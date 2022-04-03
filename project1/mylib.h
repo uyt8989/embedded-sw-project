@@ -10,6 +10,7 @@
 #include <sys/sem.h> 
 #include <sys/shm.h>
 #include <sys/ioctl.h>
+#include <sys/wait.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <termios.h>
@@ -83,3 +84,10 @@ typedef struct _OUTPUT_SHARED_MEM {
     unsigned char dot[10];
     unsigned char init_flag;
 } output_shm;
+
+int seminit();
+int semlock(int semid);
+int semunlock(int semid);
+
+void input_process(int shm_id);
+void main_process(int shm_input_id, int shm_output_id);

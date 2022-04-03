@@ -1,1 +1,7 @@
 .vscode
+input_process.o
+main_process.o
+main.o
+output_proccess.o
+sema.o
+app

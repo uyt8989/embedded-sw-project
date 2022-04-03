@@ -25,9 +25,9 @@ void key_action(int dev_key, input_shm *shm_addr, int sem_id)
     }
 
     // Accessing Critical Section
-    //semalock(sem_id);
+    semlock(sem_id);
     shm_addr->key_code = ev[0].code;
-    //semaunlock(sem_id);
+    semunlock(sem_id);
 
     return ;
 }
@@ -57,9 +57,9 @@ void switch_action(int dev_sw, input_shm *shm_addr, int sem_id)
     }
 
     // Accessing ritical Section
-    //semalock(sem_id);
+    semlock(sem_id);
     memcpy(shm_addr->sw, result, sw_size);
-    //semaunlock(sem_id);
+    semunlock(sem_id);
 
     return;
 }
@@ -90,7 +90,7 @@ void input_process(int shm_id)
     shm_addr = (input_shm *)shmat(shm_id, (void *)0, 0);
 
     // Create Semaphore
-    //sem_id = seminit();
+    sem_id = seminit();
 
     printf("Input process is successfully started\n");
 

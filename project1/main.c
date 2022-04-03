@@ -60,8 +60,8 @@ int main(int argc, char **argv)
     }
 
     // Wait for child process
-    wait(p1);
-    wait(p2);
+    wait(&p1);
+    wait(&p2);
 
     // Erase shared memory
     shmctl(shm_input_id, IPC_RMID, (struct shmid_ds *)NULL);
