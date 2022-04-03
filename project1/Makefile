@@ -7,7 +7,7 @@ CFLAGS = -W
 TARGET = app
 
 $(TARGET) : $(OBJECTS)
-$(CC) -static -o $(TARGET) $(OBJECTS)
+	$(CC) -static -o $(TARGET) $(OBJECTS)
  
 clean : 
 	rm -f $(OBJECTS) $(TARGET)
