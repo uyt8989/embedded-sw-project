@@ -2,12 +2,16 @@ OBJECTS = main.o input_process.o main_process.o output_process.o sema.o
 SRCS = main.c input_process.c main_process.c output_process.c sema.c
  
 CC = arm-none-linux-gnueabi-gcc
-CFLAGS = -static -c -W
+CFLAGS = -W
  
 TARGET = app
 
 $(TARGET) : $(OBJECTS)
+<<<<<<< HEAD
 	$(CC) -o $(TARGET) $(OBJECTS)
+=======
+	$(CC) -static -o $(TARGET) $(OBJECTS)
+>>>>>>> 0f24497209082e7607a0b41ec21942adfee8d796
  
 clean : 
 	rm -f $(OBJECTS) $(TARGET)
