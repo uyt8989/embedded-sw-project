@@ -21,7 +21,7 @@ void input_process(int shm_id)
 
     // Open key device file
     char *key_file = "/dev/input/event0";
-    if ((dev_key = open(dev_key, O_RDONLY)) < 0)
+    if ((dev_key = open(key_file, O_RDONLY)) < 0)
     {
         printf("%s is not a vaild device\n", key_file);
         return ;
@@ -29,7 +29,7 @@ void input_process(int shm_id)
 
     // Open switch device file
     char *sw_file = "/dev/fpga_push_switch";
-    if ((dev_sw = open(dev_sw, O_RDONLY)) < 0)
+    if ((dev_sw = open(sw_file, O_RDONLY)) < 0)
     {
         printf("%s is not a vaild device\n", sw_file);
         return ;
@@ -90,9 +90,10 @@ void switch_action(int dev_sw, input_shm *shm_addr, int sem_id)
     int sw_size = sizeof(push_sw_buff);
 
     memset(result, 0, sw_size);
-
+    
+    int i, j;
     // Processing when simultaneous input
-    for (int i = 0; i < 10000; i++)
+    for (i = 0; i < 10000; i++)
     {
         if (read(dev_sw, &push_sw_buff, sw_size) < 0)
         {
@@ -100,7 +101,7 @@ void switch_action(int dev_sw, input_shm *shm_addr, int sem_id)
             return -1;
         }
 
-        for (int j = 0; j < MAX_BUTTON; j++)
+        for (j = 0; j < MAX_BUTTON; j++)
         {
             result[j] = result[j] | push_sw_buff[j];
         }
