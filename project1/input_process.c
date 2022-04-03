@@ -64,7 +64,7 @@ void input_process(int shm_id)
     return ;
 }
 
-int key_action(int dev_key, input_shm *shm_addr, int sem_id)
+void key_action(int dev_key, input_shm *shm_addr, int sem_id)
 {
     struct input_event ev[BUFF_SIZE];
     int key_size = sizeof(struct input_event);
