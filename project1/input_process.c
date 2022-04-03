@@ -72,7 +72,7 @@ int key_action(int dev_key, input_shm *shm_addr, int sem_id)
     if (read(dev_key, ev, key_size * BUFF_SIZE) < 0)
     {
         printf("Key input error\n");
-        return -1;
+        return ;
     }
 
     // Accessing Critical Section
@@ -80,7 +80,7 @@ int key_action(int dev_key, input_shm *shm_addr, int sem_id)
     shm_addr->key_code = ev[0].code;
     semaunlock(sem_id);
 
-    return 0;
+    return ;
 }
 
 void switch_action(int dev_sw, input_shm *shm_addr, int sem_id)
@@ -98,7 +98,7 @@ void switch_action(int dev_sw, input_shm *shm_addr, int sem_id)
         if (read(dev_sw, &push_sw_buff, sw_size) < 0)
         {
             printf("Switch input error\n");
-            return -1;
+            return ;
         }
 
         for (j = 0; j < MAX_BUTTON; j++)
@@ -112,5 +112,5 @@ void switch_action(int dev_sw, input_shm *shm_addr, int sem_id)
     memcpy(shm_addr->sw, result, sw_size);
     semaunlock(sem_id);
 
-    return 0;
+    return;
 }
