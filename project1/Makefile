@@ -3,7 +3,7 @@ SRCS = main.c input_process.c main_process.c output_process.c sema.c
 
 CC = arm-none-linux-gnueabi-gcc
 #CC = gcc
-CFLAGS = -W
+CFLAGS = -static -W
  
 TARGET = app
 
