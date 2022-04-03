@@ -13,7 +13,7 @@ clean :
 	rm -f $(OBJECTS) $(TARGET)
  
 main.o : mylib.h main.c
-input_process.o : mylib.h input_process.c
-main_process.o : mylib.h main_process.c
-output_process.o : mylib.h output_process.c
+input_process.o : mylib.h sema.o input_process.c
+main_process.o : mylib.h sema.o main_process.c
+output_process.o : mylib.h sema.o output_process.c
 sema.o : mylib.h sema.c
