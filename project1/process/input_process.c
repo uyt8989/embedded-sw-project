@@ -37,23 +37,17 @@ void input_process(int shm_id)
 
     // Attach shared memory
     shm_addr = (input_shm *)shmat(shm_id, (void *)0, 0);
-    if (shm_id < 0)
-    {
-        printf("shmat error\n");
-        return ;
-    }
 
     // Create Semaphore
     sem_id = seminit();
 
     printf("Input process is successfully started\n");
-    printf("Input process is Hearing...\n");
 
     while (exit == FALSE)
     {
         // exit is chagned in main process
         if (shm_addr->exit == TRUE)
-            exit = shm_addr->exit;
+            exit = TRUE;
         // Key input
         key_action(dev_key, shm_addr, sem_id);
         // Switch input

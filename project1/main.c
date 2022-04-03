@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     else if (p1 == 0)
     {
         // output process
-        output_process(shm_output_id);
+        //output_process(shm_output_id);
     }
 
     else
@@ -66,6 +66,8 @@ int main(int argc, char **argv)
     // Erase shared memory
     shmctl(shm_input_id, IPC_RMID, (struct shmid_ds *)NULL);
     shmctl(shm_output_id, IPC_RMID, (struct shmid_ds *)NULL);
+
+    printf("Successfully terminated\n");
 
     return 0;
 }
