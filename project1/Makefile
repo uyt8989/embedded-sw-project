@@ -24,3 +24,8 @@ $(OBJDIR):
 .PHONY: clean
 clean:
 	rm -rf $(OBJDIR)
+	
+.PHONY: push
+push:
+	make
+	adb push $(OBJDIR)$(TARGET) /data/local/tmp
