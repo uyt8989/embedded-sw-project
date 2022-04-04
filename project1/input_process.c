@@ -64,7 +64,7 @@ void switch_action(int dev_sw, input_shm *shm_addr, int sem_id)
     return;
 }
 
-void input_process(int shm_id)
+int input_process(int shm_id)
 {
     int dev_key, dev_sw, sem_id;
     input_shm *shm_addr;
@@ -112,5 +112,7 @@ void input_process(int shm_id)
     close(dev_key);
     close(dev_sw);
 
-    return ;
+    printf("Input process is successfully done\n");
+
+    return 0;
 }

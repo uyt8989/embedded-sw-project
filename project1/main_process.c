@@ -1,6 +1,6 @@
 #include "mylib.h"
 
-void main_process(int shm_input_id, int shm_output_id) {
+int main_process(int shm_input_id, int shm_output_id) {
     int exit = FALSE;
     int sem_id;
 
@@ -27,9 +27,10 @@ void main_process(int shm_input_id, int shm_output_id) {
             exit = TRUE;
     }
 
-
     shmdt((char *)shm_input_addr);
     shmdt((char *)shm_output_addr);
 
-    return;
+    printf("Main process is successfully done\n");
+
+    return 0;
 }

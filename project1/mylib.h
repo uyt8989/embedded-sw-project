@@ -89,5 +89,5 @@ int seminit();
 int semlock(int semid);
 int semunlock(int semid);
 
-void input_process(int shm_id);
-void main_process(int shm_input_id, int shm_output_id);
+int input_process(int shm_id);
+int main_process(int shm_input_id, int shm_output_id);

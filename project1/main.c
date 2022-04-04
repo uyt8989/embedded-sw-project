@@ -3,6 +3,7 @@
 int main(int argc, char **argv)
 {
     pid_t p1 = 0, p2 = 0;
+    int process1, process2;
     int shm_input_id, shm_output_id;
     
     // Create shared memory
@@ -29,12 +30,14 @@ int main(int argc, char **argv)
 
         if (p2 == 0)
         {
+            printf("Calling input process\n");
             // input process
             input_process(shm_input_id);
         }
 
         else if (p2 > 0)
         {
+            printf("Calling main process\n");
             // main process
             main_process(shm_input_id, shm_output_id);
         }
@@ -49,6 +52,7 @@ int main(int argc, char **argv)
     // child process
     else if (p1 == 0)
     {
+        printf("Calling output process\n");
         // output process
         //output_process(shm_output_id);
     }
@@ -59,9 +63,11 @@ int main(int argc, char **argv)
         exit(-1);
     }
 
+    sleep(5);
+
     // Wait for child process
-    wait(&p1);
-    wait(&p2);
+    wait(NULL);
+    wait(NULL);
 
     // Erase shared memory
     shmctl(shm_input_id, IPC_RMID, (struct shmid_ds *)NULL);
