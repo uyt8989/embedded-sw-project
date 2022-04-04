@@ -1,20 +1,26 @@
-OBJECTS = main.o input_process.o main_process.o output_process.o sema.o
-SRCS = main.c input_process.c main_process.c output_process.c sema.c
+CC=arm-none-linux-gnueabi-gcc
+#CC=gcc
 
-CC = arm-none-linux-gnueabi-gcc
-#CC = gcc
-CFLAGS = -static -W
- 
+.SUFFIXES: .c .h .o
+
+DEPS = mylib.h 
+CFLAGS=
+
 TARGET = app
+OBJDIR = build/
 
-$(TARGET) : $(OBJECTS)
-	$(CC) -o $(TARGET) $(OBJECTS)
- 
-clean : 
-	rm -f $(OBJECTS) $(TARGET)
- 
-main.o : mylib.h main.c
-input_process.o : mylib.h input_process.c
-main_process.o : mylib.h main_process.c
-output_process.o : mylib.h output_process.c
-sema.o : mylib.h sema.c
+_OBJS = input_process.o output_process.o main.o main_process.o sema.o
+OBJS = $(addprefix $(OBJDIR),$(_OBJS))
+
+$(OBJDIR)$(TARGET): $(OBJS)
+	$(CC) -static -o $(OBJDIR)$(TARGET) $(OBJS)
+
+$(OBJDIR)%.o: %.c $(OBJDIR)
+	$(CC) -static -c -o $@ $<
+
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
+
+.PHONY: clean
+clean:
+	rm -rf $(OBJDIR)
