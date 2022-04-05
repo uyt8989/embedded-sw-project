@@ -103,6 +103,10 @@ void init_board(shm_out *shm_output_addr);
 
 // mode.c
 void mode_handler(shm_out *shm_addr, int d);
+void init_clock();
+void init_counter();
+void init_text_editor();
+void init_draw_board();
 
 
 
