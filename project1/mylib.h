@@ -34,17 +34,11 @@
 #define BOARD_KEY_VOL_UP 115
 #define BOARD_KEY_VOL_DOWN 114
 
-//Clock mode
-#define MODE_1 100
-
-//Counter mode
-#define MODE_2 200
-
-//Text editor mode
-#define MODE_3 300
-
-//Draw board mode
-#define MODE_4 400
+#define MODS 4
+#define MODE_1 0 //Clock mode
+#define MODE_2 1 //Counter mode
+#define MODE_3 2 //Text editor mode
+#define MODE_4 3 //Draw board mode
 
 //MOD1
 #define M1_CHANGE_TIME -100
@@ -62,6 +56,8 @@
 
 //MOD4
 
+
+int current_mode = MODE_1;
 
 typedef struct _CUR_STAT {
     int cur_mode;
@@ -103,7 +99,10 @@ int main_process(int shm_input_id, int shm_output_id);
 
 // output_process.c
 int output_process(int shm_id);
+void init_board(shm_out *shm_output_addr);
 
+// mode.c
+void mode_handler(shm_out *shm_addr, int d);
 
 
 

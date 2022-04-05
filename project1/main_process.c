@@ -39,20 +39,32 @@ int main_process(int shm_input_id, int shm_output_id)
 		sleep(1);
 		printf("maining...\n");
 
+		// Check key inputs
 		cur_key = getKeycode(shm_input_addr, sem_id);
 		if(prev_key != cur_key) {
+			// Mode change
+			init_board(shm_output_addr);
+
 			switch (cur_key)
 			{
 			case BOARD_KEY_BACK :
 				exit = setExit(shm_input_addr, sem_id);
 				break;
 			case BOARD_KEY_VOL_UP : 
+				mode_handler(shm_output_addr, 1);
 				break;
-			case BOARD_KEY_VOL_DOWN : 
+			case BOARD_KEY_VOL_DOWN :
+				mode_handler(shm_output_addr, -1); 
 				break;
 			default:
 				break;
 			}
+		}
+		
+		//모드에 맞게 입력을 처리하고 output process로 넘긴다
+		//output process에서는 디바이스 파일 열어서 디바이스 상태만 바꿔주면 됨
+		switch(current_mode) {
+
 		}
 	}
 
