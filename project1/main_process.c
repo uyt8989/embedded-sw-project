@@ -5,6 +5,7 @@ int checkExit(input_shm *addr, int sem_id) {
    semlock(sem_id);
    if(addr->key_code == BOARD_KEY_BACK){
        ret = TRUE;
+       addr->exit = TRUE;
    }
    semunlock(sem_id);
    return ret; 
