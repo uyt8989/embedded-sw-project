@@ -96,6 +96,10 @@ int input_process(int shm_id)
 
     while (exit == FALSE)
     {
+        sleep(1);
+        printf("inputing...\n");
+        
+        /*
         // exit is chagned in main process
         if (shm_addr->exit == TRUE)
             exit = TRUE;
@@ -103,6 +107,7 @@ int input_process(int shm_id)
         key_action(dev_key, shm_addr, sem_id);
         // Switch input
         switch_action(dev_sw, shm_addr, sem_id);
+        */
     }
 
     // Detach shahred memory

@@ -54,7 +54,7 @@ int main(int argc, char **argv)
     {
         printf("Calling output process\n");
         // output process
-        //output_process(shm_output_id);
+        output_process(shm_output_id);
     }
 
     else
@@ -63,16 +63,16 @@ int main(int argc, char **argv)
         exit(-1);
     }
 
-    sleep(5);
-
     // Wait for child process
     wait(NULL);
     wait(NULL);
 
-    // Erase shared memory
-    shmctl(shm_input_id, IPC_RMID, (struct shmid_ds *)NULL);
-    shmctl(shm_output_id, IPC_RMID, (struct shmid_ds *)NULL);
-
+    if(p1 && p2) {
+        // Erase shared memory
+        shmctl(shm_input_id, IPC_RMID, (struct shmid_ds *)NULL);
+        shmctl(shm_output_id, IPC_RMID, (struct shmid_ds *)NULL);
+    }
+    
     printf("Successfully terminated(pid1=%d, pid2=%d)\n", p1, p2);
 
     return 0;
