@@ -19,7 +19,7 @@ void key_action(int dev_key, shm_in *shm_addr, int sem_id)
     int key_size = sizeof(struct input_event);
 
     printf("waiting key input...\n");
-    if (read(dev_key, &ev, key_size * BUFF_SIZE) < 0)
+    if (read(dev_key, ev, key_size * BUFF_SIZE) < 0)
     {
         printf("Key input error\n");
         return;
