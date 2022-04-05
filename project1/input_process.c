@@ -88,7 +88,7 @@ int input_process(int shm_id)
 
     // Open switch device file
     char *sw_file = "/dev/fpga_push_switch";
-    if ((dev_sw = open(sw_file, O_RDONLY | O_NONBLOCK)) < 0)
+    if ((dev_sw = open(sw_file, O_RDONLY)) < 0)
     {
         printf("%s is not a vaild device\n", sw_file);
         return -1;
