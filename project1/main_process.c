@@ -1,5 +1,15 @@
 #include "mylib.h"
 
+int checkExit(input_shm *addr, int sem_id) {
+   int ret = FALSE;
+   semlock(sem_id);
+   if(addr->key_code == BOARD_KEY_BACK){
+       ret = TRUE;
+   }
+   semunlock(sem_id);
+   return ret; 
+}
+
 int main_process(int shm_input_id, int shm_output_id) {
     int exit = FALSE;
     int sem_id;
@@ -23,12 +33,9 @@ int main_process(int shm_input_id, int shm_output_id) {
     printf("Main process is successfully started\n");
 
     while(exit == FALSE) {
-        /*
-        if(shm_input_addr->exit == TRUE)
-            exit = TRUE;
-        */
        sleep(1);
        printf("maining...\n");
+       exit = checkExit(shm_input_addr, sem_id);
     }
 
     shmdt((char *)shm_input_addr);
