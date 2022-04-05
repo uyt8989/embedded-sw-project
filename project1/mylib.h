@@ -97,7 +97,7 @@ int input_process(int shm_id);
 // main_process.c
 int getKeycode(shm_in *shm_addr, int sem_id);
 int main_process(int shm_input_id, int shm_output_id);
-int init_board(shm_out *shm_addr);
+void init_board(shm_out *shm_addr);
 
 // output_process.c
 int output_process(int shm_id);
