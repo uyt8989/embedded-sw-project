@@ -1,42 +1,71 @@
+/*****************************************
+ *
+ * Main process :
+ *
+ * 1. Get input from shared memory
+ * 2. Process input
+ * 3. Transfer result to output process
+ *
+ *****************************************/
+
 #include "mylib.h"
 
-int checkExit(input_shm *addr, int sem_id) {
-   int ret = FALSE;
-   semlock(sem_id);
-   if(addr->key_code == BOARD_KEY_BACK){
-       ret = TRUE;
-       addr->exit = TRUE;
-   }
-   semunlock(sem_id);
-   return ret; 
+int setExit(shm *addr, int sem_id)
+{
+	int ret = FALSE;
+	
+	semlock(sem_id);
+	if (addr->key_code == BOARD_KEY_BACK)
+	{
+		ret = TRUE;
+		addr->exit = TRUE;
+	}
+	semunlock(sem_id);
+
+	return ret;
 }
 
-int main_process(int shm_input_id, int shm_output_id) {
-    int exit = FALSE;
-    int sem_id;
+int checkExit(shm *addr, int sem_id)
+{
+	int ret = FALSE;
+	
+	semlock(sem_id);
+	ret = addr->key_code;
+	semunlock(sem_id);
 
-    //Attach shared memory
-    input_shm *shm_input_addr = (input_shm *)shmat(shm_input_id, (void *)0, 0);
-    output_shm *shm_output_addr = (output_shm *)shmat(shm_output_id, (void *)0, 0);
+	return ret;
+}
 
-    sem_id = seminit();
+int main_process(int shm_id)
+{
+	int exit = FALSE;
+	int sem_id;
 
-    printf("Main process is successfully started\n");
+	// Attach shared memory
+	shm *shm_addr = (shm *)shmat(shm_id, (void *)0, 0);
 
-    while(exit == FALSE) {
-       sleep(1);
-       printf("maining...\n");
-       exit = checkExit(shm_input_addr, sem_id);
-    }
+	sem_id = seminit();
 
-    semlock(sem_id);
-    shm_input_addr->exit = exit;
-    semunlock(sem_id);
+	printf("Main process is successfully started\n");
 
-    shmdt(shm_input_addr);
-    shmdt(shm_output_addr);
+	while (exit == FALSE)
+	{
+		sleep(1);
+		printf("maining...\n");
 
-    printf("Main process is successfully done\n");
+		exit = setExit(shm_addr, sem_id);
 
-    return 0;
+	}
+
+	// Send exit signal to other process
+	semlock(sem_id);
+	shm_addr->exit = exit;
+	semunlock(sem_id);
+
+	// Detach shared memory
+	shmdt(shm_addr);
+
+	printf("Main process is successfully done\n");
+
+	return 0;
 }

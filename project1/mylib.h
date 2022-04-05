@@ -21,9 +21,7 @@
 #define TRUE 1
 #define FALSE 0
 
-#define SHARED_MEM_KEY_IN 5678
-#define SHARED_MEM_KEY_OUT 5679
-
+#define SHARED_MEM_KEY 5678
 #define SEMA_KEY 6789
 
 #define BUFF_SIZE 64
@@ -71,26 +69,25 @@ typedef struct _CUR_STAT {
 
 } cur_stat;
 
-typedef struct _INPUT_SHARED_MEM {
+typedef struct _SHARED_MEM {
     int exit;
     int key_code;
     unsigned char sw[MAX_BUTTON];
-} input_shm;
-
-typedef struct _OUTPUT_SHARED_MEM {
     int exit;
     int fnd;
     char text[32];
     unsigned char led;
     unsigned char dot[10];
     unsigned char init_flag;
-} output_shm;
+} shm;
 
 int seminit();
 int semlock(int semid);
 int semunlock(int semid);
 
 int input_process(int shm_id);
-int main_process(int shm_input_id, int shm_output_id);
+int main_process(int shm_id);
 int output_process(int shm_id);
-int checkExit(input_shm *addr, int sem_id);
+
+int setExit(shm *addr, int sem_id);
+int checkExit(shm *addr, int sem_id);

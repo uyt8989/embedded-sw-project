@@ -13,7 +13,7 @@
 #define KEY_RELEASE 0
 #define KEY_PRESS 1
 
-void key_action(int dev_key, input_shm *shm_addr, int sem_id)
+void key_action(int dev_key, shm *shm_addr, int sem_id)
 {
     struct input_event ev[BUFF_SIZE];
     int key_size = sizeof(struct input_event);
@@ -22,7 +22,7 @@ void key_action(int dev_key, input_shm *shm_addr, int sem_id)
     if (read(dev_key, &ev, key_size * BUFF_SIZE) < 0)
     {
         printf("Key input error\n");
-        return ;
+        return;
     }
 
     // Accessing critical section
@@ -30,26 +30,27 @@ void key_action(int dev_key, input_shm *shm_addr, int sem_id)
     shm_addr->key_code = ev[0].code;
     semunlock(sem_id);
 
-    return ;
+    return;
 }
 
-void switch_action(int dev_sw, input_shm *shm_addr, int sem_id)
+void switch_action(int dev_sw, shm *shm_addr, int sem_id)
 {
     unsigned char push_sw_buff[MAX_BUTTON];
     unsigned char result[MAX_BUTTON];
     int sw_size = sizeof(push_sw_buff);
 
     memset(result, 0, sw_size);
-    
+
     int i, j;
     printf("waiting switch input...\n");
-    // Processing when simultaneous input
+
+    // Get simultaneous input
     for (i = 0; i < 10000; i++)
     {
         if (read(dev_sw, &push_sw_buff, sw_size) < 0)
         {
             printf("Switch input error\n");
-            return ;
+            return;
         }
 
         for (j = 0; j < MAX_BUTTON; j++)
@@ -59,7 +60,7 @@ void switch_action(int dev_sw, input_shm *shm_addr, int sem_id)
     }
 
     printf("switch : ");
-    for(i = 0; i < MAX_BUTTON; i++)
+    for (i = 0; i < MAX_BUTTON; i++)
         printf("%d", result[i]);
     printf("\n");
 
@@ -74,7 +75,7 @@ void switch_action(int dev_sw, input_shm *shm_addr, int sem_id)
 int input_process(int shm_id)
 {
     int dev_key, dev_sw, sem_id;
-    input_shm *shm_addr;
+    shm *shm_addr;
     int exit = FALSE;
 
     // Open key device file
@@ -87,14 +88,14 @@ int input_process(int shm_id)
 
     // Open switch device file
     char *sw_file = "/dev/fpga_push_switch";
-    if ((dev_sw = open(sw_file, O_RDONLY)) < 0)
+    if ((dev_sw = open(sw_file, O_RDONLY | O_NONBLOCK)) < 0)
     {
         printf("%s is not a vaild device\n", sw_file);
         return -1;
     }
 
     // Attach shared memory
-    shm_addr = (input_shm *)shmat(shm_id, (void *)0, 0);
+    shm_addr = (shm *)shmat(shm_id, (void *)0, 0);
 
     // Create Semaphore
     sem_id = seminit();
@@ -105,14 +106,14 @@ int input_process(int shm_id)
     {
         sleep(1);
         printf("inputing...\n");
-        
-        if(shm_addr->exit == TRUE) exit = TRUE;
 
-         // Switch input
+        // Check terminate condition
+        exit = checkExit(shm_addr, sem_id);
+
+        // Get switch input
         switch_action(dev_sw, shm_addr, sem_id);
-        // Key input
+        // Get key input
         key_action(dev_key, shm_addr, sem_id);
-       
     }
 
     // Detach shahred memory
