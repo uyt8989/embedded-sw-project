@@ -11,7 +11,7 @@ int output_process(int shm_id)
     {
         sleep(1);
         printf("outputing...\n");
-        if(shm_addr->exit == TRUE) break;
+       // if(shm_addr->exit == TRUE) break;
     }
 
     printf("Output process is successfully done\n");

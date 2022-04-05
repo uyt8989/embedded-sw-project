@@ -80,7 +80,7 @@ int input_process(int shm_id)
 
     // Open key device file
     char *key_file = "/dev/input/event0";
-    if ((dev_key = open(key_file, O_RDONLY | O_NONBLOCK)) < 0)
+    if ((dev_key = open(key_file, O_RDONLY)) < 0)
     {
         printf("%s is not a vaild device\n", key_file);
         return -1;
