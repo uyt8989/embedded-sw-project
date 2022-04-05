@@ -76,12 +76,12 @@ typedef struct _SHARED_MEM_IN {
 } shm_in;
 
 typedef struct _SHARED_MEM_OUT {
-    unsigned short fnd;
-    unsigned char exit;
+    int exit;
+    int fnd;
+    char text[32];
     unsigned char led;
-    unsigned char init_flag;
-    unsigned char text[32];
     unsigned char dot[10];
+    unsigned char init_flag;
 } shm_out;
 
 int seminit();
