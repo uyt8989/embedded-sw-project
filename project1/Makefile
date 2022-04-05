@@ -1,15 +1,14 @@
 CC=arm-none-linux-gnueabi-gcc
 #CC=gcc
 
-.SUFFIXES: .c .h .o
+.SUFFIXES: .c .o
 
-DEPS = mylib.h 
-CFLAGS=
+CFLAGS= -W
 
 TARGET = app
 OBJDIR = build/
 
-_OBJS = input_process.o output_process.o main.o main_process.o sema.o
+_OBJS =  main.o input_process.o main_process.o output_process.o sema.o
 OBJS = $(addprefix $(OBJDIR),$(_OBJS))
 
 $(OBJDIR)$(TARGET): $(OBJS)

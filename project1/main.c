@@ -73,7 +73,7 @@ int main(int argc, char **argv)
     shmctl(shm_input_id, IPC_RMID, (struct shmid_ds *)NULL);
     shmctl(shm_output_id, IPC_RMID, (struct shmid_ds *)NULL);
 
-    printf("Successfully terminated\n");
+    printf("Successfully terminated(pid1=%d, pid2=%d)\n", p1, p2);
 
     return 0;
 }

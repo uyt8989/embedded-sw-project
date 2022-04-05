@@ -75,7 +75,7 @@ int input_process(int shm_id)
     if ((dev_key = open(key_file, O_RDONLY)) < 0)
     {
         printf("%s is not a vaild device\n", key_file);
-        return ;
+        return -1;
     }
 
     // Open switch device file
@@ -83,7 +83,7 @@ int input_process(int shm_id)
     if ((dev_sw = open(sw_file, O_RDONLY)) < 0)
     {
         printf("%s is not a vaild device\n", sw_file);
-        return ;
+        return -1;
     }
 
     // Attach shared memory
