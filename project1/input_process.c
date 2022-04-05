@@ -64,7 +64,7 @@ void switch_action(int dev_sw, shm_in *shm_addr, int sem_id)
         }
     }
 
-    printf("switch : ");
+    printf("switch value : ");
     for (i = 0; i < MAX_BUTTON; i++)
         printf("%d ", result[i]);
     printf("\n");
