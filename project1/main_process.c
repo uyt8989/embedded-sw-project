@@ -62,9 +62,10 @@ int main_process(int shm_input_id, int shm_output_id)
 				break;
 			}
 		}
+		prev_key = cur_key;
 		
 		usleep(1000);
-		
+
 		//모드에 맞게 입력을 처리하고 output process로 넘긴다
 		//output process에서는 디바이스 파일 열어서 디바이스 상태만 바꿔주면 됨
 		switch(current_mode) {
