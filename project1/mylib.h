@@ -70,14 +70,14 @@ typedef struct _CUR_STAT {
 } cur_stat;
 
 typedef struct _SHARED_MEM {
-    unsigned char exit;
-    unsigned short sw;
-    unsigned char key_code;
     unsigned short fnd;
-    unsigned char text[32];
-    unsigned char led;
-    unsigned char dot[10];
+    unsigned short sw;
+    unsigned char exit;
+    unsigned char key_code;
     unsigned char init_flag;
+    unsigned char led;
+    unsigned char text[32];
+    unsigned char dot[10];
 } shm;
 
 int seminit();
