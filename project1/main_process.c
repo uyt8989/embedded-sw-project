@@ -39,7 +39,7 @@ int main_process(int shm_input_id, int shm_output_id)
 	while (exit == FALSE)
 	{
 		sleep(1);
-		printf("maining...\n");
+		//printf("maining...\n");
 
 		// Check key inputs
 		cur_key = getKeycode(shm_input_addr, sem_id);

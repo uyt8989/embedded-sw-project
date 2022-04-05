@@ -10,7 +10,7 @@ int output_process(int shm_id)
     while (1)
     {
         sleep(1);
-        printf("outputing...\n");
+        //printf("outputing...\n");
         if(shm_addr->exit == TRUE) break;
     }
 

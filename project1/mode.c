@@ -10,7 +10,9 @@ void mode_handler(shm_out* shm_addr, int d) {
 
     printf("Mode is changed to code:%d\n", changed_mode);
 
-    switch (changed_mode)
+    current_mode = changed_mode;
+
+    switch (current_mode)
     {
     case MODE_1 :
         init_clock();
