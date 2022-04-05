@@ -18,6 +18,7 @@ void key_action(int dev_key, input_shm *shm_addr, int sem_id)
     struct input_event ev[BUFF_SIZE];
     int key_size = sizeof(struct input_event);
 
+    printf("waiting key input...\n");
     if (read(dev_key, ev, key_size * BUFF_SIZE) < 0)
     {
         printf("Key input error\n");
@@ -41,6 +42,7 @@ void switch_action(int dev_sw, input_shm *shm_addr, int sem_id)
     memset(result, 0, sw_size);
     
     int i, j;
+    printf("waiting switch input...\n");
     // Processing when simultaneous input
     for (i = 0; i < 10000; i++)
     {
