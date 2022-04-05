@@ -10,10 +10,21 @@
 
 #include "mylib.h"
 
+int getKeycode(shm_in *shm_addr, int sem_id) 
+{
+	int value = BOARD_KEY_DEFAULT;
+	semlock(sem_id);
+	value = shm_addr->key_code;	
+	semunlock(sem_id);
+	return value;
+}
+
 int main_process(int shm_input_id, int shm_output_id)
 {
 	int exit = FALSE;
 	int sem_id;
+	int prev_key = BOARD_KEY_DEFAULT;
+	int cur_key = BOARD_KEY_DEFAULT;
 
 	// Attach shared memory
 	shm_in *shm_input_addr = (shm_in *)shmat(shm_input_id, (void *)0, 0);
@@ -28,7 +39,21 @@ int main_process(int shm_input_id, int shm_output_id)
 		sleep(1);
 		printf("maining...\n");
 
-		exit = setExit(shm_input_addr, sem_id);
+		cur_key = getKeycode(shm_input_addr, sem_id);
+		if(prev_key != cur_key) {
+			switch (cur_key)
+			{
+			case BOARD_KEY_BACK :
+				exit = setExit(shm_input_addr, sem_id);
+				break;
+			case BOARD_KEY_VOL_UP : 
+				break;
+			case BOARD_KEY_VOL_DOWN : 
+				break;
+			default:
+				break;
+			}
+		}
 	}
 
 	// Send exit signal to output process
@@ -42,3 +67,4 @@ int main_process(int shm_input_id, int shm_output_id)
 
 	return 0;
 }
+

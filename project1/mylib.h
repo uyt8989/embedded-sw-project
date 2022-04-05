@@ -85,13 +85,25 @@ typedef struct _SHARED_MEM_OUT {
     unsigned char init_flag;
 } shm_out;
 
+// sema.c
 int seminit();
 int semlock(int semid);
 int semunlock(int semid);
 
-int input_process(int shm_id);
-int main_process(int shm_input_id, int shm_output_id);
-int output_process(int shm_id);
-
+// utils.c
 int setExit(shm_in *addr, int sem_id);
 int checkExit(shm_in *addr, int sem_id);
+
+// input_process.c
+int input_process(int shm_id);
+
+// main_process.c
+int getKeycode(shm_in *shm_addr, int sem_id);
+int main_process(int shm_input_id, int shm_output_id);
+
+// output_process.c
+int output_process(int shm_id);
+
+
+
+

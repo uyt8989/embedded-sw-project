@@ -25,10 +25,13 @@ int main(int argc, char **argv)
     shm_in *shm_input_addr = (shm_in *)shmat(shm_input_id, (void *)0, 0);
     shm_input_addr->exit = FALSE;
     shm_input_addr->key_code = BOARD_KEY_DEFAULT;
-    //memset(shm_input_addr->sw, 0, sizeof(unsigned char) * MAX_BUTTON);
 
     shm_out *shm_output_addr = (shm_out *)shmat(shm_output_id, (void *)0, 0);
     shm_output_addr->exit = FALSE;
+
+    // Detach shared memory
+    shmdt(shm_input_addr);
+    shmdt(shm_output_addr);
 
     p1 = fork();
 
@@ -79,8 +82,8 @@ int main(int argc, char **argv)
     if (p1 && p2)
     {
         // Detach shared memory
-        shmdt(shm_input_addr);
-        shmdt(shm_output_addr);
+        //shmdt(shm_input_addr);
+        //shmdt(shm_output_addr);
 
         // Erase shared memory
         shmctl(shm_input_id, IPC_RMID, (struct shmid_ds *)NULL);
