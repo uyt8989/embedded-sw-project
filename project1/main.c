@@ -10,7 +10,7 @@ int main(int argc, char **argv)
     shm_id = shmget((key_t)SHARED_MEM_KEY, sizeof(shm), IPC_CREAT | 066);
     if (shm_id < 0)
     {
-        printf("shmget error\n");
+        printf("shmget error %d\n", shm_id);
         exit(-1);
     }
 
