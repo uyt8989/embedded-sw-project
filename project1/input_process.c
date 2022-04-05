@@ -27,7 +27,7 @@ void key_action(int dev_key, shm_in *shm_addr, int sem_id)
     else 
     {
         value = ev[0].code;
-        printf("Key is pressed code : %d\n", value);
+        //printf("Key is pressed code : %d\n", value);
     }
 
     // Accessing critical section
@@ -112,7 +112,7 @@ int input_process(int shm_id)
 
     while (exit == FALSE)
     {
-        sleep(1);
+        //sleep(1);
         //printf("inputing...\n");
 
         // Check terminate condition

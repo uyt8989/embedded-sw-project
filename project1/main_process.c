@@ -38,7 +38,7 @@ int main_process(int shm_input_id, int shm_output_id)
 
 	while (exit == FALSE)
 	{
-		sleep(1);
+		//sleep(1);
 		//printf("maining...\n");
 
 		// Check key inputs
