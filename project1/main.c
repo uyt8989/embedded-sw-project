@@ -21,6 +21,15 @@ int main(int argc, char **argv)
         exit(-1);
     }
 
+    //Initialize shared memory
+    input_shm *shm_input_addr = (input_shm *)shmat(shm_input_id, (void *)0, 0);
+    output_shm *shm_output_addr = (output_shm *)shmat(shm_output_id, (void *)0, 0);
+
+    shm_input_addr->key_code = BOARD_KEY_DEFAULT;
+    shm_input_addr->exit = FALSE;
+    memset(shm_input_addr, 0, sizeof(unsigned char) * MAX_BUTTON);
+
+
     p1 = fork();
 
     // parent process
@@ -68,11 +77,15 @@ int main(int argc, char **argv)
     wait(NULL);
 
     if(p1 && p2) {
+        // Detach shared memory
+        shmdt(shm_input_addr);
+        shmdt(shm_output_addr);
+        
         // Erase shared memory
         shmctl(shm_input_id, IPC_RMID, (struct shmid_ds *)NULL);
         shmctl(shm_output_id, IPC_RMID, (struct shmid_ds *)NULL);
     }
-    
+
     printf("Successfully terminated(pid1=%d, pid2=%d)\n", p1, p2);
 
     return 0;

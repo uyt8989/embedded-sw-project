@@ -21,16 +21,6 @@ int main_process(int shm_input_id, int shm_output_id) {
 
     sem_id = seminit();
 
-    semlock(sem_id);
-    // Initialize shared memories
-    shm_input_addr->exit = FALSE;
-    shm_input_addr->key_code = -1;
-    memset(shm_input_addr->sw, 0, sizeof(unsigned char) * MAX_BUTTON);
-
-    shm_output_addr->exit = FALSE;
-    //나머지도 초기화
-    semunlock(sem_id);
-
     printf("Main process is successfully started\n");
 
     while(exit == FALSE) {
@@ -43,8 +33,8 @@ int main_process(int shm_input_id, int shm_output_id) {
     shm_input_addr->exit = exit;
     semunlock(sem_id);
 
-    shmdt((char *)shm_input_addr);
-    shmdt((char *)shm_output_addr);
+    shmdt(shm_input_addr);
+    shmdt(shm_output_addr);
 
     printf("Main process is successfully done\n");
 

@@ -100,7 +100,7 @@ int input_process(int shm_id)
         printf("inputing...\n");
         
         if(shm_addr->exit == TRUE) exit = TRUE;
-        
+
         // Key input
         key_action(dev_key, shm_addr, sem_id);
         // Switch input
@@ -108,7 +108,7 @@ int input_process(int shm_id)
     }
 
     // Detach shahred memory
-    shmdt((char *)shm_addr);
+    shmdt(shm_addr);
 
     // Close device files
     close(dev_key);

@@ -14,5 +14,7 @@ int output_process(int shm_id) {
 
     printf("Output process is successfully done\n");
 
+    shmdt(shm_addr);
+    
     return 0;
 }

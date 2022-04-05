@@ -29,6 +29,7 @@
 #define BUFF_SIZE 64
 #define MAX_BUTTON 9
 
+#define BOARD_KEY_DEFAULT 117
 #define BOARD_KEY_BACK 158
 #define BOARD_KEY_PROG 116
 #define BOARD_KEY_VOL_UP 115
