@@ -92,3 +92,4 @@ int semunlock(int semid);
 int input_process(int shm_id);
 int main_process(int shm_input_id, int shm_output_id);
 int output_process(int shm_id);
+int checkExit(input_shm *addr, int sem_id);

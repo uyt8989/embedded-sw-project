@@ -38,6 +38,10 @@ int main_process(int shm_input_id, int shm_output_id) {
        exit = checkExit(shm_input_addr, sem_id);
     }
 
+    semlock(sem_id);
+    shm_input_addr->exit = exit;
+    semunlock(sem_id);
+
     shmdt((char *)shm_input_addr);
     shmdt((char *)shm_output_addr);
 

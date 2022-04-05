@@ -100,8 +100,7 @@ int input_process(int shm_id)
         printf("inputing...\n");
         
         // exit is chagned in main process
-        if (shm_addr->exit == TRUE)
-            exit = TRUE;
+        exit = checkExit(shm_addr, sem_id);
         // Key input
         key_action(dev_key, shm_addr, sem_id);
         // Switch input
