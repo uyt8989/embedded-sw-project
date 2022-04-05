@@ -13,7 +13,7 @@
 #define KEY_RELEASE 0
 #define KEY_PRESS 1
 
-void key_action(int dev_key, shm *shm_addr, int sem_id)
+void key_action(int dev_key, shm_in *shm_addr, int sem_id)
 {
     struct input_event ev[BUFF_SIZE];
     int key_size = sizeof(struct input_event);
@@ -33,7 +33,7 @@ void key_action(int dev_key, shm *shm_addr, int sem_id)
     return;
 }
 
-void switch_action(int dev_sw, shm *shm_addr, int sem_id)
+void switch_action(int dev_sw, shm_in *shm_addr, int sem_id)
 {
     unsigned char push_sw_buff[MAX_BUTTON];
     unsigned char result[MAX_BUTTON];
@@ -75,7 +75,7 @@ void switch_action(int dev_sw, shm *shm_addr, int sem_id)
 int input_process(int shm_id)
 {
     int dev_key, dev_sw, sem_id;
-    shm *shm_addr;
+    shm_in *shm_addr;
     int exit = FALSE;
 
     // Open key device file
@@ -95,7 +95,7 @@ int input_process(int shm_id)
     }
 
     // Attach shared memory
-    shm_addr = (shm *)shmat(shm_id, (void *)0, 0);
+    shm_addr = (shm_in *)shmat(shm_id, (void *)0, 0);
 
     // Create Semaphore
     sem_id = seminit();

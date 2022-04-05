@@ -69,24 +69,28 @@ typedef struct _CUR_STAT {
 
 } cur_stat;
 
-typedef struct _SHARED_MEM {
-    unsigned short fnd;
-    unsigned short sw;
+typedef struct _SHARED_MEM_IN {
+    unsigned short sw[MAX_BUTTON];
     unsigned char exit;
     unsigned char key_code;
-    unsigned char init_flag;
+} shm_in;
+
+typedef struct _SHARED_MEM_OUT {
+    unsigned short fnd;
+    unsigned char exit;
     unsigned char led;
+    unsigned char init_flag;
     unsigned char text[32];
     unsigned char dot[10];
-} shm;
+} shm_out;
 
 int seminit();
 int semlock(int semid);
 int semunlock(int semid);
 
 int input_process(int shm_id);
-int main_process(int shm_id);
+int main_process(int shm_input_id, int shm_output_id);
 int output_process(int shm_id);
 
-int setExit(shm *addr, int sem_id);
-int checkExit(shm *addr, int sem_id);
+int setExit(shm_in *addr, int sem_id);
+int checkExit(shm_in *addr, int sem_id);

@@ -10,7 +10,7 @@
 
 #include "mylib.h"
 
-int setExit(shm *addr, int sem_id)
+int setExit(shm_in *addr, int sem_id)
 {
 	int ret = FALSE;
 	
@@ -25,7 +25,7 @@ int setExit(shm *addr, int sem_id)
 	return ret;
 }
 
-int checkExit(shm *addr, int sem_id)
+int checkExit(shm_in *addr, int sem_id)
 {
 	int ret = FALSE;
 	
@@ -36,13 +36,14 @@ int checkExit(shm *addr, int sem_id)
 	return ret;
 }
 
-int main_process(int shm_id)
+int main_process(int shm_input_id, int shm_output_id)
 {
 	int exit = FALSE;
 	int sem_id;
 
 	// Attach shared memory
-	shm *shm_addr = (shm *)shmat(shm_id, (void *)0, 0);
+	shm_in *shm_input_addr = (shm_in *)shmat(shm_input_id, (void *)0, 0);
+	shm_out *shm_output_addr = (shm_out *)shmat(shm_output_id, (void *)0, 0);
 
 	sem_id = seminit();
 
@@ -53,17 +54,16 @@ int main_process(int shm_id)
 		sleep(1);
 		printf("maining...\n");
 
-		exit = setExit(shm_addr, sem_id);
+		exit = setExit(shm_input_addr, sem_id);
 
 	}
 
-	// Send exit signal to other process
-	semlock(sem_id);
-	shm_addr->exit = exit;
-	semunlock(sem_id);
-
+	// Send exit signal to output process
+	shm_output_addr->exit = exit;
+	
 	// Detach shared memory
-	shmdt(shm_addr);
+	shmdt(shm_input_addr);
+	shmdt(shm_output_addr);
 
 	printf("Main process is successfully done\n");
 
