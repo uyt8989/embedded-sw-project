@@ -80,3 +80,6 @@ int main_process(int shm_input_id, int shm_output_id)
 	return 0;
 }
 
+void init_board(shm_out *shm_addr) {
+	memset(shm_addr, 0, sizeof(shm_out));
+}

@@ -1,3 +1,6 @@
+#ifndef __MY_LIB__
+#define __MY_LIB__
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -62,8 +65,6 @@ int current_mode = MODE_1;
 typedef struct _CUR_STAT {
     int cur_mode;
 
-
-
 } cur_stat;
 
 typedef struct _SHARED_MEM_IN {
@@ -96,6 +97,7 @@ int input_process(int shm_id);
 // main_process.c
 int getKeycode(shm_in *shm_addr, int sem_id);
 int main_process(int shm_input_id, int shm_output_id);
+int init_board(shm_out *shm_addr);
 
 // output_process.c
 int output_process(int shm_id);
@@ -108,5 +110,4 @@ void init_counter();
 void init_text_editor();
 void init_draw_board();
 
-
-
+#endif

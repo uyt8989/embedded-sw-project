@@ -17,7 +17,7 @@ void mode_handler(shm_out* shm_addr, int d) {
         init_counter(); 
         break;
     case MODE_3 : 
-        init_text_edditor();
+        init_text_editor();
         break;
     case MODE_4 : 
         init_draw_board();
