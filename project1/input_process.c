@@ -25,7 +25,7 @@ void key_action(int dev_key, input_shm *shm_addr, int sem_id)
         return ;
     }
 
-    // Accessing Critical Section
+    // Accessing critical section
     semlock(sem_id);
     shm_addr->key_code = ev[0].code;
     semunlock(sem_id);
@@ -58,7 +58,7 @@ void switch_action(int dev_sw, input_shm *shm_addr, int sem_id)
         }
     }
 
-    // Accessing ritical Section
+    // Accessing critical section
     semlock(sem_id);
     memcpy(shm_addr->sw, result, sw_size);
     semunlock(sem_id);
@@ -103,10 +103,11 @@ int input_process(int shm_id)
         
         if(shm_addr->exit == TRUE) exit = TRUE;
 
+         // Switch input
+        switch_action(dev_sw, shm_addr, sem_id);
         // Key input
         key_action(dev_key, shm_addr, sem_id);
-        // Switch input
-        switch_action(dev_sw, shm_addr, sem_id);
+       
     }
 
     // Detach shahred memory
