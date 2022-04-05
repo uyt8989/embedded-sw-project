@@ -70,9 +70,9 @@ typedef struct _CUR_STAT {
 } cur_stat;
 
 typedef struct _SHARED_MEM {
-    int exit;
-    int key_code;
+    unsigned char exit;
     unsigned char sw[MAX_BUTTON];
+    int key_code;
     int fnd;
     char text[32];
     unsigned char led;

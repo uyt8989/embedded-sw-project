@@ -7,7 +7,7 @@ int main(int argc, char **argv)
     int shm_id;
 
     // Create shared memory
-    shm_id = shmget((key_t)SHARED_MEM_KEY, sizeof(shm), IPC_CREAT);
+    shm_id = shmget((key_t)SHARED_MEM_KEY, sizeof(shm), IPC_CREAT | 066);
     if (shm_id < 0)
     {
         printf("shmget error\n");
