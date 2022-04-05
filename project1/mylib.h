@@ -71,7 +71,7 @@ typedef struct _CUR_STAT {
 
 typedef struct _SHARED_MEM {
     unsigned char exit;
-    unsigned char sw[MAX_BUTTON];
+    unsigned short sw;
     unsigned char key_code;
     unsigned short fnd;
     unsigned char text[32];
