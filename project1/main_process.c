@@ -31,7 +31,7 @@ int checkExit(shm_in *addr, int sem_id)
 	int ret = FALSE;
 	
 	semlock(sem_id);
-	ret = addr->key_code;
+	ret = addr->exit;
 	semunlock(sem_id);
 
 	return ret;

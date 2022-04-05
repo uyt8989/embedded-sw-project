@@ -61,12 +61,13 @@ void switch_action(int dev_sw, shm_in *shm_addr, int sem_id)
 
     printf("switch : ");
     for (i = 0; i < MAX_BUTTON; i++)
-        printf("%d", result[i]);
+        printf("%d ", result[i]);
     printf("\n");
 
     // Accessing critical section
     semlock(sem_id);
-    memcpy(shm_addr->sw, result, sw_size);
+     for (i = 0; i < MAX_BUTTON; i++)
+        shm_addr->sw[i] = result[i];
     semunlock(sem_id);
 
     return;
