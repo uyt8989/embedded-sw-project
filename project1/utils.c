@@ -1,3 +1,10 @@
+/*****************************************
+ *
+ * util functions :
+ *
+ *
+ *****************************************/
+
 #include "mylib.h"
 
 int setExit(shm_in *addr, int sem_id)
