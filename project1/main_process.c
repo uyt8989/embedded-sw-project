@@ -10,6 +10,8 @@
 
 #include "mylib.h"
 
+extern int current_mode = MODE_1;
+
 int getKeycode(shm_in *shm_addr, int sem_id) 
 {
 	int value = BOARD_KEY_DEFAULT;

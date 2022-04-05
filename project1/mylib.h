@@ -60,8 +60,6 @@
 //MOD4
 
 
-int current_mode = MODE_1;
-
 typedef struct _CUR_STAT {
     int cur_mode;
 

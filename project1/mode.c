@@ -1,5 +1,7 @@
 #include "mylib.h"
 
+extern int current_mode = MODE_1;
+
 void mode_handler(shm_out* shm_addr, int d) {
     int changed_mode = current_mode + d;
 

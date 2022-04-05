@@ -1,5 +1,7 @@
 #include "mylib.h"
 
+int current_mode = MODE_1;
+
 int main(int argc, char **argv)
 {
     pid_t p1 = 0, p2 = 0;
