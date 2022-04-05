@@ -19,7 +19,7 @@ void key_action(int dev_key, shm_in *shm_addr, int sem_id)
     int key_size = sizeof(struct input_event);
 
     printf("waiting key input...\n");
-    if (read(dev_key, ev, key_size * BUFF_SIZE) < 0)
+    if (read(dev_key, &ev, key_size * BUFF_SIZE) < 0)
     {
         printf("Key input error\n");
         return;
@@ -81,7 +81,7 @@ int input_process(int shm_id)
 
     // Open key device file
     char *key_file = "/dev/input/event0";
-    if ((dev_key = open(key_file, O_RDONLY)) < 0)
+    if ((dev_key = open(key_file, O_RDONLY | O_NONBLOCK)) < 0)
     {
         printf("%s is not a vaild device\n", key_file);
         return -1;
