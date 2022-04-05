@@ -27,6 +27,7 @@ int main_process(int shm_input_id, int shm_output_id) {
         if(shm_input_addr->exit == TRUE)
             exit = TRUE;
         */
+       sleep(1);
        printf("maining...\n");
     }
 
