@@ -17,6 +17,7 @@ int setExit(shm_in *addr, int sem_id)
 	semlock(sem_id);
 	if (addr->key_code == BOARD_KEY_BACK)
 	{
+		printf("back key is pressed\n");
 		ret = TRUE;
 		addr->exit = TRUE;
 	}
