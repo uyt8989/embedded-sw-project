@@ -73,7 +73,6 @@ typedef struct _SHARED_MEM {
     int exit;
     int key_code;
     unsigned char sw[MAX_BUTTON];
-    int exit;
     int fnd;
     char text[32];
     unsigned char led;
