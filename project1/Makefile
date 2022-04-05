@@ -8,7 +8,7 @@ CFLAGS= -W
 TARGET = app
 OBJDIR = build/
 
-_OBJS =  main.o input_process.o main_process.o output_process.o sema.o utils.o
+_OBJS =  main.o input_process.o main_process.o output_process.o sema.o utils.o mode.o
 OBJS = $(addprefix $(OBJDIR),$(_OBJS))
 
 $(OBJDIR)$(TARGET): $(OBJS)
