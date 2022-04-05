@@ -10,7 +10,7 @@
 
 #include "mylib.h"
 
-extern int current_mode = MODE_1;
+extern int current_mode;
 
 int getKeycode(shm_in *shm_addr, int sem_id) 
 {
