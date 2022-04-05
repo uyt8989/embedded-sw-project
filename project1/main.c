@@ -7,14 +7,14 @@ int main(int argc, char **argv)
     int shm_input_id, shm_output_id;
 
     // Create shared memory
-    shm_input_id = shmget((key_t)SHARED_MEM_KEY, sizeof(shm_in), IPC_CREAT | 066);
+    shm_input_id = shmget((key_t)SHARED_MEM_KEY_IN, sizeof(shm_in), IPC_CREAT | 066);
     if (shm_input_id < 0)
     {
         printf("input shmget fail (errno = %s)\n",strerror(errno));
         exit(-1);
     }
     
-    shm_output_id = shmget((key_t)SHARED_MEM_KEY, sizeof(shm_out), IPC_CREAT | 066);
+    shm_output_id = shmget((key_t)SHARED_MEM_KEY_OUT, sizeof(shm_out), IPC_CREAT | 066);
     if (shm_output_id < 0)
     {
         printf("output shmget fail (errno = %s)",strerror(errno));

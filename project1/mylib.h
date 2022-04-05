@@ -21,7 +21,8 @@
 #define TRUE 1
 #define FALSE 0
 
-#define SHARED_MEM_KEY 5678
+#define SHARED_MEM_KEY_IN 5678
+#define SHARED_MEM_KEY_OUT 5679
 #define SEMA_KEY 6789
 
 #define BUFF_SIZE 64
