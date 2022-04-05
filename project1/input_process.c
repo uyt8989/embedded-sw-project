@@ -21,6 +21,7 @@ void key_action(int dev_key, shm_in *shm_addr, int sem_id)
     printf("waiting key input...\n");
     if (read(dev_key, ev, key_size * BUFF_SIZE) < 0)
     {
+        printf("read (errno = %s)\n",strerror(errno));
         printf("Key input error\n");
         return;
     }
