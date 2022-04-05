@@ -11,6 +11,7 @@ int main(int argc, char **argv)
     if (shm_id < 0)
     {
         printf("shmget error %d\n", shm_id);
+        printf("shmget fail (errno = %s)",strerror(errno));
         exit(-1);
     }
 
