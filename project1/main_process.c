@@ -55,7 +55,6 @@ int main_process(int shm_input_id, int shm_output_id)
 		printf("maining...\n");
 
 		exit = setExit(shm_input_addr, sem_id);
-
 	}
 
 	// Send exit signal to output process

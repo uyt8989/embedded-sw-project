@@ -110,10 +110,11 @@ int input_process(int shm_id)
         // Check terminate condition
         exit = checkExit(shm_addr, sem_id);
 
-        // Get switch input
-        switch_action(dev_sw, shm_addr, sem_id);
         // Get key input
         key_action(dev_key, shm_addr, sem_id);
+
+        // Get switch input
+        switch_action(dev_sw, shm_addr, sem_id);
     }
 
     // Detach shahred memory
