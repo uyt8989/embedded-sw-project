@@ -34,7 +34,7 @@ int getSwitch(shm_in *shm_addr, int sem_id)
 			flag = TRUE;
 		}
 	}
-	semulock(sem_id);
+	semunlock(sem_id);
 
 	return flag;
 }
@@ -86,7 +86,7 @@ int main_process(int shm_input_id, int shm_output_id)
 		}
 
 		prev_key = cur_key;
-		
+
 		// Check the swtich inputs
 		if (getSwitch(shm_input_addr, sem_id) == TRUE)
 		{
