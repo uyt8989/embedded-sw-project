@@ -17,6 +17,7 @@ int getKeycode(shm_in *shm_addr, int sem_id)
 	int value = BOARD_KEY_DEFAULT;
 	semlock(sem_id);
 	value = shm_addr->key_code;
+	shm_addr->key_code = BOARD_KEY_DEFAULT;
 	semunlock(sem_id);
 	return value;
 }
