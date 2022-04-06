@@ -105,6 +105,7 @@ int main_process(int shm_input_id, int shm_output_id);
 
 // output_process.c
 int output_process(int shm_input_id, int shm_output_id);
+void makeDigit(int num, unsigned char data[]);
 
 // mode.c
 void init_device(shm_out *shm_addr);

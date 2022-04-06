@@ -89,7 +89,7 @@ int output_process(int shm_input_id, int shm_output_id)
         usleep(200000);
         
         // FND
-        makeDigit(shm_output_addr, fnd_data);
+        makeDigit(shm_output_addr->fnd, fnd_data);
         write(dev_fnd, &fnd_data, MAX_DIGIT);
 
         // Dot  <- 애는 아직....
