@@ -102,8 +102,8 @@ int input_process(int shm_id)
 
     while (exit == FALSE)
     {
-        usleep(100000);
-        
+        usleep(200000);
+
         // Check terminate condition
         exit = checkExit(shm_addr, sem_id);
 

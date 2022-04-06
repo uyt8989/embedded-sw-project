@@ -9,8 +9,8 @@ int output_process(int shm_id)
 
     while (1)
     {   
-        usleep(100000);
-        
+        usleep(200000);
+
         if(shm_addr->exit == TRUE) break;
     }
 

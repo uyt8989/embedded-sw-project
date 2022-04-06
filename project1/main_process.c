@@ -17,7 +17,6 @@ int getKeycode(shm_in *shm_addr, int sem_id)
 	int value = BOARD_KEY_DEFAULT;
 	semlock(sem_id);
 	value = shm_addr->key_code;
-	shm_addr->key_code = BOARD_KEY_DEFAULT;
 	semunlock(sem_id);
 	return value;
 }
@@ -41,7 +40,7 @@ int main_process(int shm_input_id, int shm_output_id)
 
 	while (exit == FALSE)
 	{
-		usleep(100000);
+		usleep(200000);
 
 		// Check key inputs
 		cur_key = getKeycode(shm_input_addr, sem_id);
