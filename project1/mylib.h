@@ -100,7 +100,7 @@ int input_process(int shm_id);
 
 // main_process.c
 int getKeycode(shm_in *shm_addr, int sem_id);
-int getSwitch(shm_in *shm_addr, int sem_id)
+int getSwitch(shm_in *shm_addr, int sem_id);
 int main_process(int shm_input_id, int shm_output_id);
 
 // output_process.c
