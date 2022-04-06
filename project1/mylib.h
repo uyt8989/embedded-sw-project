@@ -98,7 +98,7 @@ int main_process(int shm_input_id, int shm_output_id);
 void init_board(shm_out *shm_addr);
 
 // output_process.c
-int output_process(int shm_id);
+int output_process(int shm_input_id, int shm_output_id);
 
 // mode.c
 void init_device(shm_out *shm_output_addr);

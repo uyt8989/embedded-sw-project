@@ -51,6 +51,7 @@ int main_process(int shm_input_id, int shm_output_id)
 			switch (cur_key)
 			{
 			case BOARD_KEY_BACK:
+				// Set exit signal to terminate other processes
 				exit = setExit(shm_input_addr, sem_id);
 				break;
 			case BOARD_KEY_VOL_UP:
@@ -73,8 +74,6 @@ int main_process(int shm_input_id, int shm_output_id)
 		}
 	}
 
-	// Send exit signal to output process
-	shm_output_addr->exit = exit;
 
 	// Detach shared memory
 	shmdt(shm_input_addr);
