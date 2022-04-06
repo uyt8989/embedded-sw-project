@@ -2,7 +2,7 @@
  *
  * Mode functions :
  *
- * 1.
+ * 1. Initialize devices when mode is chaned 
  *
  *****************************************/
 
@@ -11,15 +11,21 @@
 
 extern int current_mode;
 
+void init_device(shm_out *shm_addr) {
+	memset(shm_addr, 0, sizeof(shm_out));
+}
+
 void mode_handler(shm_out* shm_addr, int d) {
     int changed_mode = current_mode + d;
 
     if(changed_mode < MODE_1) changed_mode = MODE_4;
     else if(changed_mode > MODE_4) changed_mode = MODE_1;
 
-    printf("Mode is changed to code:%d\n", changed_mode);
+    printf("Mode is changed to %d\n", changed_mode);
 
     current_mode = changed_mode;
+
+    init_device(shm_addr);
 
     switch (current_mode)
     {

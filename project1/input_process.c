@@ -19,15 +19,13 @@ void key_action(int dev_key, shm_in *shm_addr, int sem_id)
     int key_size = sizeof(struct input_event);
     int value;
 
-    //printf("waiting key input...\n");
     if (read(dev_key, ev, key_size * BUFF_SIZE) < 0)
     {
-        value = BOARD_KEY_DEFAULT;
+        //value = BOARD_KEY_DEFAULT;
     }
     else 
     {
         value = ev[0].code;
-        //printf("Key is pressed code : %d\n", value);
     }
 
     // Accessing critical section
@@ -43,11 +41,9 @@ void switch_action(int dev_sw, shm_in *shm_addr, int sem_id)
     unsigned char push_sw_buff[MAX_BUTTON];
     unsigned char result[MAX_BUTTON];
     int sw_size = sizeof(push_sw_buff);
+    int i, j;
 
     memset(result, 0, sw_size);
-
-    int i, j;
-    //printf("waiting switch input...\n");
 
     // Get simultaneous input
     for (i = 0; i < 10000; i++)
@@ -63,13 +59,6 @@ void switch_action(int dev_sw, shm_in *shm_addr, int sem_id)
             result[j] = result[j] | push_sw_buff[j];
         }
     }
-
-    /*
-    printf("switch value : ");
-    for (i = 0; i < MAX_BUTTON; i++)
-        printf("%d ", result[i]);
-    printf("\n");
-    */
 
     // Accessing critical section
     semlock(sem_id);

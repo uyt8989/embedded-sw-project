@@ -83,16 +83,16 @@ int main(int argc, char **argv)
 
     if (p1 && p2)
     {
-        // Detach shared memory
-        //shmdt(shm_input_addr);
-        //shmdt(shm_output_addr);
-
         // Erase shared memory
         shmctl(shm_input_id, IPC_RMID, (struct shmid_ds *)NULL);
         shmctl(shm_output_id, IPC_RMID, (struct shmid_ds *)NULL);
+        
+        printf("**************************************\n");
+        printf("*                                    *\n");
+        printf("*  Successfully terminated program!  *\n");\
+        printf("*                                    *\n");
+        printf("**************************************\n");
     }
-
-    printf("Successfully terminated(pid1=%d, pid2=%d)\n", p1, p2);
 
     return 0;
 }

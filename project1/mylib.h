@@ -99,9 +99,9 @@ void init_board(shm_out *shm_addr);
 
 // output_process.c
 int output_process(int shm_id);
-void init_board(shm_out *shm_output_addr);
 
 // mode.c
+void init_device(shm_out *shm_output_addr);
 void mode_handler(shm_out *shm_addr, int d);
 void init_clock();
 void init_counter();
