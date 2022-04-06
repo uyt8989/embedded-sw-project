@@ -2,7 +2,11 @@
  *
  * Output process :
  *
- * 1.
+ * 1. makeDigit() : 
+        Translate integer fnd value 
+        to unsigned char array[4]
+ * 2. output_process() :
+ *      Processing outputs
  *
  *****************************************/
 
