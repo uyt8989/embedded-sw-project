@@ -21,12 +21,32 @@ int getKeycode(shm_in *shm_addr, int sem_id)
 	return value;
 }
 
+int getSwitch(shm_in *shm_addr, int sem_id)
+{
+	int i = 0;
+	int flag = FALSE;
+
+	semlock(sem_id);
+	for (i = 0; i < MAX_BUTTON; i++)
+	{
+		if (shm_addr->sw[i] == 1)
+		{
+			flag = TRUE;
+		}
+	}
+	semulock(sem_id);
+
+	return flag;
+}
+
 int main_process(int shm_input_id, int shm_output_id)
 {
 	int exit = FALSE;
 	int sem_id;
 	int prev_key = BOARD_KEY_DEFAULT;
 	int cur_key = BOARD_KEY_DEFAULT;
+	int sw_flag = FALSE;
+	int i;
 
 	// Attach shared memory
 	shm_in *shm_input_addr = (shm_in *)shmat(shm_input_id, (void *)0, 0);
@@ -55,10 +75,10 @@ int main_process(int shm_input_id, int shm_output_id)
 				exit = setExit(shm_input_addr, sem_id);
 				break;
 			case BOARD_KEY_VOL_UP:
-				mode_handler(shm_output_addr, 1);
+				mode_handler(shm_output_addr, CHANGE_UP);
 				break;
 			case BOARD_KEY_VOL_DOWN:
-				mode_handler(shm_output_addr, -1);
+				mode_handler(shm_output_addr, CHANGE_DOWN);
 				break;
 			default:
 				break;
@@ -67,13 +87,38 @@ int main_process(int shm_input_id, int shm_output_id)
 
 		prev_key = cur_key;
 
-		//모드에 맞게 입력을 처리하고 output process로 넘긴다
-		// output process에서는 디바이스 파일 열어서 디바이스 상태만 바꿔주면 됨
-		switch (current_mode)
+		
+		// Check the swtich inputs
+		if (getSwitch(shm_input_addr, sem_id) == TRUE)
 		{
+			printf("switch: ");
+			for (i = 0; i < MAX_BUTTON; i++)
+			{
+				printf("%d ", shm_input_addr->sw[i]);
+			}
+			printf("\n");
+
+
+			// Handle switch input 
+			switch (current_mode)
+			{
+			case MODE_1:
+				clock_mode(shm_output_addr);
+				break;
+			case MODE_2:
+				counter_mode(shm_output_addr);
+				break;
+			case MODE_3:
+				text_editor_mode(shm_output_addr);
+				break;
+			case MODE_4:
+				draw_board_mode(shm_output_addr);
+				break;
+			default:
+				break;
+			}
 		}
 	}
-
 
 	// Detach shared memory
 	shmdt(shm_input_addr);

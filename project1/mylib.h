@@ -14,6 +14,7 @@
 #include <sys/shm.h>
 #include <sys/ioctl.h>
 #include <sys/wait.h>
+#include <sys/mman.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <termios.h>
@@ -30,12 +31,17 @@
 
 #define BUFF_SIZE 64
 #define MAX_BUTTON 9
+#define MAX_DIGIT 4
+#define LCD_MAX_BUFF 32
 
 #define BOARD_KEY_DEFAULT 117
 #define BOARD_KEY_BACK 158
 #define BOARD_KEY_PROG 116
 #define BOARD_KEY_VOL_UP 115
 #define BOARD_KEY_VOL_DOWN 114
+
+#define CHANGE_UP 1
+#define CHANGE_DOWN -1
 
 #define MODS 4
 #define MODE_1 0 //Clock mode
@@ -74,7 +80,7 @@ typedef struct _SHARED_MEM_IN {
 typedef struct _SHARED_MEM_OUT {
     int exit;
     int fnd;
-    char text[32];
+    char lcd[32];
     unsigned char led;
     unsigned char dot[10];
     unsigned char init_flag;
@@ -94,18 +100,22 @@ int input_process(int shm_id);
 
 // main_process.c
 int getKeycode(shm_in *shm_addr, int sem_id);
+int getSwitch(shm_in *shm_addr, int sem_id)
 int main_process(int shm_input_id, int shm_output_id);
-void init_board(shm_out *shm_addr);
 
 // output_process.c
 int output_process(int shm_input_id, int shm_output_id);
 
 // mode.c
-void init_device(shm_out *shm_output_addr);
+void init_device(shm_out *shm_addr);
 void mode_handler(shm_out *shm_addr, int d);
-void init_clock();
-void init_counter();
-void init_text_editor();
-void init_draw_board();
+void init_clock(shm_out *shm_addr);
+void init_counter(shm_out *shm_addr);
+void init_text_editor(shm_out *shm_addr);
+void init_draw_board(shm_out *shm_addr);
+void clock_mode(shm_out *shm_addr);
+void counter_mode(shm_out *shm_addr);
+void text_editor_mode(shm_out *shm_addr);
+void draw_board_mode(shm_out *shm_addr);
 
 #endif
