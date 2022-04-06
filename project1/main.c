@@ -44,14 +44,12 @@ int main(int argc, char **argv)
 
         if (p2 == 0)
         {
-            printf("Calling input process\n");
             // input process
             input_process(shm_input_id);
         }
 
         else if (p2 > 0)
         {
-            printf("Calling main process\n");
             // main process
             main_process(shm_input_id, shm_output_id);
         }
@@ -66,7 +64,6 @@ int main(int argc, char **argv)
     // child process
     else if (p1 == 0)
     {
-        printf("Calling output process\n");
         // output process
         output_process(shm_output_id);
     }
@@ -86,12 +83,12 @@ int main(int argc, char **argv)
         // Erase shared memory
         shmctl(shm_input_id, IPC_RMID, (struct shmid_ds *)NULL);
         shmctl(shm_output_id, IPC_RMID, (struct shmid_ds *)NULL);
-        
-        printf("**************************************\n");
-        printf("*                                    *\n");
-        printf("*  Successfully terminated program!  *\n");\
-        printf("*                                    *\n");
-        printf("**************************************\n");
+
+        printf("*************************************\n");
+        printf("*                                   *\n");
+        printf("*  Successfully terminate program!  *\n");\
+        printf("*                                   *\n");
+        printf("*************************************\n");
     }
 
     return 0;

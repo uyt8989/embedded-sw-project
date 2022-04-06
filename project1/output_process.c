@@ -8,9 +8,9 @@ int output_process(int shm_id)
     printf("Output process is successfully started\n");
 
     while (1)
-    {
-        //sleep(1);
-        //printf("outputing...\n");
+    {   
+        usleep(100000);
+        
         if(shm_addr->exit == TRUE) break;
     }
 

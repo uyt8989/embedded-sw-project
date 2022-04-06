@@ -103,9 +103,7 @@ int input_process(int shm_id)
     while (exit == FALSE)
     {
         usleep(100000);
-        // sleep(1);
-        // printf("inputing...\n");
-
+        
         // Check terminate condition
         exit = checkExit(shm_addr, sem_id);
 
