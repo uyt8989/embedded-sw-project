@@ -21,14 +21,15 @@ void key_action(int dev_key, shm_in *shm_addr, int sem_id)
 
     if (read(dev_key, ev, key_size * BUFF_SIZE) < 0)
     {
-        //value = BOARD_KEY_DEFAULT;
+        value = BOARD_KEY_DEFAULT;
     }
-    else 
+    else
     {
         value = ev[0].code;
+        
     }
 
-    // Accessing critical section
+    //Accessing critical section
     semlock(sem_id);
     shm_addr->key_code = value;
     semunlock(sem_id);
@@ -62,7 +63,7 @@ void switch_action(int dev_sw, shm_in *shm_addr, int sem_id)
 
     // Accessing critical section
     semlock(sem_id);
-     for (i = 0; i < MAX_BUTTON; i++)
+    for (i = 0; i < MAX_BUTTON; i++)
         shm_addr->sw[i] = result[i];
     semunlock(sem_id);
 
@@ -102,8 +103,8 @@ int input_process(int shm_id)
     while (exit == FALSE)
     {
         usleep(100000);
-        //sleep(1);
-        //printf("inputing...\n");
+        // sleep(1);
+        // printf("inputing...\n");
 
         // Check terminate condition
         exit = checkExit(shm_addr, sem_id);
