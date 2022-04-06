@@ -112,6 +112,14 @@ int input_process(int shm_id)
 
         // Get switch input
         switch_action(dev_sw, shm_addr, sem_id);
+
+        printf("switch: ");
+        int i;
+			for (i = 0; i < MAX_BUTTON; i++)
+			{
+				printf("%d ", shm_addr->sw[i]);
+			}
+			printf("\n");
     }
 
     // Detach shahred memory
