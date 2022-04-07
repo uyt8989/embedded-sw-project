@@ -29,3 +29,10 @@ int checkExit(shm_in *addr, int sem_id)
 
 	return ret;
 }
+
+int get_cur_time () {
+    time_t t = time (NULL);
+    struct tm tm = *localtime (&t);
+
+    return 100 * tm.tm_hour + tm.tm_min;
+}

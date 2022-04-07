@@ -21,7 +21,7 @@ int getKeycode(shm_in *shm_addr, int sem_id)
 	return value;
 }
 
-int getSwitch(shm_in *shm_addr, int sem_id)
+int getSwitch(shm_in *shm_addr, int sem_id, int sw_buff[])
 {
 	int i = 0;
 	int flag = FALSE;
@@ -33,6 +33,7 @@ int getSwitch(shm_in *shm_addr, int sem_id)
 		{
 			flag = TRUE;
 		}
+		sw_buff[i] = shm_addr->sw[i];
 	}
 	semunlock(sem_id);
 
@@ -47,6 +48,7 @@ int main_process(int shm_input_id, int shm_output_id)
 	int cur_key = BOARD_KEY_DEFAULT;
 	int sw_flag = FALSE;
 	int i;
+	int sw_buff[MAX_BUTTON];
 
 	// Attach shared memory
 	shm_in *shm_input_addr = (shm_in *)shmat(shm_input_id, (void *)0, 0);
@@ -56,7 +58,7 @@ int main_process(int shm_input_id, int shm_output_id)
 
 	printf("Main process is successfully started\n");
 
-	init_device(shm_output_addr);
+	clear_out_shm(shm_output_addr);
 
 	while (exit == FALSE)
 	{
@@ -64,7 +66,7 @@ int main_process(int shm_input_id, int shm_output_id)
 
 		// Check key inputs
 		cur_key = getKeycode(shm_input_addr, sem_id);
-		if (prev_key != cur_key)
+		if (prev_key != cur_key && cur_key != BOARD_KEY_DEFAULT)
 		{
 			printf("prev : %d     cur : %d\n", prev_key, cur_key);
 			// Mode change
@@ -88,7 +90,7 @@ int main_process(int shm_input_id, int shm_output_id)
 		prev_key = cur_key;
 
 		// Check the swtich inputs
-		if (getSwitch(shm_input_addr, sem_id) == TRUE)
+		if (getSwitch(shm_input_addr, sem_id, sw_buff) == TRUE)
 		{
 			printf("switch: ");
 			for (i = 0; i < MAX_BUTTON; i++)
@@ -96,26 +98,25 @@ int main_process(int shm_input_id, int shm_output_id)
 				printf("%d ", shm_input_addr->sw[i]);
 			}
 			printf("\n");
-
-
-			// Handle switch input 
-			switch (current_mode)
-			{
-			case MODE_1:
-				clock_mode(shm_output_addr);
-				break;
-			case MODE_2:
-				counter_mode(shm_output_addr);
-				break;
-			case MODE_3:
-				text_editor_mode(shm_output_addr);
-				break;
-			case MODE_4:
-				draw_board_mode(shm_output_addr);
-				break;
-			default:
-				break;
-			}
+		}
+		
+		// Handle switch input
+		switch (current_mode)
+		{
+		case MODE_1:
+			clock_mode(shm_output_addr, sw_buff);
+			break;
+		case MODE_2:
+			counter_mode(shm_output_addr);
+			break;
+		case MODE_3:
+			text_editor_mode(shm_output_addr);
+			break;
+		case MODE_4:
+			draw_board_mode(shm_output_addr);
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -126,4 +127,23 @@ int main_process(int shm_input_id, int shm_output_id)
 	printf("Main process is successfully done\n");
 
 	return 0;
+}
+
+void setFnd(shm_out *shm_addr, int value)
+{
+	shm_addr->fnd = value;
+}
+void setDot(shm_out *shm_addr, unsigned char *value)
+{
+	for (int i = 0; i < 10; i++)
+		shm_addr->dot[i] = value[i];
+}
+void setLcd(shm_out *shm_addr, char *value)
+{
+	for (int i = 0; i < 32; i++)
+		shm_addr->lcd[i] = value[i];
+}
+void setLed(shm_out *shm_addr, unsigned char value)
+{
+	shm_addr->led = value;
 }

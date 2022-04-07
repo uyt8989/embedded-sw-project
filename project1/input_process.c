@@ -15,18 +15,17 @@
 
 void key_action(int dev_key, shm_in *shm_addr, int sem_id)
 {
-    struct input_event ev[BUFF_SIZE];
+    struct input_event ev[KEY_BUFF_SIZE];
     int key_size = sizeof(struct input_event);
     int value;
 
-    if (read(dev_key, ev, key_size * BUFF_SIZE) < 0)
+    if (read(dev_key, ev, key_size * KEY_BUFF_SIZE) < 0)
     {
         value = BOARD_KEY_DEFAULT;
     }
     else
     {
         value = ev[0].code;
-        
     }
 
     //Accessing critical section

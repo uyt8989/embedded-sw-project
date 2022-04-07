@@ -2,8 +2,8 @@
  *
  * Output process :
  *
- * 1. makeDigit() : 
-        Translate integer fnd value 
+ * 1. makeDigit() :
+        Translate integer fnd value
         to unsigned char array[4]
  * 2. output_process() :
  *      Processing outputs
@@ -15,24 +15,8 @@
 
 extern int current_mode;
 
-#define FPGA_BASE_ADDRESS 0x08000000 //fpga_base address
-#define LED_ADDR 0x16 
-
-void makeDigit(int num, unsigned char data[])
-{
-    int i, d = 10;
-
-    for (i = MAX_DIGIT - 1; i >= 0; i--)
-    {
-        data[i] = num % d;
-        num /= 10;
-    }
-
-    if (current_mode == MODE_2)
-    {
-        data[0] = 0;
-    }
-}
+#define FPGA_BASE_ADDRESS 0x08000000 // fpga_base address
+#define LED_ADDR 0x16
 
 int output_process(int shm_input_id, int shm_output_id)
 {
@@ -42,7 +26,6 @@ int output_process(int shm_input_id, int shm_output_id)
     int exit = FALSE;
     int sem_id;
     int dev_fnd, dev_dot, dev_lcd, dev_mem;
-    unsigned char fnd_data[MAX_DIGIT];
 
     printf("Output process is successfully started\n");
 
@@ -78,32 +61,28 @@ int output_process(int shm_input_id, int shm_output_id)
         return -1;
     }
 
-    unsigned long *fpga_addr = (unsigned long *)mmap(NULL, 4096, 
-                                PROT_READ | PROT_WRITE, MAP_SHARED, dev_mem, FPGA_BASE_ADDRESS);
-    
+    unsigned long *fpga_addr = (unsigned long *)mmap(NULL, 4096,
+                            PROT_READ | PROT_WRITE, MAP_SHARED, dev_mem, FPGA_BASE_ADDRESS);
+
     if (fpga_addr == MAP_FAILED)
-	{
-		printf("mmap error!\n");
-	}
-	
-    unsigned char *led_addr = (unsigned char*)((void*)fpga_addr + LED_ADDR);
+    {
+        printf("mmap error!\n");
+    }
+
+    unsigned char *led_addr = (unsigned char *)((void *)fpga_addr + LED_ADDR);
 
     while (exit == FALSE)
     {
         usleep(200000);
-        
+
         // FND
-        makeDigit(shm_output_addr->fnd, fnd_data);
-        write(dev_fnd, &fnd_data, MAX_DIGIT);
-
+        writeToFnd(shm_output_addr, dev_fnd);
         // Dot  <- 애는 아직....
-
-
+        writeToDot(shm_output_addr, dev_dot);
         // LCD
-        write(dev_lcd, shm_output_addr->lcd, LCD_MAX_BUFF);
-
+        writeToLcd(shm_output_addr, dev_lcd);
         // LED
-        *led_addr=shm_output_addr->led;
+        writeToLed(shm_output_addr, led_addr);
 
         // Check terminate condition
         exit = checkExit(shm_input_addr, sem_id);
@@ -123,4 +102,46 @@ int output_process(int shm_input_id, int shm_output_id)
     printf("Output process is successfully done\n");
 
     return 0;
+}
+
+void makeDigit(int num, unsigned char data[])
+{
+    int i, d = 10;
+
+    for (i = MAX_DIGIT - 1; i >= 0; i--)
+    {
+        data[i] = num % d;
+        num /= 10;
+    }
+
+    if (current_mode == MODE_2)
+    {
+        data[0] = 0;
+    }
+}
+
+void writeToFnd(shm_out *shm_addr, int fd)
+{
+    unsigned char fnd_data[MAX_DIGIT];
+
+    makeDigit(shm_addr->fnd, fnd_data);
+    write(fd, &fnd_data, MAX_DIGIT);
+
+    return;
+}
+void writeToDot(shm_out *shm_addr, int fd)
+{
+
+}
+void writeToLcd(shm_out *shm_addr, int fd)
+{
+    write(fd, shm_addr->lcd, LCD_MAX_BUFF);
+
+    return;
+}
+void writeToLed(shm_out *shm_addr, unsigned char *led_addr)
+{
+    *led_addr = shm_addr->led;
+
+    return;
 }

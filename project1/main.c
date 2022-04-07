@@ -29,7 +29,6 @@ int main(int argc, char **argv)
     shm_input_addr->key_code = BOARD_KEY_DEFAULT;
 
     shm_out *shm_output_addr = (shm_out *)shmat(shm_output_id, (void *)0, 0);
-    shm_output_addr->exit = FALSE;
 
     // Detach shared memory
     shmdt(shm_input_addr);

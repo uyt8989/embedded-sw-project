@@ -20,6 +20,7 @@
 #include <termios.h>
 #include <dirent.h>
 #include <signal.h>
+#include <time.h>
 #include <linux/input.h>
 
 #define TRUE 1
@@ -29,10 +30,10 @@
 #define SHARED_MEM_KEY_OUT 5679
 #define SEMA_KEY 6789
 
-#define BUFF_SIZE 64
+#define KEY_BUFF_SIZE 64
+#define LCD_MAX_BUFF 32
 #define MAX_BUTTON 9
 #define MAX_DIGIT 4
-#define LCD_MAX_BUFF 32
 
 #define BOARD_KEY_DEFAULT 117
 #define BOARD_KEY_BACK 158
@@ -78,12 +79,10 @@ typedef struct _SHARED_MEM_IN {
 } shm_in;
 
 typedef struct _SHARED_MEM_OUT {
-    int exit;
     int fnd;
     char lcd[32];
     unsigned char led;
     unsigned char dot[10];
-    unsigned char init_flag;
 } shm_out;
 
 // sema.c
@@ -94,27 +93,43 @@ int semunlock(int semid);
 // utils.c
 int setExit(shm_in *addr, int sem_id);
 int checkExit(shm_in *addr, int sem_id);
+int get_cur_time ();
+
 
 // input_process.c
 int input_process(int shm_id);
+void key_action(int dev_key, shm_in *shm_addr, int sem_id);
+void switch_action(int dev_sw, shm_in *shm_addr, int sem_id);
 
 // main_process.c
-int getKeycode(shm_in *shm_addr, int sem_id);
-int getSwitch(shm_in *shm_addr, int sem_id);
 int main_process(int shm_input_id, int shm_output_id);
+int getKeycode(shm_in *shm_addr, int sem_id);
+int getSwitch(shm_in *shm_addr, int sem_id, int sw_buff[]);
+
+void setFnd(shm_out *, int);
+void setDot(shm_out *, unsigned char *);
+void setLcd(shm_out *, char *);
+void setLed(shm_out *, unsigned char);
 
 // output_process.c
 int output_process(int shm_input_id, int shm_output_id);
 void makeDigit(int num, unsigned char data[]);
 
+void writeToFnd(shm_out*, int fd);
+void writeToDot(shm_out*, int fd);
+void writeToLcd(shm_out*, int fd);
+void writeToLed(shm_out*, unsigned char* addr);
+
 // mode.c
-void init_device(shm_out *shm_addr);
+void clear_out_shm(shm_out *shm_addr);
 void mode_handler(shm_out *shm_addr, int d);
-void init_clock(shm_out *shm_addr);
-void init_counter(shm_out *shm_addr);
-void init_text_editor(shm_out *shm_addr);
-void init_draw_board(shm_out *shm_addr);
-void clock_mode(shm_out *shm_addr);
+
+void init_clock_mode(shm_out *shm_addr);
+void init_counter_mode(shm_out *shm_addr);
+void init_text_editor_mode(shm_out *shm_addr);
+void init_draw_board_mode(shm_out *shm_addr);
+
+void clock_mode(shm_out *shm_addr, int sw_buff[]);
 void counter_mode(shm_out *shm_addr);
 void text_editor_mode(shm_out *shm_addr);
 void draw_board_mode(shm_out *shm_addr);
