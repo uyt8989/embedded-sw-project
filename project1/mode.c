@@ -133,7 +133,7 @@ void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
         else
             setLed(shm_addr, 0b00010000);
         break;
-    case default:
+    default:
         break;
     }
 }
