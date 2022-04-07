@@ -4,7 +4,8 @@
  *
  * 1. Clear all devices when mode is chaned
  * 2. Mode Handling
- * 3. Initialize devices to each initial state
+ * 3. Initialize shared memory to each initial state
+ * 4. Process each modes
  *
  *****************************************/
 
@@ -54,7 +55,6 @@ void mode_handler(shm_out *shm_addr, int d)
     return;
 }
 
-// 해당 모드들에 맞게 초기화
 void init_clock_mode(shm_out *shm_addr)
 {
     printf("Current Mode : Clock\n");
@@ -84,11 +84,10 @@ void init_draw_board_mode(shm_out *shm_addr)
 
 void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
 {
-    //현재 어떤 모드냐에 따라서 스위치 입력 관리
     clock_stat.time++;
-    printf("%d\n", clock_stat.time);
     if (clock_stat.time > 3)
     {   
+        // Blink LED per each second
         printf("Clock LED blick!\n");
         clock_stat.time = 0;
         if (clock_stat.blink == M1_BLINK)
@@ -99,39 +98,42 @@ void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
 
     switch (clock_stat.cur_mode)
     {
-    //시간 바꾸는 모드가 아닌 경우에
+    // Default mode
     case M1_DEFAULT_MODE:
-        // 1번 스위치 입력 시 시간 바꾸는 모드로 바꿈
+        // Change mode when no.1 switch is pushed
         if (sw_buff[0])
         {
             printf("Clock mode is changed to change mode\n");
             clock_stat.cur_mode = M1_CHANGE_MODE;
         }
-        // 1번 led만 점등
+        // Light on only first LED
         setLed(shm_addr, 0b10000000);
         break;
+
+    // Time change mode
     case M1_CHANGE_MODE:
-        //시간 바꾸는 모드라면
-        // 1번 스위치 입력 시 시간 안 바꾸는 모드로 바꿈
+        // Change mode when no.1 switch is pushed
         if (sw_buff[0])
         {
             printf("Clock mode is changed to default mode\n");
             clock_stat.cur_mode = M1_DEFAULT_MODE;
         }
-        // 2번 스위치 입력 시 보드 시간으로 초기화
+        // Initialize to board time when no.2 switch is pushed
         if (sw_buff[1])
             setFnd(shm_addr, get_cur_time());
-        // 3번 스위치 입력 시 시 1 증가
+        // Add 1 hour when no.3 switch is pushed
         if (sw_buff[2])
             setFnd(shm_addr, shm_addr->fnd + 100);
-        // 4번 스위치 입력 시 분 1 증가
+        // Add 1 minute when no.4 switch is pushed
         if (sw_buff[3])
             setFnd(shm_addr, shm_addr->fnd + 1);
-        //매초 led 깜빡거림
+        // Blink every second
         if (clock_stat.blink == M1_BLINK)
             setLed(shm_addr, 0b00100000);
         else
             setLed(shm_addr, 0b00010000);
+        break;
+    case default:
         break;
     }
 }
