@@ -66,7 +66,7 @@ int main_process(int shm_input_id, int shm_output_id)
 
 	while (exit == FALSE)
 	{
-		usleep(200000);
+		usleep(250000);
 
 		memset(sw_buff, 0, sizeof(unsigned char) * MAX_BUTTON);
 
@@ -101,7 +101,7 @@ int main_process(int shm_input_id, int shm_output_id)
 			printf("switch: ");
 			for (i = 0; i < MAX_BUTTON; i++)
 			{
-				printf("%c ", sw_buff[i]);
+				printf("%d ", sw_buff[i]);
 			}
 			printf("\n");
 		}
