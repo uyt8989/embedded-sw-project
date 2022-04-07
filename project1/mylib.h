@@ -51,8 +51,11 @@
 #define MODE_4 3 //Draw board mode
 
 //MOD1
-#define M1_CHANGE_TIME -100
-#define M1_NO_CHANGE_TIME -101
+#define M1_DEFAULT_MODE -100
+#define M1_CHANGE_MODE -101
+#define M1_BLINK -102
+#define M1_UNBLINK -103
+
 
 //MOD2
 #define M2_DEC_MODE -102
@@ -67,11 +70,6 @@
 //MOD4
 
 
-typedef struct _CUR_STAT {
-    int cur_mode;
-
-} cur_stat;
-
 typedef struct _SHARED_MEM_IN {
     int exit;
     int key_code;
@@ -84,6 +82,12 @@ typedef struct _SHARED_MEM_OUT {
     unsigned char led;
     unsigned char dot[10];
 } shm_out;
+
+typedef struct _CLOCK_STAT {
+    int cur_mode;
+    int blink;
+    int time;
+} clock_s;
 
 // sema.c
 int seminit();
@@ -129,7 +133,7 @@ void init_counter_mode(shm_out *shm_addr);
 void init_text_editor_mode(shm_out *shm_addr);
 void init_draw_board_mode(shm_out *shm_addr);
 
-void clock_mode(shm_out *shm_addr, int sw_buff[]);
+void clock_mode(shm_out *shm_addr, unsigned char sw_buff[]);
 void counter_mode(shm_out *shm_addr);
 void text_editor_mode(shm_out *shm_addr);
 void draw_board_mode(shm_out *shm_addr);

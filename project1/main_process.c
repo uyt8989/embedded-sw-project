@@ -12,6 +12,8 @@
 
 extern int current_mode;
 
+clock_s clock_stat;
+
 int getKeycode(shm_in *shm_addr, int sem_id)
 {
 	int value = BOARD_KEY_DEFAULT;
@@ -21,7 +23,7 @@ int getKeycode(shm_in *shm_addr, int sem_id)
 	return value;
 }
 
-int getSwitch(shm_in *shm_addr, int sem_id, int sw_buff[])
+int getSwitch(shm_in *shm_addr, int sem_id, unsigned char sw_buff[])
 {
 	int i = 0;
 	int flag = FALSE;
@@ -49,7 +51,7 @@ int main_process(int shm_input_id, int shm_output_id)
 	int cur_key = BOARD_KEY_DEFAULT;
 	int sw_flag = FALSE;
 	int i;
-	int sw_buff[MAX_BUTTON];
+	unsigned char sw_buff[MAX_BUTTON];
 
 	// Attach shared memory
 	shm_in *shm_input_addr = (shm_in *)shmat(shm_input_id, (void *)0, 0);
@@ -64,6 +66,8 @@ int main_process(int shm_input_id, int shm_output_id)
 	while (exit == FALSE)
 	{
 		usleep(200000);
+
+		memset(sw_buff, 0, sizeof(unsigned char) * MAX_BUTTON);
 
 		// Check key inputs
 		cur_key = getKeycode(shm_input_addr, sem_id);
@@ -119,6 +123,7 @@ int main_process(int shm_input_id, int shm_output_id)
 		default:
 			break;
 		}
+		
 	}
 
 	// Detach shared memory
