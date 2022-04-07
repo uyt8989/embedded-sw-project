@@ -86,7 +86,6 @@ void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
 {
     //현재 어떤 모드냐에 따라서 스위치 입력 관리
     clock_stat.time++;
-    printf("%d\n", clock_stat.time);
     if (clock_stat.time > 3)
     {   
         printf("Clock LED blick!\n");
