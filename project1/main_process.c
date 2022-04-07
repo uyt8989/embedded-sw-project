@@ -29,11 +29,12 @@ int getSwitch(shm_in *shm_addr, int sem_id, int sw_buff[])
 	semlock(sem_id);
 	for (i = 0; i < MAX_BUTTON; i++)
 	{
+		sw_buff[i] = shm_addr->sw[i];
 		if (shm_addr->sw[i] == 1)
 		{
 			flag = TRUE;
+			shm_addr->sw[i] = 0;
 		}
-		sw_buff[i] = shm_addr->sw[i];
 	}
 	semunlock(sem_id);
 
