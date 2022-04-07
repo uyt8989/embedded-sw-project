@@ -108,7 +108,7 @@ void switch_action(int dev_sw, shm_in *shm_addr, int sem_id);
 // main_process.c
 int main_process(int shm_input_id, int shm_output_id);
 int getKeycode(shm_in *shm_addr, int sem_id);
-int getSwitch(shm_in *shm_addr, int sem_id, int sw_buff[]);
+int getSwitch(shm_in *shm_addr, int sem_id, unsigned char sw_buff[]);
 
 void setFnd(shm_out *, int);
 void setDot(shm_out *, unsigned char *);

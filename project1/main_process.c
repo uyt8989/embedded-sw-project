@@ -62,6 +62,7 @@ int main_process(int shm_input_id, int shm_output_id)
 	printf("Main process is successfully started\n");
 
 	clear_out_shm(shm_output_addr);
+	init_clock_mode(shm_output_addr);
 
 	while (exit == FALSE)
 	{

@@ -57,7 +57,7 @@ void mode_handler(shm_out *shm_addr, int d)
 // 해당 모드들에 맞게 초기화
 void init_clock_mode(shm_out *shm_addr)
 {
-    printf("Mode Change : Clock\n");
+    printf("Current Mode : Clock\n");
 
     clock_stat.cur_mode = M1_DEFAULT_MODE;
     clock_stat.blink = M1_BLINK;
@@ -69,26 +69,27 @@ void init_clock_mode(shm_out *shm_addr)
 
 void init_counter_mode(shm_out *shm_addr)
 {
-    printf("Mode Change : Counter\n");
+    printf("Current Mode : Counter\n");
 }
 
 void init_text_editor_mode(shm_out *shm_addr)
 {
-    printf("Mode Change : Text editor\n");
+    printf("Current Mode : Text editor\n");
 }
 
 void init_draw_board_mode(shm_out *shm_addr)
 {
-    printf("Mode Change : Draw board\n");
+    printf("Current Mode : Draw board\n");
 }
 
 void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
 {
     //현재 어떤 모드냐에 따라서 스위치 입력 관리
     clock_stat.time++;
-    if(clock_stat.time > 100000) {
+    if (clock_stat.time > 100000)
+    {
         clock_stat.time = 0;
-        if(clock_stat.blink == M1_BLINK) 
+        if (clock_stat.blink == M1_BLINK)
             clock_stat.blink = M1_UNBLINK;
         else
             clock_stat.blink = M1_BLINK;
@@ -99,7 +100,9 @@ void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
     //시간 바꾸는 모드가 아닌 경우에
     case M1_DEFAULT_MODE:
         // 1번 스위치 입력 시 시간 바꾸는 모드로 바꿈
-        if(sw_buff[0]) {
+        if (sw_buff[0])
+        {
+            printf("Clock mode is changed to change mode\n");
             clock_stat.cur_mode = M1_CHANGE_MODE;
             clock_stat.blink = M1_BLINK;
         }
@@ -109,7 +112,11 @@ void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
     case M1_CHANGE_MODE:
         //시간 바꾸는 모드라면
         // 1번 스위치 입력 시 시간 안 바꾸는 모드로 바꿈
-        if(sw_buff[0]) clock_stat.cur_mode = M1_DEFAULT_MODE;
+        if (sw_buff[0])
+        {
+            printf("Clock mode is changed to default mode\n");
+            clock_stat.cur_mode = M1_DEFAULT_MODE;
+        }
         // 2번 스위치 입력 시 보드 시간으로 초기화
         if (sw_buff[1])
             setFnd(shm_addr, get_cur_time());
@@ -120,7 +127,7 @@ void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
         if (sw_buff[3])
             setFnd(shm_addr, shm_addr->fnd + 1);
         //매초 led 깜빡거림
-        if(clock_stat.blink == M1_BLINK)
+        if (clock_stat.blink == M1_BLINK)
             setLed(shm_addr, 0b00100000);
         else
             setLed(shm_addr, 0b00010000);
