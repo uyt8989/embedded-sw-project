@@ -96,7 +96,7 @@ int main_process(int shm_input_id, int shm_output_id)
 			printf("switch: ");
 			for (i = 0; i < MAX_BUTTON; i++)
 			{
-				printf("%d ", shm_input_addr->sw[i]);
+				printf("%d ", sw_buff[i]);
 			}
 			printf("\n");
 		}
