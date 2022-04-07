@@ -99,7 +99,7 @@ int main_process(int shm_input_id, int shm_output_id)
 			}
 			printf("\n");
 		}
-		
+
 		// Handle switch input
 		switch (current_mode)
 		{
@@ -135,12 +135,14 @@ void setFnd(shm_out *shm_addr, int value)
 }
 void setDot(shm_out *shm_addr, unsigned char *value)
 {
-	for (int i = 0; i < 10; i++)
+	int i;
+	for (i = 0; i < 10; i++)
 		shm_addr->dot[i] = value[i];
 }
 void setLcd(shm_out *shm_addr, char *value)
 {
-	for (int i = 0; i < 32; i++)
+	int i;
+	for (i = 0; i < 32; i++)
 		shm_addr->lcd[i] = value[i];
 }
 void setLed(shm_out *shm_addr, unsigned char value)
