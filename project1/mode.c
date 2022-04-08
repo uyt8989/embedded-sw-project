@@ -63,8 +63,8 @@ void init_clock_mode(shm_out *shm_addr)
     printf("Current Mode : Clock\n");
 
     clock_stat.cur_mode = M1_DEFAULT_MODE;
-    clock_stat.hour = get_cur_time() % 100;
-    clock_stat.min = get_cur_time() / 100;
+    clock_stat.hour = get_cur_time() / 100;
+    clock_stat.min = get_cur_time() % 100;
     clock_stat.blink = M1_BLINK;
 
     setFnd(shm_addr, get_cur_time());
@@ -129,7 +129,6 @@ void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
             clock_stat.cur_mode = M1_CHANGE_MODE;
         }
         // Light on only first LED
-        // setLed(shm_addr, 0b10000000);
         led = 0b10000000;
         break;
 
@@ -144,19 +143,16 @@ void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
         // Initialize to board time when no.2 switch is pushed
         if (sw_buff[1])
         {
-            clock_stat.hour = get_cur_time() % 100;
-            clock_stat.min = get_cur_time() / 100;
+            clock_stat.hour = get_cur_time() / 100;
+            clock_stat.min = get_cur_time() % 100;
         }
-        // setFnd(shm_addr, get_cur_time());
         // Add 1 hour when no.3 switch is pushed
         if (sw_buff[2])
             clock_stat.hour += 1;
-        // setFnd(shm_addr, shm_addr->fnd + 100);
         // Add 1 minute when no.4 switch is pushed
         if (sw_buff[3])
         {
             clock_stat.min += 1;
-            // setFnd(shm_addr, shm_addr->fnd + 1);
         }
 
         // Caculate hours and minutes
@@ -174,10 +170,8 @@ void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
         // Blink LED for each seconds
         if (clock_stat.blink == M1_BLINK)
             led = 0b00100000;
-            //setLed(shm_addr, 0b00100000);
         else
             led = 0b00010000;
-            //setLed(shm_addr, 0b00010000);
         break;
     default:
         break;
