@@ -327,7 +327,7 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
     }
 
     // No more processing when two switches are pushed
-    if (special_flag == FALSE)
+    if (special_flag == TRUE)
         return;
 
     // Get pushed switch number
