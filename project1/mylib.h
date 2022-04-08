@@ -34,6 +34,7 @@
 #define LCD_MAX_BUFF 32
 #define MAX_BUTTON 9
 #define MAX_DIGIT 4
+#define MAX_DOT_BUFF 10
 
 #define BOARD_KEY_DEFAULT 117
 #define BOARD_KEY_BACK 158
@@ -49,6 +50,11 @@
 #define MODE_2 1 //Counter mode
 #define MODE_3 2 //Text editor mode
 #define MODE_4 3 //Draw board mode
+
+enum {
+    SW1, SW2, SW3, SW4, SW5, 
+    SW6, SW7, SW8, SW9, SW_NULL
+};
 
 //MOD1
 #define M1_DEFAULT_MODE -100
@@ -66,7 +72,7 @@
 //MOD3
 #define M3_ALPHA_MODE -106
 #define M3_NUM_MODE -107
-
+#define M3_KEYPAD 3
 
 //MOD4
 
@@ -80,9 +86,9 @@ typedef struct _SHARED_MEM_IN {
 typedef struct _SHARED_MEM_OUT {
     int fnd;
     unsigned char digit[MAX_DIGIT];
-    char lcd[32];
+    char lcd[LCD_MAX_BUFF];
     unsigned char led;
-    unsigned char dot[10];
+    unsigned char dot[MAX_DOT_BUFF];
 } shm_out;
 
 typedef struct _CLOCK_STAT {
@@ -102,8 +108,10 @@ typedef struct _TEXT_EDITOR_STAT {
     int cur_mode;
     int count;
     int cursor;
-    int length;
     int last_sw;
+    int keypad_idx;
+    char buff[LCD_MAX_BUFF];
+    unsigned char dot[MAX_DOT_BUFF];
 } text_s;
 
 typedef struct _DRAW_BOARD_STAT {
