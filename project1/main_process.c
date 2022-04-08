@@ -119,10 +119,10 @@ int main_process(int shm_input_id, int shm_output_id)
 			counter_mode(shm_output_addr, sw_buff);
 			break;
 		case MODE_3:
-			text_editor_mode(shm_output_addr);
+			text_editor_mode(shm_output_addr,sw_buff);
 			break;
 		case MODE_4:
-			draw_board_mode(shm_output_addr);
+			draw_board_mode(shm_output_addr, sw_buff);
 			break;
 		default:
 			break;

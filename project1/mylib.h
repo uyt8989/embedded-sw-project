@@ -64,8 +64,9 @@
 #define M2_BIN_MODE 3
 
 //MOD3
-#define M3_NUM_MODE -106
-#define M3_ALPHA_MODE -107
+#define M3_ALPHA_MODE -106
+#define M3_NUM_MODE -107
+
 
 //MOD4
 
@@ -92,19 +93,23 @@ typedef struct _CLOCK_STAT {
 
 typedef struct _COUNTER_STAT {
     int cur_mode;
-    int count;
 } counter_s;
 
 typedef struct _TEXT_EDITOR_STAT {
     int cur_mode;
     int count;
-
+    int cursor;
+    int length;
+    int last_sw;
 } text_s;
 
 typedef struct _DRAW_BOARD_STAT {
     int cur_mode;
     int count;
 } draw_s;
+
+//state에 올려놓고 나중에 
+//shared memory로 내리는게 더 좋으려나
 
 // sema.c
 int seminit();
@@ -150,7 +155,7 @@ void init_draw_board_mode(shm_out *shm_addr);
 
 void clock_mode(shm_out *shm_addr, unsigned char sw_buff[]);
 void counter_mode(shm_out *shm_addr, unsigned char sw_buff[]);
-void text_editor_mode(shm_out *shm_addr);
-void draw_board_mode(shm_out *shm_addr);
+void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[]);
+void draw_board_mode(shm_out *shm_addr, unsigned char sw_buff[]);
 
 #endif

@@ -88,6 +88,12 @@ int output_process(int shm_input_id, int shm_output_id)
         exit = checkExit(shm_input_addr, sem_id);
     }
 
+    clear_out_shm(shm_output_addr);
+    writeToFnd(shm_output_addr, dev_fnd);
+    writeToDot(shm_output_addr, dev_dot);
+    writeToLcd(shm_output_addr, dev_lcd);
+    writeToLed(shm_output_addr, led_addr);
+
     // Detach shared memory
     shmdt(shm_input_addr);
     shmdt(shm_output_addr);
