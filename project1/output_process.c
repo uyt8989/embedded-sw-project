@@ -104,28 +104,9 @@ int output_process(int shm_input_id, int shm_output_id)
     return 0;
 }
 
-void makeDigit(int num, unsigned char data[])
-{
-    int i, d = 10;
-
-    for (i = MAX_DIGIT - 1; i >= 0; i--)
-    {
-        data[i] = num % d;
-        num /= 10;
-    }
-
-    if (current_mode == MODE_2)
-    {
-        data[0] = 0;
-    }
-}
-
 void writeToFnd(shm_out *shm_addr, int fd)
 {
-    unsigned char fnd_data[MAX_DIGIT];
-
-    makeDigit(shm_addr->fnd, fnd_data);
-    write(fd, &fnd_data, MAX_DIGIT);
+    write(fd, shm_addr->digit, sizeof(unsigned char) * MAX_DIGIT);
 
     return;
 }
@@ -135,7 +116,7 @@ void writeToDot(shm_out *shm_addr, int fd)
 }
 void writeToLcd(shm_out *shm_addr, int fd)
 {
-    write(fd, shm_addr->lcd, LCD_MAX_BUFF);
+    write(fd, shm_addr->lcd, sizeof(unsigned char) * LCD_MAX_BUFF);
 
     return;
 }

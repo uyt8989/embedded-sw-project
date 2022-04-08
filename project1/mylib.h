@@ -56,12 +56,12 @@
 #define M1_BLINK -102
 #define M1_UNBLINK -103
 
-
 //MOD2
-#define M2_DEC_MODE -102
-#define M2_OCT_MODE -103
-#define M2_QUA_MODE -104
-#define M2_BIN_MODE -105
+#define M2_MODES 4
+#define M2_DEC_MODE 0 
+#define M2_OCT_MODE 1
+#define M2_QUA_MODE 2
+#define M2_BIN_MODE 3
 
 //MOD3
 #define M3_NUM_MODE -106
@@ -78,6 +78,7 @@ typedef struct _SHARED_MEM_IN {
 
 typedef struct _SHARED_MEM_OUT {
     int fnd;
+    unsigned char digit[MAX_DIGIT];
     char lcd[32];
     unsigned char led;
     unsigned char dot[10];
@@ -89,6 +90,22 @@ typedef struct _CLOCK_STAT {
     int time;
 } clock_s;
 
+typedef struct _COUNTER_STAT {
+    int cur_mode;
+    int count;
+} counter_s;
+
+typedef struct _TEXT_EDITOR_STAT {
+    int cur_mode;
+    int count;
+
+} text_s;
+
+typedef struct _DRAW_BOARD_STAT {
+    int cur_mode;
+    int count;
+} draw_s;
+
 // sema.c
 int seminit();
 int semlock(int semid);
@@ -98,7 +115,6 @@ int semunlock(int semid);
 int setExit(shm_in *addr, int sem_id);
 int checkExit(shm_in *addr, int sem_id);
 int get_cur_time ();
-
 
 // input_process.c
 int input_process(int shm_id);
@@ -117,7 +133,6 @@ void setLed(shm_out *, unsigned char);
 
 // output_process.c
 int output_process(int shm_input_id, int shm_output_id);
-void makeDigit(int num, unsigned char data[]);
 
 void writeToFnd(shm_out*, int fd);
 void writeToDot(shm_out*, int fd);
@@ -134,7 +149,7 @@ void init_text_editor_mode(shm_out *shm_addr);
 void init_draw_board_mode(shm_out *shm_addr);
 
 void clock_mode(shm_out *shm_addr, unsigned char sw_buff[]);
-void counter_mode(shm_out *shm_addr);
+void counter_mode(shm_out *shm_addr, unsigned char sw_buff[]);
 void text_editor_mode(shm_out *shm_addr);
 void draw_board_mode(shm_out *shm_addr);
 

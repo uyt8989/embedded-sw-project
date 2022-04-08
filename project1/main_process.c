@@ -13,6 +13,9 @@
 extern int current_mode;
 
 clock_s clock_stat;
+counter_s counter_stat;
+text_s text_stat;
+draw_s draw_stat;
 
 int getKeycode(shm_in *shm_addr, int sem_id)
 {
@@ -113,7 +116,7 @@ int main_process(int shm_input_id, int shm_output_id)
 			clock_mode(shm_output_addr, sw_buff);
 			break;
 		case MODE_2:
-			counter_mode(shm_output_addr);
+			counter_mode(shm_output_addr, sw_buff);
 			break;
 		case MODE_3:
 			text_editor_mode(shm_output_addr);
