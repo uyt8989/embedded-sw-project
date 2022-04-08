@@ -87,12 +87,15 @@ typedef struct _SHARED_MEM_OUT {
 
 typedef struct _CLOCK_STAT {
     int cur_mode;
+    int hour;
+    int min;
     int blink;
     int time;
 } clock_s;
 
 typedef struct _COUNTER_STAT {
     int cur_mode;
+    int count;
 } counter_s;
 
 typedef struct _TEXT_EDITOR_STAT {

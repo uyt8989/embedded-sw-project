@@ -63,8 +63,9 @@ void init_clock_mode(shm_out *shm_addr)
     printf("Current Mode : Clock\n");
 
     clock_stat.cur_mode = M1_DEFAULT_MODE;
+    clock_stat.hour = get_cur_time() % 100;
+    clock_stat.min = get_cur_time() / 100;
     clock_stat.blink = M1_BLINK;
-    clock_stat.time = 0;
 
     setFnd(shm_addr, get_cur_time());
     setLed(shm_addr, 0b10000000);
@@ -75,6 +76,7 @@ void init_counter_mode(shm_out *shm_addr)
     printf("Current Mode : Counter\n");
 
     counter_stat.cur_mode = M2_DEC_MODE;
+    counter_stat.count = 0;
 
     setFnd(shm_addr, 0);
     setLed(shm_addr, 0b01000000);
@@ -100,11 +102,14 @@ void init_draw_board_mode(shm_out *shm_addr)
 
 void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
 {
+    int i;
+    unsigned char led;
+
     clock_stat.time++;
     if (clock_stat.time > 3)
     {
         // Blink LED per each second
-        if(clock_stat.cur_mode == M1_CHANGE_MODE)
+        if (clock_stat.cur_mode == M1_CHANGE_MODE)
             printf("Clock LED blick!\n");
         clock_stat.time = 0;
         if (clock_stat.blink == M1_BLINK)
@@ -124,7 +129,8 @@ void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
             clock_stat.cur_mode = M1_CHANGE_MODE;
         }
         // Light on only first LED
-        setLed(shm_addr, 0b10000000);
+        // setLed(shm_addr, 0b10000000);
+        led = 0b10000000;
         break;
 
     // Time change mode
@@ -137,41 +143,61 @@ void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
         }
         // Initialize to board time when no.2 switch is pushed
         if (sw_buff[1])
-            setFnd(shm_addr, get_cur_time());
+        {
+            clock_stat.hour = get_cur_time() % 100;
+            clock_stat.min = get_cur_time() / 100;
+        }
+        // setFnd(shm_addr, get_cur_time());
         // Add 1 hour when no.3 switch is pushed
         if (sw_buff[2])
-            setFnd(shm_addr, shm_addr->fnd + 100);
+            clock_stat.hour += 1;
+        // setFnd(shm_addr, shm_addr->fnd + 100);
         // Add 1 minute when no.4 switch is pushed
         if (sw_buff[3])
         {
-            setFnd(shm_addr, shm_addr->fnd + 1);
-            if (shm_addr->fnd == 60)
-            {
-                shm_addr->fnd += 40;
-            }
+            clock_stat.min += 1;
+            // setFnd(shm_addr, shm_addr->fnd + 1);
+        }
+
+        // Caculate hours and minutes
+        if (clock_stat.min >= 60)
+        {
+            clock_stat.min = 0;
+            clock_stat.hour += 1;
+        }
+
+        if (clock_stat.hour >= 24)
+        {
+            clock_stat.hour = 0;
         }
 
         // Blink LED for each seconds
         if (clock_stat.blink == M1_BLINK)
-            setLed(shm_addr, 0b00100000);
+            led = 0b00100000;
+            //setLed(shm_addr, 0b00100000);
         else
-            setLed(shm_addr, 0b00010000);
+            led = 0b00010000;
+            //setLed(shm_addr, 0b00010000);
         break;
     default:
         break;
     }
 
-    int i;
-    int fnd_value = shm_addr->fnd;
+    // Set output shared memory
+    int fnd_value = clock_stat.hour * 100 + clock_stat.min;
     for (i = MAX_DIGIT - 1; i >= 0; i--)
     {
         shm_addr->digit[i] = fnd_value % 10;
         fnd_value /= 10;
     }
+    setLed(shm_addr, led);
 }
 void counter_mode(shm_out *shm_addr, unsigned char sw_buff[])
 {
-    int digit, i, fnd_value = shm_addr->fnd;
+    int digit, i, prev_mode, fnd_value;
+    unsigned led;
+
+    prev_mode = counter_stat.cur_mode;
 
     // Change mode when no.1 switch is pushed
     if (sw_buff[0])
@@ -184,24 +210,32 @@ void counter_mode(shm_out *shm_addr, unsigned char sw_buff[])
     switch (counter_stat.cur_mode)
     {
     case M2_BIN_MODE:
-        printf("Change notation to Binary\n");
+        if(prev_mode != M2_BIN_MODE)
+            printf("Change notation to Binary\n");
         digit = 2;
-        setLed(shm_addr, 0b10000000);
+        led = 0b10000000;
+       //setLed(shm_addr, 0b10000000);
         break;
     case M2_DEC_MODE:
-        printf("Change notation to Decimal\n");
+        if(prev_mode != M2_DEC_MODE)
+            printf("Change notation to Decimal\n");
         digit = 10;
-        setLed(shm_addr, 0b01000000);
+        led = 0b01000000;
+        //setLed(shm_addr, 0b01000000);
         break;
     case M2_OCT_MODE:
-        printf("Change notation to Octal\n");
+        if(prev_mode != M2_OCT_MODE)
+            printf("Change notation to Octal\n");
         digit = 8;
-        setLed(shm_addr, 0b00100000);
+        led = 0b00100000;
+        //setLed(shm_addr, 0b00100000);
         break;
     case M2_QUA_MODE:
-        printf("Chage notation to Quaternary\n");
+        if(prev_mode != M2_QUA_MODE)
+            printf("Chage notation to Quaternary\n");
         digit = 4;
-        setLed(shm_addr, 0b00010000);
+        led = 0b00010000;
+        //setLed(shm_addr, 0b00010000);
         break;
     default:
         break;
@@ -210,23 +244,24 @@ void counter_mode(shm_out *shm_addr, unsigned char sw_buff[])
     // Add 1 to hundreds when no.2 switch is pushed
     if (sw_buff[1])
     {
-        fnd_value += digit * digit;
+        counter_stat.count += digit * digit;
     }
     // Add 1 to tens when no.3 switch is pushed
     if (sw_buff[2])
     {
-        fnd_value += digit;
+        counter_stat.count+= digit;
     }
     // Add 1 to units when no.4 switch is pushed
     if (sw_buff[3])
     {
-        fnd_value += 1;
+        counter_stat.count += 1;
     }
 
     // Update FND value
-    shm_addr->fnd = fnd_value;
+    shm_addr->fnd = counter_stat.count;
 
     // Change FND numbers to each notations
+    fnd_value = counter_stat.count;
     for (i = MAX_DIGIT - 1; i >= 0; i--)
     {
         shm_addr->digit[i] = fnd_value % digit;
@@ -234,6 +269,7 @@ void counter_mode(shm_out *shm_addr, unsigned char sw_buff[])
     }
     if (counter_stat.cur_mode == M2_DEC_MODE)
         shm_addr->digit[0] = 0;
+    setLed(shm_addr, led);
 }
 void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
 {
