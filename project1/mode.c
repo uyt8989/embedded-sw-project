@@ -304,7 +304,7 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
         // If buffer is fulled
         if (text_stat.cursor == LCD_MAX_BUFF)
         {
-            for (int i = 0; i < LCD_MAX_BUFF - 1; i++)
+            for (i = 0; i < LCD_MAX_BUFF - 1; i++)
             {
                 text_stat.buff[i] = text_stat.buff[i + 1];
             }
