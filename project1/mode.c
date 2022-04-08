@@ -278,9 +278,10 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
     {
         special_flag = TRUE;
         text_stat.last_sw = SW_NULL;
-        text_stat.count++;
+        text_stat.count += 1;
         text_stat.cursor = 0;
-        memset(text_stat.buff, 0, LCD_MAX_BUFF * sizeof(char));
+        for(i = 0; i < LCD_MAX_BUFF; i++) 
+            text_stat.buff[i] = ' ';
     }
 
     // Change input mode when no.5 and no.6 switches are pushed
@@ -288,7 +289,8 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
     {
         special_flag = TRUE;
         text_stat.last_sw = SW_NULL;
-        text_stat.count++;
+        text_stat.count += 1;
+        // dot 수정 여기서
         if (text_stat.cur_mode == M3_ALPHA_MODE)
             text_stat.cur_mode = M3_NUM_MODE;
         else
@@ -298,8 +300,8 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
     if (sw_buff[SW7] && sw_buff[SW9])
     {
         special_flag = TRUE;
-        text_stat.last_sw = 0;
-        text_stat.count++;
+        text_stat.last_sw = SW_NULL;
+        text_stat.count += 1;
 
         // If buffer is fulled
         if (text_stat.cursor == LCD_MAX_BUFF)
@@ -310,20 +312,9 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
             }
             text_stat.buff[text_stat.cursor - 1] = ' ';
         }
-        else
+        else {
             text_stat.buff[text_stat.cursor++] = ' ';
-    }
-
-    switch (text_stat.cur_mode)
-    {
-    case M3_ALPHA_MODE:
-        // dot 에 A 그리기
-        break;
-    case M3_NUM_MODE:
-        // dot에 B 그리기
-        break;
-    default:
-        break;
+        }
     }
 
     // No more processing when two switches are pushed
@@ -339,9 +330,10 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
     }
 
     // There is no pushed switch
-    if (sw_num == SW_NULL)
+    if (sw_num == SW_NULL) 
         return;
 
+    
     switch (text_stat.cur_mode)
     {
     case M3_ALPHA_MODE:
@@ -382,9 +374,10 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
     }
 
     text_stat.last_sw = sw_num;
+    text_stat.count += 1;
 
     setLcd(shm_addr, text_stat.buff);
-    fnd_value = counter_stat.count;
+    fnd_value = text_stat.count;
     for (i = MAX_DIGIT - 1; i >= 0; i--)
     {
         shm_addr->digit[i] = fnd_value % 10;
