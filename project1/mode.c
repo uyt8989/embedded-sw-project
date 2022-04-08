@@ -341,7 +341,7 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
     // There is no pushed switch
     if (sw_num == SW_NULL)
         return;
-        
+
     switch (text_stat.cur_mode)
     {
     case M3_ALPHA_MODE:
@@ -355,7 +355,7 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
         {
             if (text_stat.cursor == LCD_MAX_BUFF)
             {
-                for (int i = 0; i < LCD_MAX_BUFF - 1; i++)
+                for (i = 0; i < LCD_MAX_BUFF - 1; i++)
                 {
                     text_stat.buff[i] = text_stat.buff[i + 1];
                 }
@@ -369,7 +369,7 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
     case M3_NUM_MODE:
         if (text_stat.cursor == LCD_MAX_BUFF)
         {
-            for (int i = 0; i < LCD_MAX_BUFF - 1; i++)
+            for (i = 0; i < LCD_MAX_BUFF - 1; i++)
             {
                 text_stat.buff[i] = text_stat.buff[i + 1];
             }
