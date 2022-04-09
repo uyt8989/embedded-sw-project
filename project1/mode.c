@@ -94,6 +94,7 @@ void init_text_editor_mode(shm_out *shm_addr)
     printf("Current Mode : Text editor\n");
 
     text_stat.cur_mode = M3_ALPHA_MODE;
+    text_stat.count = 0;
     text_stat.cursor = -1;
     text_stat.last_sw = SW_NULL;
     text_stat.keypad_idx = 0;
