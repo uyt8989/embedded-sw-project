@@ -191,12 +191,7 @@ void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
     }
 
     // Set output shared memory
-    int fnd_value = clock_stat.hour * 100 + clock_stat.min;
-    for (i = MAX_DIGIT - 1; i >= 0; i--)
-    {
-        shm_addr->digit[i] = fnd_value % 10;
-        fnd_value /= 10;
-    }
+    setFnd(shm_addr, clock_stat.hour * 100 + clock_stat.min);
     setLed(shm_addr, led);
 }
 void counter_mode(shm_out *shm_addr, unsigned char sw_buff[])
@@ -264,16 +259,8 @@ void counter_mode(shm_out *shm_addr, unsigned char sw_buff[])
         counter_stat.count += 1;
     }
 
-    // Update FND value
-    shm_addr->fnd = counter_stat.count;
-
     // Change FND numbers to each notations
-    fnd_value = counter_stat.count;
-    for (i = MAX_DIGIT - 1; i >= 0; i--)
-    {
-        shm_addr->digit[i] = fnd_value % digit;
-        fnd_value /= digit;
-    }
+    setFnd(shm_addr, counter_stat.count);
     if (counter_stat.cur_mode == M2_DEC_MODE)
         shm_addr->digit[0] = 0;
     setLed(shm_addr, led);
@@ -313,7 +300,7 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
         }
     }
     // Insert space when no.8 and no.9 switches are pused
-    if (sw_buff[SW7] && sw_buff[SW9])
+    if (sw_buff[SW8] && sw_buff[SW9])
     {
         special_flag = TRUE;
         text_stat.last_sw = SW_NULL;
@@ -349,7 +336,6 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
     if (sw_num == SW_NULL) 
         goto skip;
 
-    
     switch (text_stat.cur_mode)
     {
     case M3_ALPHA_MODE:
@@ -399,12 +385,7 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
 
 skip:
     setLcd(shm_addr, text_stat.buff);
-    fnd_value = text_stat.count;
-    for (i = MAX_DIGIT - 1; i >= 0; i--)
-    {
-        shm_addr->digit[i] = fnd_value % 10;
-        fnd_value /= 10;
-    }
+    setFnd(shm_addr, text_stat.count);
     setDot(shm_addr, text_stat.dot);
 }
 void draw_board_mode(shm_out *shm_addr, unsigned char sw_buff[])
