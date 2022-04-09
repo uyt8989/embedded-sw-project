@@ -105,7 +105,8 @@ void init_text_editor_mode(shm_out *shm_addr)
         text_stat.dot[i] = dot_font[M3_DOT_FONT_A][i];
 
     setFnd(shm_addr, 0);
-    setLcd(shm_addr, text_stat.dot);
+    setLcd(shm_addr, text_stat.buff);
+    setDot(shm_addr, text_stat.dot);
 }
 void init_draw_board_mode(shm_out *shm_addr)
 {
@@ -289,7 +290,7 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
         text_stat.count += 1;
         text_stat.cursor = 0;
         for(i = 0; i < LCD_MAX_BUFF; i++) 
-            text_stat.buff[i] = ' ';
+            text_stat.buff[i] = 0;
     }
 
     // Change input mode when no.5 and no.6 switches are pushed
@@ -299,6 +300,7 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
         text_stat.last_sw = SW_NULL;
         text_stat.count += 1;
 
+        printf("Change input mode\n");  
         if (text_stat.cur_mode == M3_ALPHA_MODE) {
             text_stat.cur_mode = M3_NUM_MODE;
             for(i = 0; i < MAX_DOT_BUFF; i++)
