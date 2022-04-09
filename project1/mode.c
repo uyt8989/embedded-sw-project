@@ -74,7 +74,7 @@ void init_clock_mode(shm_out *shm_addr)
     clock_stat.min = get_cur_time() % 100;
     clock_stat.blink = M1_BLINK;
 
-    setFnd(shm_addr, get_cur_time());
+    setFnd(shm_addr, get_cur_time(), 10);
     setLed(shm_addr, 0b10000000);
 }
 void init_counter_mode(shm_out *shm_addr)
@@ -84,7 +84,7 @@ void init_counter_mode(shm_out *shm_addr)
     counter_stat.cur_mode = M2_DEC_MODE;
     counter_stat.count = 0;
 
-    setFnd(shm_addr, 0);
+    setFnd(shm_addr, 0, 10);
     setLed(shm_addr, 0b01000000);
 }
 void init_text_editor_mode(shm_out *shm_addr)
@@ -104,7 +104,7 @@ void init_text_editor_mode(shm_out *shm_addr)
     for(i = 0; i < MAX_DOT_BUFF; i++)
         text_stat.dot[i] = dot_font[M3_DOT_FONT_A][i];
 
-    setFnd(shm_addr, 0);
+    setFnd(shm_addr, 0, 10);
     setLcd(shm_addr, text_stat.buff);
     setDot(shm_addr, text_stat.dot);
 }
@@ -191,7 +191,7 @@ void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
     }
 
     // Set output shared memory
-    setFnd(shm_addr, clock_stat.hour * 100 + clock_stat.min);
+    setFnd(shm_addr, clock_stat.hour * 100 + clock_stat.min, 10);
     setLed(shm_addr, led);
 }
 void counter_mode(shm_out *shm_addr, unsigned char sw_buff[])
@@ -260,7 +260,7 @@ void counter_mode(shm_out *shm_addr, unsigned char sw_buff[])
     }
 
     // Change FND numbers to each notations
-    setFnd(shm_addr, counter_stat.count);
+    setFnd(shm_addr, counter_stat.count, digit);
     if (counter_stat.cur_mode == M2_DEC_MODE)
         shm_addr->digit[0] = 0;
     setLed(shm_addr, led);
@@ -384,8 +384,8 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
     text_stat.count += 1;
 
 skip:
+    setFnd(shm_addr, text_stat.count, 10);
     setLcd(shm_addr, text_stat.buff);
-    setFnd(shm_addr, text_stat.count);
     setDot(shm_addr, text_stat.dot);
 }
 void draw_board_mode(shm_out *shm_addr, unsigned char sw_buff[])

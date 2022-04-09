@@ -139,14 +139,14 @@ int main_process(int shm_input_id, int shm_output_id)
 	return 0;
 }
 
-void setFnd(shm_out *shm_addr, int value)
+void setFnd(shm_out *shm_addr, int value, int digit)
 {
 	int i;
 	shm_addr->fnd = value;
 	for (i = MAX_DIGIT - 1; i >= 0; i--)
     {
-        shm_addr->digit[i] = value % 10;
-        value /= 10;
+        shm_addr->digit[i] = value % digit;
+        value /= digit;
     }
 }
 void setDot(shm_out *shm_addr, unsigned char *value)

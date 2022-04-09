@@ -144,7 +144,7 @@ int main_process(int shm_input_id, int shm_output_id);
 int getKeycode(shm_in *shm_addr, int sem_id);
 int getSwitch(shm_in *shm_addr, int sem_id, unsigned char sw_buff[]);
 
-void setFnd(shm_out *, int);
+void setFnd(shm_out *, int, int);
 void setDot(shm_out *, unsigned char *);
 void setLcd(shm_out *, char *);
 void setLed(shm_out *, unsigned char);
