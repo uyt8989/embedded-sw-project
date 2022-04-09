@@ -2,11 +2,8 @@
  *
  * Output process :
  *
- * 1. makeDigit() :
-        Translate integer fnd value
-        to unsigned char array[4]
- * 2. output_process() :
- *      Processing outputs
+ * 1. Processing outputs
+ * 2. Set each devices ( FND, Dot, LCD, LED )
  *
  *****************************************/
 
@@ -76,7 +73,7 @@ int output_process(int shm_input_id, int shm_output_id)
 
         // FND
         writeToFnd(shm_output_addr, dev_fnd);
-        // Dot  <- 애는 아직....
+        // Dot
         writeToDot(shm_output_addr, dev_dot);
         // LCD
         writeToLcd(shm_output_addr, dev_lcd);

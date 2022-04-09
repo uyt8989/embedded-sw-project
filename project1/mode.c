@@ -5,7 +5,7 @@
  * 1. Clear all devices when mode is chaned
  * 2. Mode Handling
  * 3. Initialize shared memory to each initial state
- * 4. Process each modes
+ * 4. Process inputs for each modes
  *
  *****************************************/
 

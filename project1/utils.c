@@ -4,6 +4,7 @@
  * 
  * 1. Set exit flag
  * 2. Check exit flag
+ * 3. Get board's current time
  *
  *****************************************/
 
