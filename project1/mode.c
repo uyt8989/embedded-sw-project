@@ -335,7 +335,7 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
 
     // No more processing when two switches are pushed
     if (special_flag == TRUE)
-        return;
+        goto skip;
 
     // Get pushed switch number
     sw_num = SW_NULL;
@@ -347,7 +347,7 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
 
     // There is no pushed switch
     if (sw_num == SW_NULL) 
-        return;
+        goto skip;
 
     
     switch (text_stat.cur_mode)
@@ -395,9 +395,9 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
         break;
     }
 
-    
     text_stat.count += 1;
 
+skip:
     setLcd(shm_addr, text_stat.buff);
     fnd_value = text_stat.count;
     for (i = MAX_DIGIT - 1; i >= 0; i--)
