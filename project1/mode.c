@@ -273,8 +273,7 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
     if (sw_buff[SW2] && sw_buff[SW3])
     {
         special_flag = TRUE;
-        text_stat.last_sw = SW_NULL;
-        text_stat.count += 1;
+
         text_stat.cursor = 0;
         for(i = 0; i < LCD_MAX_BUFF; i++) 
             text_stat.buff[i] = 0;
@@ -284,8 +283,6 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
     if (sw_buff[SW5] && sw_buff[SW6])
     {
         special_flag = TRUE;
-        text_stat.last_sw = SW_NULL;
-        text_stat.count += 1;
 
         printf("Change input mode\n");  
         if (text_stat.cur_mode == M3_ALPHA_MODE) {
@@ -295,17 +292,18 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
         }
         else {
             text_stat.cur_mode = M3_ALPHA_MODE;
+            text_stat.last_sw = SW_NULL;
+            text_stat.keypad_idx = 0;
             for(i = 0; i < MAX_DOT_BUFF; i++)
                 text_stat.dot[i] = dot_font[M3_DOT_FONT_A][i];
         }
     }
+
     // Insert space when no.8 and no.9 switches are pused
     if (sw_buff[SW8] && sw_buff[SW9])
     {
         special_flag = TRUE;
-        text_stat.last_sw = SW_NULL;
-        text_stat.count += 1;
-
+    
         // If buffer is fulled
         if (text_stat.cursor == LCD_MAX_BUFF)
         {
@@ -321,9 +319,12 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
     }
 
     // No more processing when two switches are pushed
-    if (special_flag == TRUE)
+    if (special_flag == TRUE) {
+        //text_stat.last_sw = SW_NULL;
+        text_stat.count += 1;
         goto skip;
-
+    }
+        
     // Get pushed switch number
     sw_num = SW_NULL;
     for (i = 0; i < MAX_BUTTON; i++)
@@ -344,9 +345,9 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
             text_stat.keypad_idx = (text_stat.keypad_idx + 1) / M3_KEYPAD;
             text_stat.buff[text_stat.cursor] = keypad[sw_num][text_stat.keypad_idx];
         }
-
-        else
-        {
+        else {
+            text_stat.keypad_idx = 0;
+            
             if (text_stat.cursor == LCD_MAX_BUFF)
             {
                 for (i = 0; i < LCD_MAX_BUFF - 1; i++)
@@ -355,12 +356,11 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
                 }
                 text_stat.cursor--;
             }
-            text_stat.keypad_idx = 0;
-            text_stat.buff[text_stat.cursor++] = keypad[sw_num][0];
+
+            text_stat.buff[text_stat.cursor++] = keypad[sw_num][text_stat.keypad_idx];
         }
 
         text_stat.last_sw = sw_num;
-
         break;
     case M3_NUM_MODE:
         if (text_stat.cursor == LCD_MAX_BUFF)
@@ -372,10 +372,6 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
             text_stat.cursor--;
         }
         text_stat.buff[text_stat.cursor++] = (sw_num + 1) + '0';
-        
-        text_stat.last_sw = SW_NULL;
-        text_stat.keypad_idx = 0;
-        
         break;
     default:
         break;
