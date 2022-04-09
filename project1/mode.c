@@ -343,7 +343,7 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
         printf("last switch %d current %d\n", text_stat.last_sw, sw_num);
         if (text_stat.last_sw == sw_num)
         {
-            text_stat.keypad_idx = (text_stat.keypad_idx + 1) / M3_KEYPAD;
+            text_stat.keypad_idx = (text_stat.keypad_idx + 1) % M3_KEYPAD;
             text_stat.buff[text_stat.cursor] = keypad[sw_num][text_stat.keypad_idx];
         }
         else {
