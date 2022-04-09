@@ -11,7 +11,6 @@
  *****************************************/
 
 #include "mylib.h"
-#include "fpga_dot_font.h"
 
 extern int current_mode;
 
@@ -118,7 +117,7 @@ void writeToFnd(shm_out *shm_addr, int fd)
 }
 void writeToDot(shm_out *shm_addr, int fd)
 {
-
+    write(fd, shm_addr->dot, sizeof(unsigned char) * MAX_DOT_BUFF);
 }
 void writeToLcd(shm_out *shm_addr, int fd)
 {

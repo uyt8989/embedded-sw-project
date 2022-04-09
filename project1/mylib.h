@@ -73,6 +73,8 @@ enum {
 #define M3_ALPHA_MODE -106
 #define M3_NUM_MODE -107
 #define M3_KEYPAD 3
+#define M3_DOT_FONT_1 1
+#define M3_DOT_FONT_A 10
 
 //MOD4
 

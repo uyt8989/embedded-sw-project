@@ -146,7 +146,7 @@ void setFnd(shm_out *shm_addr, int value)
 void setDot(shm_out *shm_addr, unsigned char *value)
 {
 	int i;
-	for (i = 0; i < 10; i++)
+	for (i = 0; i < MAX_DOT_BUFF; i++)
 		shm_addr->dot[i] = value[i];
 }
 void setLcd(shm_out *shm_addr, char *value)

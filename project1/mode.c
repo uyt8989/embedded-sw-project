@@ -10,6 +10,7 @@
  *****************************************/
 
 #include "mylib.h"
+#include "fpga_dot_font.h"
 
 extern int current_mode;
 extern clock_s clock_stat;
@@ -17,8 +18,11 @@ extern counter_s counter_stat;
 extern text_s text_stat;
 extern draw_s draw_stat;
 
-static char keypad[9][3] = {
-    {'.', 'Q', 'Z'}, {'A', 'B', 'C'}, {'D', 'E', 'F'}, {'G', 'H', 'I'}, {'J', 'K', 'L'}, {'M', 'N', 'O'}, {'P', 'R', 'S'}, {'T', 'U', 'V'}, {'W', 'X', 'Y'}};
+const static char keypad[MAX_BUTTON][M3_KEYPAD] = {
+    {'.', 'Q', 'Z'}, {'A', 'B', 'C'}, {'D', 'E', 'F'}, 
+    {'G', 'H', 'I'}, {'J', 'K', 'L'}, {'M', 'N', 'O'}, 
+    {'P', 'R', 'S'}, {'T', 'U', 'V'}, {'W', 'X', 'Y'}
+};
 
 void clear_out_shm(shm_out *shm_addr)
 {
@@ -93,11 +97,15 @@ void init_text_editor_mode(shm_out *shm_addr)
     text_stat.cursor = 0;
     text_stat.last_sw = SW_NULL;
     text_stat.keypad_idx = 0;
+
     for (i = 0; i < LCD_MAX_BUFF; i++)
-        text_stat.buff[i] = ' ';
+        text_stat.buff[i] = 0;
+    
+    for(int i = 0; i < MAX_DOT_BUFF; i++)
+        text_stat.dot[i] = dot_font[M3_DOT_FONT_A][i];
 
     setFnd(shm_addr, 0);
-    setLcd(shm_addr, "");
+    setLcd(shm_addr, text_stat.dot);
 }
 void init_draw_board_mode(shm_out *shm_addr)
 {
@@ -290,11 +298,17 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
         special_flag = TRUE;
         text_stat.last_sw = SW_NULL;
         text_stat.count += 1;
-        // dot 수정 여기서
-        if (text_stat.cur_mode == M3_ALPHA_MODE)
+
+        if (text_stat.cur_mode == M3_ALPHA_MODE) {
             text_stat.cur_mode = M3_NUM_MODE;
-        else
+            for(i = 0; i < MAX_DOT_BUFF; i++)
+                text_stat.dot[i] = dot_font[M3_DOT_FONT_1][i];
+        }
+        else {
             text_stat.cur_mode = M3_ALPHA_MODE;
+            for(i = 0; i < MAX_DOT_BUFF; i++)
+                text_stat.dot[i] = dot_font[M3_DOT_FONT_A][i];
+        }
     }
     // Insert space when no.8 and no.9 switches are pused
     if (sw_buff[SW7] && sw_buff[SW9])
@@ -357,6 +371,8 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
             text_stat.buff[text_stat.cursor++] = keypad[sw_num][0];
         }
 
+        text_stat.last_sw = sw_num;
+
         break;
     case M3_NUM_MODE:
         if (text_stat.cursor == LCD_MAX_BUFF)
@@ -368,12 +384,16 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
             text_stat.cursor--;
         }
         text_stat.buff[text_stat.cursor++] = (sw_num + 1) + '0';
+        
+        text_stat.last_sw = SW_NULL;
+        text_stat.keypad_idx = 0;
+        
         break;
     default:
         break;
     }
 
-    text_stat.last_sw = sw_num;
+    
     text_stat.count += 1;
 
     setLcd(shm_addr, text_stat.buff);
