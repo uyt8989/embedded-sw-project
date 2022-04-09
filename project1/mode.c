@@ -101,7 +101,7 @@ void init_text_editor_mode(shm_out *shm_addr)
     for (i = 0; i < LCD_MAX_BUFF; i++)
         text_stat.buff[i] = 0;
     
-    for(int i = 0; i < MAX_DOT_BUFF; i++)
+    for(i = 0; i < MAX_DOT_BUFF; i++)
         text_stat.dot[i] = dot_font[M3_DOT_FONT_A][i];
 
     setFnd(shm_addr, 0);
