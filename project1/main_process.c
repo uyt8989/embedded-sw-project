@@ -119,16 +119,16 @@ int main_process(int shm_input_id, int shm_output_id)
 		switch (current_mode)
 		{
 		case MODE_1:
-			clock_mode(shm_output_addr, sw_buff);
+			clock_mode(shm_output_addr, sem_id, sw_buff);
 			break;
 		case MODE_2:
-			counter_mode(shm_output_addr, sw_buff);
+			counter_mode(shm_output_addr, sem_id, sw_buff);
 			break;
 		case MODE_3:
-			text_editor_mode(shm_output_addr, sw_buff);
+			text_editor_mode(shm_output_addr, sem_id, sw_buff);
 			break;
 		case MODE_4:
-			draw_board_mode(shm_output_addr, sw_buff);
+			draw_board_mode(shm_output_addr, sem_id, sw_buff);
 			break;
 		default:
 			break;
