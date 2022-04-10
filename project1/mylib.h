@@ -35,7 +35,7 @@
 #define MAX_BUTTON 9
 #define MAX_DIGIT 4
 #define MAX_DOT_BUFF 10
-#define MAX_DOT_Y 8
+#define MAX_DOT_Y 7
 
 #define BOARD_KEY_DEFAULT 117
 #define BOARD_KEY_BACK 158
