@@ -2,9 +2,8 @@
  *
  * Semaphore functions :
  *
- * 1. initsem() : Initialize semaphore
- * 2. semlock(int semid) : P operation
- * 3. semunlock(int semid) : V operation
+ * 1. Initialize semaphores (input, output)
+ * 2. Wait and Post operation
  *
  *****************************************/
 
