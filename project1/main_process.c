@@ -168,7 +168,7 @@ void setDot(shm_out *shm_addr, unsigned char *value)
 void setLcd(shm_out *shm_addr, char *value)
 {
 	int i;
-	for (i = 0; i < LCD_MAX_BUFF; i++)
+	for (i = 0; i < MAX_LCD_BUFF; i++)
 		shm_addr->lcd[i] = value[i];
 }
 

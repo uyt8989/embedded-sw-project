@@ -118,7 +118,7 @@ int writeToDot(shm_out *shm_addr, int fd)
 }
 int writeToLcd(shm_out *shm_addr, int fd)
 {
-    return write(fd, shm_addr->lcd, sizeof(unsigned char) * LCD_MAX_BUFF);
+    return write(fd, shm_addr->lcd, sizeof(unsigned char) * MAX_LCD_BUFF);
 }    
 void writeToLed(shm_out *shm_addr, unsigned char *led_addr)
 {

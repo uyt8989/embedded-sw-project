@@ -103,7 +103,7 @@ void init_text_editor_mode(shm_out *shm_addr)
     text_stat.last_sw = SW_NULL;
     text_stat.keypad_idx = 0;
 
-    for (i = 0; i < LCD_MAX_BUFF; i++)
+    for (i = 0; i < MAX_LCD_BUFF; i++)
         text_stat.buff[i] = 0;
 
     for (i = 0; i < MAX_DOT_BUFF; i++)
@@ -304,7 +304,7 @@ void text_editor_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])
         special_flag = TRUE;
 
         text_stat.cursor = -1;
-        for (i = 0; i < LCD_MAX_BUFF; i++)
+        for (i = 0; i < MAX_LCD_BUFF; i++)
             text_stat.buff[i] = 0;
     }
 
@@ -336,9 +336,9 @@ void text_editor_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])
         special_flag = TRUE;
 
         // If buffer is fulled
-        if (text_stat.cursor == LCD_MAX_BUFF - 1)
+        if (text_stat.cursor == MAX_LCD_BUFF - 1)
         {
-            for (i = 0; i < LCD_MAX_BUFF - 1; i++)
+            for (i = 0; i < MAX_LCD_BUFF - 1; i++)
             {
                 text_stat.buff[i] = text_stat.buff[i + 1];
             }
@@ -383,9 +383,9 @@ void text_editor_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])
         {
             text_stat.keypad_idx = 0;
 
-            if (text_stat.cursor == LCD_MAX_BUFF - 1)
+            if (text_stat.cursor == MAX_LCD_BUFF - 1)
             {
-                for (i = 0; i < LCD_MAX_BUFF - 1; i++)
+                for (i = 0; i < MAX_LCD_BUFF - 1; i++)
                 {
                     text_stat.buff[i] = text_stat.buff[i + 1];
                 }
@@ -398,9 +398,9 @@ void text_editor_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])
         text_stat.last_sw = sw_num;
         break;
     case M3_NUM_MODE:
-        if (text_stat.cursor == LCD_MAX_BUFF - 1)
+        if (text_stat.cursor == MAX_LCD_BUFF - 1)
         {
-            for (i = 0; i < LCD_MAX_BUFF - 1; i++)
+            for (i = 0; i < MAX_LCD_BUFF - 1; i++)
             {
                 text_stat.buff[i] = text_stat.buff[i + 1];
             }

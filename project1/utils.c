@@ -13,7 +13,6 @@
 // Set exit flag of shared memory
 int setExit(shm_in *addr, int sem_id)
 {
-	printf("back key is pressed\n");
 	semlock(sem_id, INPUT_SEMA);
 	addr->exit = TRUE;
 	semunlock(sem_id, INPUT_SEMA);

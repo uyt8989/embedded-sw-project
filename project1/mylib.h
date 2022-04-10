@@ -28,13 +28,14 @@
 
 #define SHARED_MEM_KEY_IN 5678
 #define SHARED_MEM_KEY_OUT 5679
+
 #define SEMA_KEY 6789
 #define SEMA_NUM 2
 #define INPUT_SEMA 0
 #define OUTPUT_SEMA 1
 
 #define KEY_BUFF_SIZE 64
-#define LCD_MAX_BUFF 32
+#define MAX_LCD_BUFF 32
 #define MAX_BUTTON 9
 #define MAX_DIGIT 4
 #define MAX_DOT_BUFF 10
@@ -99,7 +100,7 @@ typedef struct _SHARED_MEM_OUT
 {
     int fnd;
     unsigned char digit[MAX_DIGIT];
-    char lcd[LCD_MAX_BUFF];
+    char lcd[MAX_LCD_BUFF];
     unsigned char led;
     unsigned char dot[MAX_DOT_BUFF];
 } shm_out;
@@ -126,7 +127,7 @@ typedef struct _TEXT_EDITOR_STAT
     int cursor;
     int last_sw;
     int keypad_idx;
-    char buff[LCD_MAX_BUFF];
+    char buff[MAX_LCD_BUFF];
     unsigned char dot[MAX_DOT_BUFF];
 } text_s;
 
