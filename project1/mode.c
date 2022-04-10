@@ -469,7 +469,7 @@ void draw_board_mode(shm_out *shm_addr, unsigned char sw_buff[])
     draw_stat.time++;
 
     for (i = 0; i < MAX_DOT_BUFF; i++)
-            draw_stat.dot[i] = dot_set_blank[i];
+        draw_stat.dot[i] = draw_stat.real_dot[i];
             
     if (draw_stat.time > 3)
     {
@@ -478,7 +478,7 @@ void draw_board_mode(shm_out *shm_addr, unsigned char sw_buff[])
         if (draw_stat.cur_mode == M4_ON_CURSOR_MODE)
         {
             draw_stat.dot[draw_stat.cursor[0]] 
-                |= (1 << draw_stat.cursor[1]);
+                ^= (1 << draw_stat.cursor[1]);
         }
     }
 
@@ -486,7 +486,5 @@ void draw_board_mode(shm_out *shm_addr, unsigned char sw_buff[])
         draw_stat.count += 1;
 
     setFnd(shm_addr, draw_stat.count, 10);
-    if(draw_stat.cur_mode == M4_ON_CURSOR_MODE)
-        setDot(shm_addr, draw_stat.dot);
-    setDot(shm_addr, draw_stat.real_dot);
+    setDot(shm_addr, draw_stat.dot);
 }
