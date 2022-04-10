@@ -445,7 +445,7 @@ void draw_board_mode(shm_out *shm_addr, unsigned char sw_buff[])
         break;
     // Select current position
     case SW5:
-        draw_stat.real_dot[draw_stat.cursor[0]] |= (1 << draw_stat.cursor[1]);
+        draw_stat.real_dot[draw_stat.cursor[0]] ^= (1 << draw_stat.cursor[1]);
         break;
     // Move right
     case SW6:
