@@ -486,7 +486,7 @@ void draw_board_mode(shm_out *shm_addr, unsigned char sw_buff[])
         draw_stat.count += 1;
 
     setFnd(shm_addr, draw_stat.count, 10);
-    setDot(shm_addr, draw_stat.real_dot);
     if(draw_stat.cur_mode == M4_ON_CURSOR_MODE)
         setDot(shm_addr, draw_stat.dot);
+    setDot(shm_addr, draw_stat.real_dot);
 }
