@@ -29,6 +29,9 @@
 #define SHARED_MEM_KEY_IN 5678
 #define SHARED_MEM_KEY_OUT 5679
 #define SEMA_KEY 6789
+#define SEMA_NUM 2
+#define INPUT_SEMA 0
+#define OUTPUT_SEMA 1
 
 #define KEY_BUFF_SIZE 64
 #define LCD_MAX_BUFF 32
@@ -139,8 +142,8 @@ typedef struct _DRAW_BOARD_STAT
 
 // sema.c
 int seminit();
-int semlock(int semid);
-int semunlock(int semid);
+int semlock(int semid, int sem_num);
+int semunlock(int semid, int sem_num);
 
 // utils.c
 int setExit(shm_in *addr, int sem_id);

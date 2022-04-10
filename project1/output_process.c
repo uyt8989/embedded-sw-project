@@ -16,8 +16,7 @@ int output_process(int shm_input_id, int shm_output_id)
     // Attach shared memory
     shm_in *shm_input_addr = (shm_in *)shmat(shm_input_id, (void *)0, 0);
     shm_out *shm_output_addr = (shm_out *)shmat(shm_output_id, (void *)0, 0);
-    int exit = FALSE;
-    int sem_id;
+    int exit = FALSE, sem_id;
     int dev_fnd, dev_dot, dev_lcd, dev_mem;
 
     printf("Output process is successfully started\n");
@@ -81,6 +80,7 @@ int output_process(int shm_input_id, int shm_output_id)
         exit = checkExit(shm_input_addr, sem_id);
     }
 
+    // Clear all the devices
     clear_out_shm(shm_output_addr);
     writeToFnd(shm_output_addr, dev_fnd);
     writeToDot(shm_output_addr, dev_dot);
@@ -103,6 +103,7 @@ int output_process(int shm_input_id, int shm_output_id)
     return 0;
 }
 
+// Control the devices
 int writeToFnd(shm_out *shm_addr, int fd)
 {
     return write(fd, shm_addr->digit, sizeof(unsigned char) * MAX_DIGIT);

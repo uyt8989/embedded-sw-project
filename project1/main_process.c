@@ -20,9 +20,9 @@ draw_s draw_stat;
 int getKeycode(shm_in *shm_addr, int sem_id)
 {
 	int value = BOARD_KEY_DEFAULT;
-	semlock(sem_id);
+	semlock(sem_id, INPUT_SEMA);
 	value = shm_addr->key_code;
-	semunlock(sem_id);
+	semunlock(sem_id, INPUT_SEMA);
 	return value;
 }
 
@@ -31,7 +31,7 @@ int getSwitch(shm_in *shm_addr, int sem_id, unsigned char sw_buff[])
 	int i = 0;
 	int flag = FALSE;
 
-	semlock(sem_id);
+	semlock(sem_id, INPUT_SEMA);
 	for (i = 0; i < MAX_BUTTON; i++)
 	{
 		sw_buff[i] = shm_addr->sw[i];
@@ -41,7 +41,7 @@ int getSwitch(shm_in *shm_addr, int sem_id, unsigned char sw_buff[])
 			shm_addr->sw[i] = 0;
 		}
 	}
-	semunlock(sem_id);
+	semunlock(sem_id, INPUT_SEMA);
 
 	return flag;
 }

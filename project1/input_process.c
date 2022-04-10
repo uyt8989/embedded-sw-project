@@ -29,9 +29,9 @@ void key_action(int dev_key, shm_in *shm_addr, int sem_id)
     }
 
     //Accessing critical section
-    semlock(sem_id);
+    semlock(sem_id, INPUT_SEMA);
     shm_addr->key_code = value;
-    semunlock(sem_id);
+    semunlock(sem_id, INPUT_SEMA);
 
     return;
 }
@@ -61,10 +61,10 @@ void switch_action(int dev_sw, shm_in *shm_addr, int sem_id)
     }
 
     // Accessing critical section
-    semlock(sem_id);
+    semlock(sem_id, INPUT_SEMA);
     for (i = 0; i < MAX_BUTTON; i++)
         shm_addr->sw[i] = result[i];
-    semunlock(sem_id);
+    semunlock(sem_id, INPUT_SEMA);
 
     return;
 }
