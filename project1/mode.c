@@ -42,7 +42,7 @@ int mode_handler(shm_out *shm_addr, int sem_id, int d)
 
     current_mode = changed_mode;
 
-    semalock(sem_id, OUTPUT_SEMA);
+    semlock(sem_id, OUTPUT_SEMA);
 
     clear_out_shm(shm_addr);
 
@@ -64,7 +64,7 @@ int mode_handler(shm_out *shm_addr, int sem_id, int d)
         break;
     }
 
-    semaunlock(sem_id, OUTPUT_SEMA);
+    semunlock(sem_id, OUTPUT_SEMA);
 
     return 0;
 }
