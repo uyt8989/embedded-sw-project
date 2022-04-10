@@ -5,12 +5,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/types.h> 
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/select.h>
-#include <sys/ipc.h> 
+#include <sys/ipc.h>
 #include <sys/time.h>
-#include <sys/sem.h> 
+#include <sys/sem.h>
 #include <sys/shm.h>
 #include <sys/ioctl.h>
 #include <sys/wait.h>
@@ -47,47 +47,53 @@
 #define CHANGE_DOWN -1
 
 #define MODS 4
-#define MODE_1 0 //Clock mode
-#define MODE_2 1 //Counter mode
-#define MODE_3 2 //Text editor mode
-#define MODE_4 3 //Draw board mode
+#define MODE_1 0 // Clock mode
+#define MODE_2 1 // Counter mode
+#define MODE_3 2 // Text editor mode
+#define MODE_4 3 // Draw board mode
 
-enum {
-    SW1, SW2, SW3, SW4, SW5, 
+#define FPGA_BASE_ADDRESS 0x08000000
+#define LED_ADDR 0x16
+
+enum
+{
+    SW1, SW2, SW3, SW4, SW5,
     SW6, SW7, SW8, SW9, SW_NULL
 };
 
-//MOD1
+// MOD1
 #define M1_DEFAULT_MODE -100
 #define M1_CHANGE_MODE -101
 #define M1_BLINK -102
 #define M1_UNBLINK -103
 
-//MOD2
+// MOD2
 #define M2_MODES 4
-#define M2_DEC_MODE 0 
+#define M2_DEC_MODE 0
 #define M2_OCT_MODE 1
 #define M2_QUA_MODE 2
 #define M2_BIN_MODE 3
 
-//MOD3
+// MOD3
 #define M3_ALPHA_MODE -106
 #define M3_NUM_MODE -107
 #define M3_KEYPAD 3
 #define M3_DOT_FONT_1 1
 #define M3_DOT_FONT_A 10
 
-//MOD4
+// MOD4
 #define M4_ON_CURSOR_MODE -108
 #define M4_OFF_CURSOR_MODE -109
 
-typedef struct _SHARED_MEM_IN {
+typedef struct _SHARED_MEM_IN
+{
     int exit;
     int key_code;
     unsigned char sw[MAX_BUTTON];
 } shm_in;
 
-typedef struct _SHARED_MEM_OUT {
+typedef struct _SHARED_MEM_OUT
+{
     int fnd;
     unsigned char digit[MAX_DIGIT];
     char lcd[LCD_MAX_BUFF];
@@ -95,7 +101,8 @@ typedef struct _SHARED_MEM_OUT {
     unsigned char dot[MAX_DOT_BUFF];
 } shm_out;
 
-typedef struct _CLOCK_STAT {
+typedef struct _CLOCK_STAT
+{
     int cur_mode;
     int hour;
     int min;
@@ -103,12 +110,14 @@ typedef struct _CLOCK_STAT {
     int time;
 } clock_s;
 
-typedef struct _COUNTER_STAT {
+typedef struct _COUNTER_STAT
+{
     int cur_mode;
     int count;
 } counter_s;
 
-typedef struct _TEXT_EDITOR_STAT {
+typedef struct _TEXT_EDITOR_STAT
+{
     int cur_mode;
     int count;
     int cursor;
@@ -118,12 +127,12 @@ typedef struct _TEXT_EDITOR_STAT {
     unsigned char dot[MAX_DOT_BUFF];
 } text_s;
 
-typedef struct _DRAW_BOARD_STAT {
+typedef struct _DRAW_BOARD_STAT
+{
     int cur_mode;
     int count;
     int cursor[2];
     int time;
-    int blink;
     unsigned char dot[MAX_DOT_BUFF];
     unsigned char real_dot[MAX_DOT_BUFF];
 } draw_s;
@@ -136,7 +145,7 @@ int semunlock(int semid);
 // utils.c
 int setExit(shm_in *addr, int sem_id);
 int checkExit(shm_in *addr, int sem_id);
-int get_cur_time ();
+int get_cur_time();
 
 // input_process.c
 int input_process(int shm_id);
@@ -156,10 +165,10 @@ void setLed(shm_out *, unsigned char);
 // output_process.c
 int output_process(int shm_input_id, int shm_output_id);
 
-void writeToFnd(shm_out*, int fd);
-void writeToDot(shm_out*, int fd);
-void writeToLcd(shm_out*, int fd);
-void writeToLed(shm_out*, unsigned char* addr);
+int writeToFnd(shm_out *, int fd);
+int writeToDot(shm_out *, int fd);
+int writeToLcd(shm_out *, int fd);
+void writeToLed(shm_out *, unsigned char *addr);
 
 // mode.c
 void clear_out_shm(shm_out *shm_addr);

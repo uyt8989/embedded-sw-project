@@ -11,9 +11,6 @@
 
 extern int current_mode;
 
-#define FPGA_BASE_ADDRESS 0x08000000 // fpga_base address
-#define LED_ADDR 0x16
-
 int output_process(int shm_input_id, int shm_output_id)
 {
     // Attach shared memory
@@ -106,25 +103,19 @@ int output_process(int shm_input_id, int shm_output_id)
     return 0;
 }
 
-void writeToFnd(shm_out *shm_addr, int fd)
+int writeToFnd(shm_out *shm_addr, int fd)
 {
-    write(fd, shm_addr->digit, sizeof(unsigned char) * MAX_DIGIT);
-
-    return;
+    return write(fd, shm_addr->digit, sizeof(unsigned char) * MAX_DIGIT);
 }
-void writeToDot(shm_out *shm_addr, int fd)
+int writeToDot(shm_out *shm_addr, int fd)
 {
-    write(fd, shm_addr->dot, sizeof(unsigned char) * MAX_DOT_BUFF);
+    return write(fd, shm_addr->dot, sizeof(unsigned char) * MAX_DOT_BUFF);
 }
-void writeToLcd(shm_out *shm_addr, int fd)
+int writeToLcd(shm_out *shm_addr, int fd)
 {
-    write(fd, shm_addr->lcd, sizeof(unsigned char) * LCD_MAX_BUFF);
-
-    return;
-}
+    return write(fd, shm_addr->lcd, sizeof(unsigned char) * LCD_MAX_BUFF);
+}    
 void writeToLed(shm_out *shm_addr, unsigned char *led_addr)
 {
     *led_addr = shm_addr->led;
-
-    return;
 }

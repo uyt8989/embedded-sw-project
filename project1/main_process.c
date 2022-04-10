@@ -59,12 +59,14 @@ int main_process(int shm_input_id, int shm_output_id)
 	// Attach shared memory
 	shm_in *shm_input_addr = (shm_in *)shmat(shm_input_id, (void *)0, 0);
 	shm_out *shm_output_addr = (shm_out *)shmat(shm_output_id, (void *)0, 0);
+	clear_out_shm(shm_output_addr);
 
+	// Initialize semaphore
 	sem_id = seminit();
 
 	printf("Main process is successfully started\n");
 
-	clear_out_shm(shm_output_addr);
+	// First is Clock mode
 	init_clock_mode(shm_output_addr);
 
 	while (exit == FALSE)
@@ -77,14 +79,14 @@ int main_process(int shm_input_id, int shm_output_id)
 		cur_key = getKeycode(shm_input_addr, sem_id);
 		if (prev_key != cur_key && cur_key != BOARD_KEY_DEFAULT)
 		{
-			printf("prev : %d     cur : %d\n", prev_key, cur_key);
 			// Mode change
 			switch (cur_key)
 			{
+			// Set exit signal to terminate other processes
 			case BOARD_KEY_BACK:
-				// Set exit signal to terminate other processes
 				exit = setExit(shm_input_addr, sem_id);
 				break;
+			// Change mode
 			case BOARD_KEY_VOL_UP:
 				mode_handler(shm_output_addr, CHANGE_UP);
 				break;
@@ -96,20 +98,24 @@ int main_process(int shm_input_id, int shm_output_id)
 			}
 		}
 
+		// Save the previous key input to change mode
 		prev_key = cur_key;
 
 		// Check the swtich inputs
 		if (getSwitch(shm_input_addr, sem_id, sw_buff) == TRUE)
 		{
+			// And print current input
+			/*
 			printf("switch: ");
 			for (i = 0; i < MAX_BUTTON; i++)
 			{
 				printf("%d ", sw_buff[i]);
 			}
 			printf("\n");
+			*/
 		}
 
-		// Handle switch input
+		// Handle switch input according to each mode's policy
 		switch (current_mode)
 		{
 		case MODE_1:
@@ -119,7 +125,7 @@ int main_process(int shm_input_id, int shm_output_id)
 			counter_mode(shm_output_addr, sw_buff);
 			break;
 		case MODE_3:
-			text_editor_mode(shm_output_addr,sw_buff);
+			text_editor_mode(shm_output_addr, sw_buff);
 			break;
 		case MODE_4:
 			draw_board_mode(shm_output_addr, sw_buff);
@@ -127,7 +133,6 @@ int main_process(int shm_input_id, int shm_output_id)
 		default:
 			break;
 		}
-		
 	}
 
 	// Detach shared memory
@@ -139,28 +144,35 @@ int main_process(int shm_input_id, int shm_output_id)
 	return 0;
 }
 
+// Set shared memory's FND part
 void setFnd(shm_out *shm_addr, int value, int digit)
 {
 	int i;
 	shm_addr->fnd = value;
 	for (i = MAX_DIGIT - 1; i >= 0; i--)
-    {
-        shm_addr->digit[i] = value % digit;
-        value /= digit;
-    }
+	{
+		shm_addr->digit[i] = value % digit;
+		value /= digit;
+	}
 }
+
+// Set shared memory's Dot part
 void setDot(shm_out *shm_addr, unsigned char *value)
 {
 	int i;
 	for (i = 0; i < MAX_DOT_BUFF; i++)
 		shm_addr->dot[i] = value[i];
 }
+
+// Set shared memory's LCD part
 void setLcd(shm_out *shm_addr, char *value)
 {
 	int i;
 	for (i = 0; i < LCD_MAX_BUFF; i++)
 		shm_addr->lcd[i] = value[i];
 }
+
+// Set shared memory's LED part
 void setLed(shm_out *shm_addr, unsigned char value)
 {
 	shm_addr->led = value;

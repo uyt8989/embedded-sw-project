@@ -19,7 +19,10 @@ extern text_s text_stat;
 extern draw_s draw_stat;
 
 const static char keypad[MAX_BUTTON][M3_KEYPAD] = {
-    {'.', 'Q', 'Z'}, {'A', 'B', 'C'}, {'D', 'E', 'F'}, {'G', 'H', 'I'}, {'J', 'K', 'L'}, {'M', 'N', 'O'}, {'P', 'R', 'S'}, {'T', 'U', 'V'}, {'W', 'X', 'Y'}};
+    {'.', 'Q', 'Z'}, {'A', 'B', 'C'}, {'D', 'E', 'F'}, 
+    {'G', 'H', 'I'}, {'J', 'K', 'L'}, {'M', 'N', 'O'}, 
+    {'P', 'R', 'S'}, {'T', 'U', 'V'}, {'W', 'X', 'Y'}
+};
 
 void clear_out_shm(shm_out *shm_addr)
 {
@@ -118,7 +121,8 @@ void init_draw_board_mode(shm_out *shm_addr)
     draw_stat.cursor[1] = MAX_DOT_Y - 1;
     draw_stat.time = 0;
 
-    for (i = 0; i < MAX_DOT_BUFF; i++) {
+    for (i = 0; i < MAX_DOT_BUFF; i++)
+    {
         draw_stat.real_dot[i] = 0;
         draw_stat.dot[i] = 0;
     }
@@ -470,15 +474,14 @@ void draw_board_mode(shm_out *shm_addr, unsigned char sw_buff[])
 
     for (i = 0; i < MAX_DOT_BUFF; i++)
         draw_stat.dot[i] = draw_stat.real_dot[i];
-            
+
     if (draw_stat.time > 3)
     {
         // Blink dot per each second
         draw_stat.time = 0;
         if (draw_stat.cur_mode == M4_ON_CURSOR_MODE)
         {
-            draw_stat.dot[draw_stat.cursor[0]] 
-                ^= (1 << draw_stat.cursor[1]);
+            draw_stat.dot[draw_stat.cursor[0]] ^= (1 << draw_stat.cursor[1]);
         }
     }
 
