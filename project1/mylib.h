@@ -35,6 +35,7 @@
 #define MAX_BUTTON 9
 #define MAX_DIGIT 4
 #define MAX_DOT_BUFF 10
+#define MAX_DOT_Y 8
 
 #define BOARD_KEY_DEFAULT 117
 #define BOARD_KEY_BACK 158
@@ -77,7 +78,8 @@ enum {
 #define M3_DOT_FONT_A 10
 
 //MOD4
-
+#define M4_ON_CURSOR_MODE -108
+#define M4_OFF_CURSOR_MODE -109
 
 typedef struct _SHARED_MEM_IN {
     int exit;
@@ -119,6 +121,10 @@ typedef struct _TEXT_EDITOR_STAT {
 typedef struct _DRAW_BOARD_STAT {
     int cur_mode;
     int count;
+    int cursor[2];
+    int time;
+    int blink;
+    unsigned char dot[MAX_DOT_BUFF];
 } draw_s;
 
 //state에 올려놓고 나중에 

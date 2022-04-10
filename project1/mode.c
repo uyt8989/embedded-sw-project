@@ -111,9 +111,21 @@ void init_text_editor_mode(shm_out *shm_addr)
 }
 void init_draw_board_mode(shm_out *shm_addr)
 {
-    printf("Current Mode : Draw board\n");
-}
+    int i;
 
+    printf("Current Mode : Draw board\n");
+
+    draw_stat.cur_mode = M4_ON_CURSOR_MODE;
+    draw_stat.count = 0;
+    draw_stat.cursor[0] = 0; draw_stat.cursor[1] = 0;
+    draw_stat.time = 0;
+
+    for(i = 0; i < MAX_DOT_BUFF; i++)
+        draw_stat.dot[i] = 0;
+
+    setFnd(shm_addr, 0, 10);
+    setDot(shm_addr, draw_stat.dot);
+}
 void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
 {
     int i;
@@ -388,4 +400,88 @@ skip:
 }
 void draw_board_mode(shm_out *shm_addr, unsigned char sw_buff[])
 {
+    int i, sw_num = SW_NULL;
+
+    draw_stat.time++;
+    if (draw_stat.time > 3)
+    {
+        // Blink dot per each second
+        draw_stat.time = 0;
+        if (draw_stat.blink == M1_BLINK)
+            clock_stat.blink = M1_UNBLINK;
+        else
+            draw_stat.blink = M1_BLINK;
+    }
+
+    for(i = 0; i < MAX_BUTTON; i++) {
+        if(sw_buff[i]) sw_num = i;
+    }
+
+    switch (sw_num)
+    {
+    // Go to Initial state
+    case SW1:
+        for(i = 0; i < MAX_DOT_BUFF; i++)
+            draw_stat.dot[i] = dot_set_blank[i];
+        draw_stat.cur_mode = M4_ON_CURSOR_MODE;
+        draw_stat.cursor[0] = 0; draw_stat.cursor[1] = 0;
+        draw_stat.count = 0;
+        break;
+    // Move up
+    case SW2:
+        draw_stat.cursor[0] 
+            = (draw_stat.cursor[0] + MAX_DOT_BUFF - 1) % MAX_DOT_BUFF;
+        break;
+    // Show cursor on/off
+    case SW3:
+        if(draw_stat.cur_mode == M4_ON_CURSOR_MODE)
+            draw_stat.cur_mode = M4_OFF_CURSOR_MODE;
+        else 
+            draw_stat.cur_mode = M4_ON_CURSOR_MODE;
+        break;
+    // Move left
+    case SW4:
+        draw_stat.cursor[1]
+            = (draw_stat.cursor[1] + MAX_DOT_Y - 1) % MAX_DOT_Y;
+        break;
+    // Select current position
+    case SW5:
+        draw_stat.dot[draw_stat.cursor[0]] 
+            |= (1 << draw_stat.cursor[1]);
+        break;
+    // Move right
+    case SW6:
+        draw_stat.cursor[1]
+            = (draw_stat.cursor[1] + 1) % MAX_DOT_Y;
+        break;
+    // Clear current drawing
+    case SW7:
+        for(i = 0; i < MAX_DOT_BUFF; i++)
+            draw_stat.dot[i] = dot_set_blank[i];
+        break;
+    // Move down
+    case SW8:
+        draw_stat.cursor[0] 
+            = (draw_stat.cursor[0] + 1) % MAX_DOT_BUFF;
+        break;
+    // Reverse current drawing
+    case SW9:
+        for(i = 0; i < MAX_BUTTON; i++)
+            draw_stat.dot[i] = ~(draw_stat.dot[i]);
+        break;
+
+    default:
+        break;
+    }
+
+    if(draw_stat.cur_mode == M4_ON_CURSOR_MODE) {
+        draw_stat.dot[draw_stat.cursor[0]] 
+            ^= (1 << draw_stat.cursor[1]); 
+    }
+
+    if(sw_num < SW_NULL && sw_num > SW1)
+        draw_stat.count += 1;
+
+    setFnd(shm_addr, draw_stat.count, 10);
+    setDot(shm_addr, draw_stat.dot);
 }
