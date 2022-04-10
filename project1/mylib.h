@@ -175,16 +175,16 @@ void writeToLed(shm_out *, unsigned char *addr);
 
 // mode.c
 void clear_out_shm(shm_out *shm_addr);
-void mode_handler(shm_out *shm_addr, int d);
+int mode_handler(shm_out *shm_addr, int sem_id, int d);
 
 void init_clock_mode(shm_out *shm_addr);
 void init_counter_mode(shm_out *shm_addr);
 void init_text_editor_mode(shm_out *shm_addr);
 void init_draw_board_mode(shm_out *shm_addr);
 
-void clock_mode(shm_out *shm_addr, unsigned char sw_buff[]);
-void counter_mode(shm_out *shm_addr, unsigned char sw_buff[]);
-void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[]);
-void draw_board_mode(shm_out *shm_addr, unsigned char sw_buff[]);
+void clock_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[]);
+void counter_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[]);
+void text_editor_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[]);
+void draw_board_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[]);
 
 #endif

@@ -88,10 +88,10 @@ int main_process(int shm_input_id, int shm_output_id)
 				break;
 			// Change mode
 			case BOARD_KEY_VOL_UP:
-				mode_handler(shm_output_addr, CHANGE_UP);
+				mode_handler(shm_output_addr, sem_id, CHANGE_UP);
 				break;
 			case BOARD_KEY_VOL_DOWN:
-				mode_handler(shm_output_addr, CHANGE_DOWN);
+				mode_handler(shm_output_addr, sem_id, CHANGE_DOWN);
 				break;
 			default:
 				break;

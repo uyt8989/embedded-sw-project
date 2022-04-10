@@ -67,25 +67,29 @@ int output_process(int shm_input_id, int shm_output_id)
     {
         usleep(200000);
 
-        // FND
-        writeToFnd(shm_output_addr, dev_fnd);
-        // Dot
-        writeToDot(shm_output_addr, dev_dot);
-        // LCD
-        writeToLcd(shm_output_addr, dev_lcd);
-        // LED
-        writeToLed(shm_output_addr, led_addr);
+        semalock(sem_id, OUTPUT_SEMA);
+       
+        writeToFnd(shm_output_addr, dev_fnd); // FND
+        writeToDot(shm_output_addr, dev_dot); // Dot
+        writeToLcd(shm_output_addr, dev_lcd); // LCD
+        writeToLed(shm_output_addr, led_addr); // LED
+        
+        semaunlock(sem_id, OUTPUT_SEMA);
 
         // Check terminate condition
         exit = checkExit(shm_input_addr, sem_id);
     }
 
     // Clear all the devices
+    semalock(sem_id, OUTPUT_SEMA);
+    
     clear_out_shm(shm_output_addr);
     writeToFnd(shm_output_addr, dev_fnd);
     writeToDot(shm_output_addr, dev_dot);
     writeToLcd(shm_output_addr, dev_lcd);
     writeToLed(shm_output_addr, led_addr);
+    
+    semaunlock(sem_id, OUTPUT_SEMA);
 
     // Detach shared memory
     shmdt(shm_input_addr);

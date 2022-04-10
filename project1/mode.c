@@ -29,7 +29,7 @@ void clear_out_shm(shm_out *shm_addr)
     memset(shm_addr, 0, sizeof(shm_out));
 }
 
-void mode_handler(shm_out *shm_addr, int d)
+int mode_handler(shm_out *shm_addr, int sem_id, int d)
 {
     int changed_mode = current_mode + d;
 
@@ -41,6 +41,8 @@ void mode_handler(shm_out *shm_addr, int d)
     printf("Mode is changed to %d\n", changed_mode);
 
     current_mode = changed_mode;
+
+    semalock(sem_id, OUTPUT_SEMA);
 
     clear_out_shm(shm_addr);
 
@@ -62,7 +64,9 @@ void mode_handler(shm_out *shm_addr, int d)
         break;
     }
 
-    return;
+    semaunlock(sem_id, OUTPUT_SEMA);
+
+    return 0;
 }
 
 void init_clock_mode(shm_out *shm_addr)
@@ -130,7 +134,7 @@ void init_draw_board_mode(shm_out *shm_addr)
     setFnd(shm_addr, 0, 10);
     setDot(shm_addr, draw_stat.dot);
 }
-void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
+void clock_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])
 {
     int i;
     unsigned char led;
@@ -207,11 +211,15 @@ void clock_mode(shm_out *shm_addr, unsigned char sw_buff[])
         break;
     }
 
+    semlock(sem_id, OUTPUT_SEMA);
+    
     // Set output shared memory
     setFnd(shm_addr, clock_stat.hour * 100 + clock_stat.min, 10);
     setLed(shm_addr, led);
+   
+    semunlock(sem_id, OUTPUT_SEMA);
 }
-void counter_mode(shm_out *shm_addr, unsigned char sw_buff[])
+void counter_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])
 {
     int digit, i, prev_mode, fnd_value;
     unsigned led;
@@ -276,13 +284,17 @@ void counter_mode(shm_out *shm_addr, unsigned char sw_buff[])
         counter_stat.count += 1;
     }
 
+    semlock(sem_id, OUTPUT_SEMA);
+    
     // Change FND numbers to each notations
     setFnd(shm_addr, counter_stat.count, digit);
     if (counter_stat.cur_mode == M2_DEC_MODE)
         shm_addr->digit[0] = 0;
     setLed(shm_addr, led);
+    
+    semunlock(sem_id, OUTPUT_SEMA);
 }
-void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
+void text_editor_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])
 {
     int i, sw_num, fnd_value, special_flag = FALSE;
 
@@ -403,11 +415,15 @@ void text_editor_mode(shm_out *shm_addr, unsigned char sw_buff[])
     text_stat.count += 1;
 
 skip:
+    semlock(sem_id, OUTPUT_SEMA);
+    
     setFnd(shm_addr, text_stat.count, 10);
     setLcd(shm_addr, text_stat.buff);
     setDot(shm_addr, text_stat.dot);
+    
+    semunlock(sem_id, OUTPUT_SEMA);
 }
-void draw_board_mode(shm_out *shm_addr, unsigned char sw_buff[])
+void draw_board_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])
 {
     int i, sw_num = SW_NULL;
 
@@ -488,6 +504,10 @@ void draw_board_mode(shm_out *shm_addr, unsigned char sw_buff[])
     if (sw_num < SW_NULL && sw_num > SW1)
         draw_stat.count += 1;
 
+    semlock(sem_id, OUTPUT_SEMA);
+    
     setFnd(shm_addr, draw_stat.count, 10);
     setDot(shm_addr, draw_stat.dot);
+    
+    semunlock(sem_id, OUTPUT_SEMA);
 }
