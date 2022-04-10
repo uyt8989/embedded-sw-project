@@ -125,10 +125,8 @@ typedef struct _DRAW_BOARD_STAT {
     int time;
     int blink;
     unsigned char dot[MAX_DOT_BUFF];
+    unsigned char real_dot[MAX_DOT_BUFF];
 } draw_s;
-
-//state에 올려놓고 나중에 
-//shared memory로 내리는게 더 좋으려나
 
 // sema.c
 int seminit();
