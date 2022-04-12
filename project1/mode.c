@@ -38,8 +38,6 @@ int mode_handler(shm_out *shm_addr, int sem_id, int d)
     else if (changed_mode > MODE_4)
         changed_mode = MODE_1;
 
-    printf("Mode is changed to %d\n", changed_mode);
-
     current_mode = changed_mode;
 
     semlock(sem_id, OUTPUT_SEMA);
