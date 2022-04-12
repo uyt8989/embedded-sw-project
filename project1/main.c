@@ -4,7 +4,7 @@ int current_mode = MODE_1;
 
 int main(int argc, char **argv)
 {
-    pid_t p1 = 0, p2 = 0;
+    pid_t p1 = 0, p2 = 0, p3 = 0;
     int process1, process2;
     int shm_input_id, shm_output_id;
 
@@ -37,24 +37,19 @@ int main(int argc, char **argv)
     p1 = fork();
 
     // parent process
-    if (p1 > 0)
-    {
+    if (p1 > 0){
         p2 = fork();
 
         if (p2 == 0)
-        {
-            // input process
-            input_process(shm_input_id);
+            output_process(shm_input_id, shm_output_id);
+        else if (p2 > 0){
+            p3 = fork();
+            
+            if(p3 == 0)
+                main_process(shm_input_id, shm_output_id);
         }
 
-        else if (p2 > 0)
-        {
-            // main process
-            main_process(shm_input_id, shm_output_id);
-        }
-
-        else
-        {
+        else{
             printf("Fork Failed\n");
             exit(-1);
         }
@@ -62,13 +57,9 @@ int main(int argc, char **argv)
 
     // child process
     else if (p1 == 0)
-    {
-        // output process
-        output_process(shm_input_id, shm_output_id);
-    }
+        input_process(shm_input_id);
 
-    else
-    {
+    else{
         printf("Fork Failed\n");
         exit(-1);
     }
@@ -76,8 +67,9 @@ int main(int argc, char **argv)
     // Wait for child process
     wait(NULL);
     wait(NULL);
+    wait(NULL);
 
-    if (p1 && p2)
+    if (p1 && p2 && p3)
     {
         // Erase shared memory
         shmctl(shm_input_id, IPC_RMID, (struct shmid_ds *)NULL);
