@@ -371,7 +371,6 @@ void text_editor_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])
     switch (text_stat.cur_mode)
     {
     case M3_ALPHA_MODE:
-        printf("last switch %d current %d\n", text_stat.last_sw, sw_num);
         if (text_stat.last_sw == sw_num)
         {
             text_stat.keypad_idx = (text_stat.keypad_idx + 1) % M3_KEYPAD;
