@@ -24,6 +24,7 @@ const static char keypad[MAX_BUTTON][M3_KEYPAD] = {
     {'P', 'R', 'S'}, {'T', 'U', 'V'}, {'W', 'X', 'Y'}
 };
 
+// Clear all output shared memory
 void clear_out_shm(shm_out *shm_addr)
 {
     memset(shm_addr, 0, sizeof(shm_out));
@@ -42,8 +43,10 @@ int mode_handler(shm_out *shm_addr, int sem_id, int d)
 
     semlock(sem_id, OUTPUT_SEMA);
 
+    // Clear output
     clear_out_shm(shm_addr);
 
+    // Change modes
     switch (current_mode)
     {
     case MODE_1:
@@ -371,6 +374,7 @@ void text_editor_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])
     switch (text_stat.cur_mode)
     {
     case M3_ALPHA_MODE:
+        // The same switch is entered consecutively
         if (text_stat.last_sw == sw_num)
         {
             text_stat.keypad_idx = (text_stat.keypad_idx + 1) % M3_KEYPAD;
@@ -378,6 +382,7 @@ void text_editor_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])
         }
         else
         {
+            // The new switch is entered
             text_stat.keypad_idx = 0;
 
             if (text_stat.cursor == MAX_LCD_BUFF - 1)
@@ -392,6 +397,7 @@ void text_editor_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])
             text_stat.buff[++text_stat.cursor] = keypad[sw_num][text_stat.keypad_idx];
         }
 
+        // Save current input switch
         text_stat.last_sw = sw_num;
         break;
     case M3_NUM_MODE:

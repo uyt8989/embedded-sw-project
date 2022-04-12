@@ -17,6 +17,7 @@ counter_s counter_stat;
 text_s text_stat;
 draw_s draw_stat;
 
+// Get key input from shared memory
 int getKeycode(shm_in *shm_addr, int sem_id)
 {
 	int value = BOARD_KEY_DEFAULT;
@@ -26,6 +27,8 @@ int getKeycode(shm_in *shm_addr, int sem_id)
 	return value;
 }
 
+// Get switch input from shared memory
+// Return true if there is input
 int getSwitch(shm_in *shm_addr, int sem_id, unsigned char sw_buff[])
 {
 	int i = 0;
@@ -105,14 +108,6 @@ int main_process(int shm_input_id, int shm_output_id)
 		if (getSwitch(shm_input_addr, sem_id, sw_buff) == TRUE)
 		{
 			// And print current input
-			/*
-			printf("switch: ");
-			for (i = 0; i < MAX_BUTTON; i++)
-			{
-				printf("%d ", sw_buff[i]);
-			}
-			printf("\n");
-			*/
 		}
 
 		// Handle switch input according to each mode's policy

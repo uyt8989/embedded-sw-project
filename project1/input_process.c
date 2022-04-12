@@ -19,6 +19,7 @@ void key_action(int dev_key, shm_in *shm_addr, int sem_id)
     int key_size = sizeof(struct input_event);
     int value;
 
+    // Get input from key of board
     if (read(dev_key, ev, key_size * KEY_BUFF_SIZE) < 0)
     {
         value = BOARD_KEY_DEFAULT;
@@ -28,7 +29,7 @@ void key_action(int dev_key, shm_in *shm_addr, int sem_id)
         value = ev[0].code;
     }
 
-    //Accessing critical section
+    // Accessing critical section
     semlock(sem_id, INPUT_SEMA);
     shm_addr->key_code = value;
     semunlock(sem_id, INPUT_SEMA);
@@ -45,7 +46,7 @@ void switch_action(int dev_sw, shm_in *shm_addr, int sem_id)
 
     memset(result, 0, sw_size);
 
-    // Get simultaneous input
+    // Take loops to get simultaneous input
     for (i = 0; i < 10000; i++)
     {
         if (read(dev_sw, &push_sw_buff, sw_size) < 0)
