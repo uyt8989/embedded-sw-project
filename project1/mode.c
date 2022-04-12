@@ -259,7 +259,7 @@ void counter_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])
         break;
     case M2_QUA_MODE:
         if (prev_mode != M2_QUA_MODE)
-            printf("Chage notation to Quaternary\n");
+            printf("Change notation to Quaternary\n");
         digit = 4;
         led = 0b00010000;
         // setLed(shm_addr, 0b00010000);
