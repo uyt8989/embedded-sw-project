@@ -160,7 +160,6 @@ void switch_action(int dev_sw, shm_in *shm_addr, int sem_id);
 int main_process(int shm_input_id, int shm_output_id);
 int getKeycode(shm_in *shm_addr, int sem_id);
 int getSwitch(shm_in *shm_addr, int sem_id, unsigned char sw_buff[]);
-
 void setFnd(shm_out *, int, int);
 void setDot(shm_out *, unsigned char *);
 void setLcd(shm_out *, char *);
@@ -168,7 +167,6 @@ void setLed(shm_out *, unsigned char);
 
 // output_process.c
 int output_process(int shm_input_id, int shm_output_id);
-
 int writeToFnd(shm_out *, int fd);
 int writeToDot(shm_out *, int fd);
 int writeToLcd(shm_out *, int fd);
@@ -177,12 +175,10 @@ void writeToLed(shm_out *, unsigned char *addr);
 // mode.c
 void clear_out_shm(shm_out *shm_addr);
 int mode_handler(shm_out *shm_addr, int sem_id, int d);
-
 void init_clock_mode(shm_out *shm_addr);
 void init_counter_mode(shm_out *shm_addr);
 void init_text_editor_mode(shm_out *shm_addr);
 void init_draw_board_mode(shm_out *shm_addr);
-
 void clock_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[]);
 void counter_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[]);
 void text_editor_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[]);
