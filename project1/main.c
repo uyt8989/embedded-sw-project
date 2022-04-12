@@ -1,3 +1,12 @@
+/*****************************************
+ *
+ * main function :
+ * 
+ * 1. Create child processes (input, main, output)
+ * 2. Create Shared memory and Semaphore for IPC
+ *
+ *****************************************/
+
 #include "mylib.h"
 
 int current_mode = MODE_1;
