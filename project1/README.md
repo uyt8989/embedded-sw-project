@@ -52,4 +52,4 @@ Device Driver :
 
 ### Usage
 1. make push (Host)
-2. /data/local/tmp  ./app (Device)
+2. ./data/local/tmp/app (Device)
