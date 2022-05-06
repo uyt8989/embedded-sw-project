@@ -1,5 +1,8 @@
 # Embeded System Software Homework
 
 
-1. Project1
-2. Project2
+## Project1
+1. Various device control
+
+## Project2
+2. Make device driver
