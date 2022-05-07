@@ -69,10 +69,16 @@ int main(int argc, char **argv)
 		return -1;
 	}
     
-	printf("input: %d %d %d\n", input.interval, input.cnt, input.init);
+    // print user's inputs
+	printf("input: %d %d ", input.interval, input.cnt);
+    for(i = 0; i < 4; i++) {
+        printf("%d", input.init[i]);
+    }
+    printf("\n");
 
+    // ioctl로 수정해야됨
 	write(dev_fd, &input, sizeof(input));
-	
+
     close(dev_fd);
 
 	return 0;
