@@ -30,7 +30,7 @@ static struct file_operations dev_driver_fops =
 };
 
 
-int __init kernel_timer_init(void)
+int __init dev_driver_init(void)
 {
 	int result;
 
@@ -51,7 +51,7 @@ int __init kernel_timer_init(void)
 	return 0;
 }
 
-void __exit kernel_timer_exit(void)
+void __exit dev_driver_exit(void)
 {
 	printk("kernel_timer_exit\n");
 	kernel_timer_usage = 0;
@@ -61,8 +61,8 @@ void __exit kernel_timer_exit(void)
 }
 
 
-module_init( kernel_timer_init);
-module_exit( kernel_timer_exit);
+module_init(dev_driver_init);
+module_exit(dev_driver_exit);
 
 MODULE_LICENSE ("GPL");
 MODULE_AUTHOR ("author");
