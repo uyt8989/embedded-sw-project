@@ -4,39 +4,24 @@
 #include <linux/uaccess.h>
 #include <linux/cdev.h>
 #include <linux/delay.h>
-#include <linux/ioctl.h>
-
 #include <asm/io.h>
 #include <asm/uaccess.h>
+#include "dot_font.h"
+#include "mydev.h"
 
-// register physical address
-#define IOM_FND_ADDRESS 0x08000004
-#define IOM_FPGA_DOT_ADDRESS 0x08000210
-#define IOM_LED_ADDRESS 0x08000016
-#define IOM_FPGA_TEXT_LCD_ADDRESS 0x08000090
-
-// device driver infromation
-#define DEV_DRIVER_NAME "dev_driver"
-#define DEV_DRIVER_MAJOR 242
-
-// ioctl command
-#define IOCTL_SET_OPTION _IOW(DEV_DRIVER_MAJOR, 0, char *)
-#define IOCTL_COMMAND _IO(DEV_DRIVER_MAJOR, 1)
-
-#define SUCCESS 0
-
-enum {
-	DRIVER_NOT_USED, DRIVER_OPENED
-}
+/* functions */
 
 static int fnd_write(const char *);
 static int dot_write(const char *);
 static int led_write(const char *);
 static int lcd_write(const char *);
-
+static void handle_devie(unsigned long);
+static void change_status();
 static int dev_driver_open(struct inode *, struct file *);
 static int dev_driver_release(struct inode *, struct file *);
 static long dev_driver_ioctl(struct file *, unsigned int, unsinged long);
+
+/* structs */
 
 static struct file_operations dev_driver_fops =
 {   
@@ -45,11 +30,24 @@ static struct file_operations dev_driver_fops =
 	.unlocked_ioctl = dev_driver_ioctl
 };
 
+static struct struct_my_timer {
+	struct timer_list timer;
+	int cnt;
+};
+
+/* Global variables */
+
+// usage counter for driver
 static char dev_driver_usage = ATOMIC_INIT(DRIVER_NOT_USED);
+
+// register address
 static unsigned char *fnd_addr;
 static unsigned char *dot_addr;
 static unsigned char *led_addr;
 static unsigned char *lcd_addr;
+
+static struct my_struct data;
+struct struct struct_my_timer my_timer;
 
 static int fnd_write(const char *data) {
 	unsigned short int value = 0;
@@ -85,9 +83,29 @@ static int lcd_write(const char *data) {
 	return SUCCESS;
 }
 
+static void handle_device(unsigned long timeout) {
+	struct struct_my_timer *p_data = (struct_my_timer *)timeout;
+
+	printk("Remain operation : %d\n", p_data->cnt);
+
+	if(--(p_data->cnt) < 0) return;
+
+	change_status();
+
+	my_timer.timer.expires = get_jiffies_64() + (data.interval * HZ / 10);
+	my_timer.timer.data = (unsigned long)&my_timer;
+	my_timer.timer.function = handle_device;
+	
+	add_timer(&my_timer.timer);
+}
+
+static void change_status() {
+
+}
+
 static int dev_driver_open(struct inode *minode, struct file *mfile) {
 	if(atomic_cmpxchg(&dev_driver_usage, DRIVER_NOT_USED, DRIVER_OPENED)) {
-		printk("dev_driver is already using\n");
+		printk("dev_driver is already used\n");
 		return -EBUSY;
 	}
 	
@@ -96,30 +114,40 @@ static int dev_driver_open(struct inode *minode, struct file *mfile) {
 	return SUCCESS;
 }
 
-
 static int dev_driver_release(struct inode *minode, struct file *mfile) {
-	printk("dev_driver is released");
-
 	atomic_set(&dev_driver_usage, DRIVER_NOT_USED);
+	
+	printk("dev_driver is released");
 
 	return SUCCESS;
 }
 
 static long dev_driver_ioctl(struct file *mfile, 
 			unsigned int ioctl_num, unsinged long ioctl_param) {
+	int result;
 
 	switch(ioctl_num) {
 		// set options
 		case IOCTL_SET_OPTION: 
-			
+			result = copy_from_user(&data, (void __user *)ioctl_param, sizeof(my_struct));
+			if(result) {
+				printk("Set option error\n");
+				return -EFAULT;
+			}
+			my_timer.timer.expires = jiffies + (data.interval * HZ / 10);
+			my_timer.timer.data = (unsigned long)&my_timer;
+			my_timer.timer.function = handle_device;
+			my_timer.cnt = data.cnt;
 			break;
 		// execute device
 		case IOCTL_COMMAND:
-
+			printk("Execute device\n");
+			del_timer_sync(&my_timer.timer);
+			add_timer(&my_timer.timer);
 			break;
 		default:
-			printk("wrong ioctl option\n");
-			return -1;
+			printk("Invalid ioctl option\n");
+			return -EFAULT;
 	}
 }
 
@@ -129,15 +157,19 @@ int __init dev_driver_init(void)
 
 	printk("dev_driver_init\n");
 
+	// reigster device
 	result = register_chrdev(DEV_DRIVER_MAJOR, DEV_DRIVER_NAME, &dev_driver_fops);
 
+	// register error
 	if(result < 0) {
 		printk("register error %d\n", result);
 		return result;
 	}
 
+	// print informations of driver
     printk("dev_file : /dev/%s , major : %d\n", DEV_DRIVER_NAME, DEV_DRIVER_MAJOR);
 
+	// map register's physical address
 	fnd_addr = ioremap(IOM_FND_ADDRESS, 0x4);
 	dot_addr = ioremap(IOM_FPGA_DOT_ADDRESS, 0x10);
 	led_addr = ioremap(IOM_LED_ADDRESS, 0x1);
@@ -152,18 +184,20 @@ int __init dev_driver_init(void)
 
 void __exit dev_driver_exit(void)
 {
-	printk("dev_driver_exit\n");
-
+	// release usage counter
 	atomic_set(&dev_driver_usage, DRIVER_NOT_USED);
 	
 	//del_timer_sync(&mydata.timer);
 
+	// unmap register's physical address
 	iounmap(fnd_addr);
 	iounmap(dot_addr);
 	iounmap(led_addr);
 	iounmap(lcd_addr);
 
 	unregister_chrdev(DEV_DRIVER_MAJOR, DEV_DRIVER_NAME);
+
+	printk("dev_driver_exit\n");
 }
 
 module_init(dev_driver_init);

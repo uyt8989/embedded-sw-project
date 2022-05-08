@@ -3,8 +3,8 @@
 	AUTH : Hong, Sung-Hyun
 		Huins, Inc */
 		
-#ifndef __FPGA_NUMBER__
-#define __FPGA_NUMBER__
+#ifndef __DOT_FONT_H__
+#define __DOT_FONT_H__
 
 unsigned char fpga_number[10][10] = {
 	{0x3e,0x7f,0x63,0x73,0x73,0x6f,0x67,0x63,0x7f,0x3e}, // 0

@@ -1,14 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
-
-struct my_struct {
-    char interval, cnt;
-    char init[4];
-};
+#include <sys/ioctl.h>
+#include "../module/mydev.h"
 
 struct my_struct input;
 
@@ -76,8 +73,11 @@ int main(int argc, char **argv)
     }
     printf("\n");
 
-    // ioctl로 수정해야됨
-	write(dev_fd, &input, sizeof(input));
+    // set options
+	ioctl(dev_fd, IOCTL_SET_OPTION, &input);
+
+    // execute command
+    ioctl(dev_fd, IOCTL_COMMAND);
 
     close(dev_fd);
 
