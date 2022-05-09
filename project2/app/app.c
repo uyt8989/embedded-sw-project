@@ -53,16 +53,17 @@ int main(int argc, char **argv)
 
     for(i = 0; i < 4; i++) {
         int temp_res = temp % 10;
+        printf("temp_res: %d\n", temp_res);
 
         if (temp_res != 0) {
             if(input.num == 0 && input.pos == -1) {           
                 input.num = temp_res;
                 input.pos = idx;
             }
-            else {
+            /* else {
                 printf("Invalid TIMER_INIT. You must have only one number greater than 1\n");
                 return -1;
-            }
+            }*/
         }
 
         idx--;
