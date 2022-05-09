@@ -47,7 +47,7 @@ static unsigned char *led_addr;
 static unsigned char *lcd_addr;
 
 static struct my_struct data;
-struct struct struct_my_timer my_timer;
+static struct struct_my_timer my_timer;
 
 static int fnd_write(const char *data) {
 	unsigned short int value = 0;
