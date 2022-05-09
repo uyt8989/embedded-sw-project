@@ -110,7 +110,7 @@ static void change_status() {
 
 static int dev_driver_open(struct inode *minode, struct file *mfile) {
 	//if(atomic_cmpxchg(&dev_driver_usage, DRIVER_NOT_USED, DRIVER_OPENED)) {
-	if(dev_driver_usage != DRIVER_NOT_USED)
+	if(dev_driver_usage != DRIVER_NOT_USED) {
 		printk("dev_driver is already used\n");
 		return -EBUSY;
 	}
