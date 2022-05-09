@@ -76,15 +76,17 @@ int main(int argc, char **argv)
         return -1;
     }
 
+    /*
 	dev_fd = open("/dev/dev_driver", O_WRONLY);
 	if (dev_fd < 0){
 		printf("Open Failed!\n");
 		return -1;
-	}
+	}*/
     
     // print user's inputs
 	printf("input: %d %d %d %d\n", input.interval, input.cnt, input.num, input.pos);
 
+    /*
     // set options
 	ioctl(dev_fd, IOCTL_SET_OPTION, &input);
 
@@ -92,6 +94,7 @@ int main(int argc, char **argv)
     ioctl(dev_fd, IOCTL_COMMAND);
 
     close(dev_fd);
+    */
 
 	return 0;
 }
