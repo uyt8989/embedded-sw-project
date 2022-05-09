@@ -45,6 +45,8 @@ int main(int argc, char **argv)
     // initial state
     input.num = 0; input.pos = -1;
 
+    printf("temp : %d\n", temp);
+
     // separate init to buffer
     int i, idx = 3;
 
