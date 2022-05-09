@@ -53,7 +53,7 @@ static struct struct_my_timer my_timer;
 static int fnd_write(const char *data) {
 	unsigned short int value = 0;
 	value = data[0] << 12 | data[1] << 8 | data[2] << 4 | data[3];
-	outw(value, (unsinged int)fnd_addr);
+	outw(value, (unsigned int)fnd_addr);
 	return SUCCESS;
 }
 
