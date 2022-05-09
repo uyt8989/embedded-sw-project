@@ -6,6 +6,7 @@
 #include <linux/delay.h>
 #include <asm/io.h>
 #include <asm/uaccess.h>
+#include <linux/fs.h>
 #include "dot_font.h"
 #include "mydev.h"
 
