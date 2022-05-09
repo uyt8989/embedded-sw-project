@@ -46,10 +46,9 @@ int main(int argc, char **argv)
 
     // initial state
     input.num = 100; input.pos = 100;
-    
+
     // separate init to buffer
     int i, idx = 3;
-
     for(i = 0; i < 4; i++) {
         int temp_res = temp % 10;
         //printf("temp_res: %d\n", temp_res);
@@ -71,22 +70,20 @@ int main(int argc, char **argv)
     }
     
     // init buffer must have exactly one number greater than 1
-    if(input.num == 0 && input.pos == -1) {
-        printf("Invalid TIMER_INIT. You must have exactly one number greater than 1\n");
+    if(input.num == 9) {
+        printf("Invalid TIMER_INIT. Check the value\n");
         return -1;
     }
 
-    /*
+    // print user's inputs
+	printf("input: %d %d %d %d\n", input.interval, input.cnt, input.num, input.pos);
+
 	dev_fd = open("/dev/dev_driver", O_WRONLY);
 	if (dev_fd < 0){
 		printf("Open Failed!\n");
 		return -1;
-	}*/
-    
-    // print user's inputs
-	printf("input: %d %d %d %d\n", input.interval, input.cnt, input.num, input.pos);
+	}
 
-    /*
     // set options
 	ioctl(dev_fd, IOCTL_SET_OPTION, &input);
 
@@ -94,7 +91,6 @@ int main(int argc, char **argv)
     ioctl(dev_fd, IOCTL_COMMAND);
 
     close(dev_fd);
-    */
 
 	return 0;
 }

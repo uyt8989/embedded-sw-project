@@ -148,6 +148,9 @@ static long dev_driver_ioctl(struct file *mfile,
 			my_timer.timer.data = (unsigned long)&my_timer;
 			my_timer.timer.function = handle_device;
 			my_timer.cnt = data.cnt;
+
+			printk("%d %d %d %d\n", data.interval, data.cnt, data.num, data.pos);
+
 			break;
 		// execute device
 		case IOCTL_COMMAND:
