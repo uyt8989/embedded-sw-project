@@ -62,7 +62,7 @@ int main(int argc, char **argv)
             }
             else {
                 printf("Invalid TIMER_INIT. You must have only one number greater than 1\n");
-                return -1;
+                //return -1;
             }
         }
 
@@ -84,7 +84,6 @@ int main(int argc, char **argv)
     
     // print user's inputs
 	printf("input: %d %d %d %d\n", input.interval, input.cnt, input.num, input.pos);
-    printf("\n");
 
     // set options
 	ioctl(dev_fd, IOCTL_SET_OPTION, &input);
