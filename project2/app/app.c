@@ -45,7 +45,7 @@ int main(int argc, char **argv)
     }
 
     // initial state
-    input.num = 0; input.pos = -1;
+    input.num = 100; input.pos = 100;
 
 
     // separate init to buffer
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
         printf("temp_res: %d\n", temp_res);
 
         if (temp_res != 0) {
-            if(input.num == 0 && input.pos == -1) {           
+            if(input.num == 100 && input.pos == 100) {           
                 input.num = temp_res;
                 input.pos = idx;
             }
