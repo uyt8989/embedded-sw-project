@@ -1,14 +1,13 @@
 CC := arm-none-linux-gnueabi-gcc
-OBJDIR = build/
 
 app:
-	arm-none-linux-gnueabi-gcc -static -o $(OBJDIR)app app.c
+	arm-none-linux-gnueabi-gcc -static -o app app.c
 
 .PHONY: clean
 clean : 
-	rm -rf $(OBJDIR)
+	rm -rf app
 
 .PHONY: push
 push:
 	make
-	adb push $(OBJDIR)app /data/local/tmp
+	adb push app /data/local/tmp

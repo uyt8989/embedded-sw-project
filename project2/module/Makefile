@@ -1,17 +1,20 @@
 obj-m = dev_driver.o 
 
-OBJDIR = build/
 KDIR := /work/achroimx_kernel
 PWD := $(shell pwd)
 
 driver : 
-	$(MAKE) -C $(KDIR) SUBDIRS=$(PWD)$(OBJDIR) modules
+	$(MAKE) -C $(KDIR) SUBDIRS=$(PWD) modules
 
 .PHONY: clean
 clean : 
-	rm -rf $(OBJDIR)
+	rm -rf *.o
+	rm -rf *.ko
+	rm -rf *.mod.c
+	rm -rf *.order
+	rm -rf *.symvers
 
 .PHONY: push
 push:
 	make
-	adb push $(OBJDIR)dev_driver.ko /data/local/tmp
+	adb push dev_driver.ko /data/local/tmp
