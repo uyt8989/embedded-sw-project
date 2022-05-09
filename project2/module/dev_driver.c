@@ -39,7 +39,8 @@ static struct struct_my_timer {
 /* Global variables */
 
 // usage counter for driver
-static char dev_driver_usage = ATOMIC_INIT(DRIVER_NOT_USED);
+//static char dev_driver_usage = ATOMIC_INIT(DRIVER_NOT_USED);
+static char dev_driver_usage = DRIVER_NOT_USED;
 
 // register address
 static unsigned char *fnd_addr;
@@ -78,8 +79,8 @@ static int lcd_write(const char *data) {
 	int i;
 	unsigned short int value = 0;
 	for(i = 0; i < 32; i++) {
-		value = (data[i] & 0xFF) << 8 | value[i + 1] & 0xFF;
-		outw(value,(unsigned int)lcd_addr+(i++));
+		value = (data[i] & 0xFF) << 8 | data[i + 1] & 0xFF;
+		outw(value, (unsigned int)lcd_addr + (i++));
 	}
 	return SUCCESS;
 }
@@ -108,10 +109,13 @@ static void change_status() {
 }
 
 static int dev_driver_open(struct inode *minode, struct file *mfile) {
-	if(atomic_cmpxchg(&dev_driver_usage, DRIVER_NOT_USED, DRIVER_OPENED)) {
+	//if(atomic_cmpxchg(&dev_driver_usage, DRIVER_NOT_USED, DRIVER_OPENED)) {
+	if(dev_driver_usage != DRIVER_NOT_USED)
 		printk("dev_driver is already used\n");
 		return -EBUSY;
 	}
+
+	dev_driver_usage = DRIVER_OPENED;
 	
 	printk("dev_driver is successfully opened\n");
 
@@ -119,8 +123,9 @@ static int dev_driver_open(struct inode *minode, struct file *mfile) {
 }
 
 static int dev_driver_release(struct inode *minode, struct file *mfile) {
-	atomic_set(&dev_driver_usage, DRIVER_NOT_USED);
-	
+	//atomic_set(&dev_driver_usage, DRIVER_NOT_USED);
+	dev_driver_usage = DRIVER_NOT_USED;
+
 	printk("dev_driver is released");
 
 	return SUCCESS;
@@ -189,8 +194,9 @@ int __init dev_driver_init(void)
 void __exit dev_driver_exit(void)
 {
 	// release usage counter
-	atomic_set(&dev_driver_usage, DRIVER_NOT_USED);
-	
+	//atomic_set(&dev_driver_usage, DRIVER_NOT_USED);
+	dev_driver_usage = DRIVER_NOT_USED;
+
 	del_timer_sync(&my_timer.timer);
 
 	// unmap register's physical address
