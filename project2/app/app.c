@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     // get arguments
     input.interval = atoi(argv[1]);
     input.cnt = atoi(argv[2]);
-    char temp = atoi(argv[3]);
+    int temp = atoi(argv[3]);
 
     // invalid interval
     if(1 > input.interval || input.interval > 100) {
