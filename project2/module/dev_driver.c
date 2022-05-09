@@ -19,7 +19,7 @@ static void handle_devie(unsigned long);
 static void change_status();
 static int dev_driver_open(struct inode *, struct file *);
 static int dev_driver_release(struct inode *, struct file *);
-static long dev_driver_ioctl(struct file *, unsigned int, unsinged long);
+static long dev_driver_ioctl(struct file *, unsigned int, unsigned long);
 
 /* structs */
 
