@@ -60,10 +60,10 @@ int main(int argc, char **argv)
                 input.num = temp_res;
                 input.pos = idx;
             }
-            /* else {
+            else {
                 printf("Invalid TIMER_INIT. You must have only one number greater than 1\n");
                 return -1;
-            }*/
+            }
         }
 
         idx--;
