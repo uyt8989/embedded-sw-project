@@ -46,24 +46,29 @@ int main(int argc, char **argv)
     input.num = 0; input.pos = -1;
 
     // separate init to buffer
-    int i, idx = 0;
-    for(i = 1000; i >= 1; i /= 10, idx++) {
-        if(temp / i != 0) {
-            if(input.num == 0 && input.pos == -1) {
-                input.num = temp / i;
+    int i, idx = 3;
+
+    for(i = 0; i < 4; i++) {
+        int temp_res = temp % 10;
+
+        if (temp_res != 0) {
+            if(input.num == 0 && input.pos == -1) {           
+                input.num = temp_res;
                 input.pos = idx;
             }
-            // init buffer must have only one number greater than 1
             else {
                 printf("Invalid TIMER_INIT. You must have only one number greater than 1\n");
                 return -1;
             }
         }
+
+        idx--;
+        temp = temp / 10;
     }
     
     // init buffer must have exactly one number greater than 1
     if(input.num == 0 && input.pos == -1) {
-        printf("Invalid TIMER_INIT. You must have only one number greater than 1\n");
+        printf("Invalid TIMER_INIT. You must have exactly one number greater than 1\n");
         return -1;
     }
 
