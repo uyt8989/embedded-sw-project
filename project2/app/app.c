@@ -54,6 +54,7 @@ int main(int argc, char **argv)
     for(i = 0; i < 4; i++) {
         int temp_res = temp % 10;
         printf("temp_res: %d\n", temp_res);
+        printf("%d %d\n", input.num, input.pos);
 
         if (temp_res != 0) {
             if(input.num == 100 && input.pos == 100) {           
