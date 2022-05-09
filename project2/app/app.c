@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-    // set options
+    // set options     
 	ioctl(dev_fd, IOCTL_SET_OPTION, &input);
 
     // execute command
