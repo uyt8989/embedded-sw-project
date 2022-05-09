@@ -85,7 +85,7 @@ static int lcd_write(const char *data) {
 }
 
 static void handle_device(unsigned long timeout) {
-	struct struct_my_timer *p_data = (struct_my_timer *)timeout;
+	struct struct_my_timer *p_data = (struct struct_my_timer *)timeout;
 
 	printk("Remain operations : %d\n", p_data->cnt);
 
@@ -127,13 +127,13 @@ static int dev_driver_release(struct inode *minode, struct file *mfile) {
 }
 
 static long dev_driver_ioctl(struct file *mfile, 
-			unsigned int ioctl_num, unsinged long ioctl_param) {
+			unsigned int ioctl_num, unsigned long ioctl_param) {
 	int result;
 
 	switch(ioctl_num) {
 		// set options
 		case IOCTL_SET_OPTION: 
-			result = copy_from_user(&data, (void __user *)ioctl_param, sizeof(my_struct));
+			result = copy_from_user(&data, (void __user *)ioctl_param, sizeof(struct my_struct));
 			if(result) {
 				printk("Set option error\n");
 				return -EFAULT;
