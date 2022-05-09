@@ -16,8 +16,6 @@ IOM_FPGA_DOT_ADDRESS	module/mydev.h	16;"	d
 IOM_FPGA_TEXT_LCD_ADDRESS	module/mydev.h	18;"	d
 IOM_LED_ADDRESS	module/mydev.h	17;"	d
 KDIR	module/Makefile	/^KDIR := \/work\/achroimx_kernel$/;"	m
-OBJDIR	app/Makefile	/^OBJDIR = build\/$/;"	m
-OBJDIR	module/Makefile	/^OBJDIR = build\/$/;"	m
 PWD	module/Makefile	/^PWD := $(shell pwd)$/;"	m
 SUCCESS	module/mydev.h	20;"	d
 __DOT_FONT_H__	module/dot_font.h	7;"	d
@@ -34,7 +32,7 @@ dev_driver_init	module/dev_driver.c	/^module_init(dev_driver_init);$/;"	v
 dev_driver_ioctl	module/dev_driver.c	/^static long dev_driver_ioctl(struct file *mfile, $/;"	f	file:
 dev_driver_open	module/dev_driver.c	/^static int dev_driver_open(struct inode *minode, struct file *mfile) {$/;"	f	file:
 dev_driver_release	module/dev_driver.c	/^static int dev_driver_release(struct inode *minode, struct file *mfile) {$/;"	f	file:
-dev_driver_usage	module/dev_driver.c	/^static char dev_driver_usage = ATOMIC_INIT(DRIVER_NOT_USED);$/;"	v	file:
+dev_driver_usage	module/dev_driver.c	/^static char dev_driver_usage = DRIVER_NOT_USED;$/;"	v	file:
 dot_addr	module/dev_driver.c	/^static unsigned char *dot_addr;$/;"	v	file:
 dot_write	module/dev_driver.c	/^static int dot_write(const char *data) {$/;"	f	file:
 fnd_addr	module/dev_driver.c	/^static unsigned char *fnd_addr;$/;"	v	file:
@@ -51,7 +49,7 @@ led_addr	module/dev_driver.c	/^static unsigned char *led_addr;$/;"	v	file:
 led_write	module/dev_driver.c	/^static int led_write(const char *data) {$/;"	f	file:
 main	app/app.c	/^int main(int argc, char **argv)$/;"	f
 my_struct	module/mydev.h	/^struct my_struct {$/;"	s
-my_timer	module/dev_driver.c	/^struct struct struct_my_timer my_timer;$/;"	v	typeref:struct:struct_my_timer
+my_timer	module/dev_driver.c	/^static struct struct_my_timer my_timer;$/;"	v	typeref:struct:struct_my_timer	file:
 num	module/mydev.h	/^    char interval, cnt, num, pos;$/;"	m	struct:my_struct
 obj-m	module/Makefile	/^obj-m = dev_driver.o $/;"	m
 pos	module/mydev.h	/^    char interval, cnt, num, pos;$/;"	m	struct:my_struct

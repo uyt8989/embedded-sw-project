@@ -23,6 +23,14 @@ enum {
 	DRIVER_NOT_USED, DRIVER_OPENED
 };
 
+enum {
+	PRINT_STATE, TURN_OFF
+};
+
+const char my_id[] =   "20171659        ";
+const char my_name[] = "Yoo Kyungyun    ";
+const char blank_text[32] = {' ', };
+
 // ioctl command
 #define IOCTL_SET_OPTION _IOW(DEV_DRIVER_MAJOR, 0, struct my_struct)
 #define IOCTL_COMMAND _IO(DEV_DRIVER_MAJOR, 1)

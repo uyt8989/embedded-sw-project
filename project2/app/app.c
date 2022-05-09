@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     input.num = 100; input.pos = 100;
 
     // separate init to buffer
-    int i, idx = 3;
+    int i;
     for(i = 0; i < 4; i++) {
         int temp_res = temp % 10;
         //printf("temp_res: %d\n", temp_res);
@@ -57,15 +57,14 @@ int main(int argc, char **argv)
         if (temp_res != 0) {
             if(input.num == 100 && input.pos == 100) {           
                 input.num = temp_res;
-                input.pos = idx;
+                input.pos = i;
             }
             else {
                 printf("Invalid TIMER_INIT. You must have only one number greater than 1\n");
                 return -1;
             }
         }
-
-        idx--;
+        
         temp = temp / 10;
     }
     
