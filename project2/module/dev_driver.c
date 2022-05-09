@@ -86,9 +86,12 @@ static int lcd_write(const char *data) {
 static void handle_device(unsigned long timeout) {
 	struct struct_my_timer *p_data = (struct_my_timer *)timeout;
 
-	printk("Remain operation : %d\n", p_data->cnt);
+	printk("Remain operations : %d\n", p_data->cnt);
 
-	if(--(p_data->cnt) < 0) return;
+	if(--(p_data->cnt) < 0) {
+		printk("Excution is finished.\n");
+		return;
+	}
 
 	change_status();
 
@@ -134,6 +137,7 @@ static long dev_driver_ioctl(struct file *mfile,
 				printk("Set option error\n");
 				return -EFAULT;
 			}
+			del_timer_sync(&my_timer.timer);
 			my_timer.timer.expires = jiffies + (data.interval * HZ / 10);
 			my_timer.timer.data = (unsigned long)&my_timer;
 			my_timer.timer.function = handle_device;
@@ -142,7 +146,6 @@ static long dev_driver_ioctl(struct file *mfile,
 		// execute device
 		case IOCTL_COMMAND:
 			printk("Execute device\n");
-			del_timer_sync(&my_timer.timer);
 			add_timer(&my_timer.timer);
 			break;
 		default:
@@ -175,7 +178,7 @@ int __init dev_driver_init(void)
 	led_addr = ioremap(IOM_LED_ADDRESS, 0x1);
 	lcd_addr = ioremap(IOM_FPGA_TEXT_LCD_ADDRESS, 0x32);
 
-	init_timer(&(mydata.timer));
+	init_timer(&(my_timer.timer));
 
 	printk("init module\n");
 
@@ -187,7 +190,7 @@ void __exit dev_driver_exit(void)
 	// release usage counter
 	atomic_set(&dev_driver_usage, DRIVER_NOT_USED);
 	
-	//del_timer_sync(&mydata.timer);
+	del_timer_sync(&my_timer.timer);
 
 	// unmap register's physical address
 	iounmap(fnd_addr);

@@ -4,8 +4,7 @@
 #include <linux/ioctl.h>
 
 struct my_struct {
-    char interval, cnt;
-    char init[4];
+    char interval, cnt, num, pos;
 };
 
 // device driver infromation

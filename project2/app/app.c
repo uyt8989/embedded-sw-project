@@ -42,22 +42,29 @@ int main(int argc, char **argv)
         return -1;
     }
 
+    // initial state
+    input.num = 0; input.pos = -1;
+
     // separate init to buffer
     int i, idx = 0;
-    for(i = 1000; i >= 1; i /= 10) 
-        input.init[idx++] = temp / i;
-    
-    // init buffer must have only one number greater than 1
-    char flag = 0;
-    for(i = 0; i < 4; i++) {
-        if(input.init[i] != 0) {
-            // there are more than two numbers
-            if(flag != 0) {
+    for(i = 1000; i >= 1; i /= 10, idx++) {
+        if(temp / i != 0) {
+            if(input.num == 0 && input.pos == -1) {
+                input.num = temp / i;
+                input.pos = idx;
+            }
+            // init buffer must have only one number greater than 1
+            else {
                 printf("Invalid TIMER_INIT. You must have only one number greater than 1\n");
                 return -1;
             }
-            flag = 1;
         }
+    }
+    
+    // init buffer must have exactly one number greater than 1
+    if(input.num == 0 && input.pos == -1) {
+        printf("Invalid TIMER_INIT. You must have only one number greater than 1\n");
+        return -1;
     }
 
 	dev_fd = open("/dev/dev_driver", O_WRONLY);
@@ -67,10 +74,7 @@ int main(int argc, char **argv)
 	}
     
     // print user's inputs
-	printf("input: %d %d ", input.interval, input.cnt);
-    for(i = 0; i < 4; i++) {
-        printf("%d", input.init[i]);
-    }
+	printf("input: %d %d %d %d\n", input.interval, input.cnt, input.num, input.pos);
     printf("\n");
 
     // set options
