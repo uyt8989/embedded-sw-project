@@ -18,7 +18,7 @@ static int fnd_write(const char, const char);
 static int dot_write(const char *);
 static int led_write(unsigned short int);
 static int lcd_write(const char *);
-static int device_write(unsigned long);
+static int device_write(const int);
 static void handle_timer(unsigned long);
 static void handle_device();
 static int dev_driver_open(struct inode *, struct file *);
