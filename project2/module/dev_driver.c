@@ -222,7 +222,7 @@ static long dev_driver_ioctl(struct file *mfile,
 			my_timer.timer.expires = get_jiffies_64() + (my_data.interval * HZ / 10);
 			my_timer.timer.data = (unsigned long)&my_timer;
 			my_timer.timer.function = handle_timer;
-			my_timer.cnt = my_data.cnt;
+			my_timer.cnt = my_data.cnt - 1;
 
 			// initialize options
 			num = my_data.num;
