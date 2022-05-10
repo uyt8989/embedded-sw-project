@@ -18,7 +18,7 @@ static int fnd_write(const char, const char);
 static int dot_write(const char *);
 static int led_write(unsigned short int);
 static int lcd_write(const char *);
-static int device_write();
+static int device_write(unsigned long);
 static void handle_timer(unsigned long);
 static void handle_device();
 static int dev_driver_open(struct inode *, struct file *);
@@ -253,7 +253,7 @@ static long dev_driver_ioctl(struct file *mfile,
 			printk("Invalid ioctl option\n");
 			return -EFAULT;
 	}
-	
+
 	return SUCCESS;
 }
 
@@ -276,7 +276,7 @@ int __init dev_driver_init(void)
 	printk("********************************************\n");
     printk("* dev_file: /dev/%s, major: %d    *\n", DEV_DRIVER_NAME, DEV_DRIVER_MAJOR);
 	printk("* mknod /dev/dev_driver c 242 0            *\n");
-	printk("********************************************\n")
+	printk("********************************************\n");
 	// map register's physical address
 	fnd_addr = ioremap(IOM_FND_ADDRESS, 0x4);
 	dot_addr = ioremap(IOM_FPGA_DOT_ADDRESS, 0x10);
