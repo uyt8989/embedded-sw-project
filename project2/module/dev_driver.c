@@ -14,9 +14,9 @@
 
 /* functions */
 
-static int fnd_write(const char *);
+static int fnd_write(const char, const char);
 static int dot_write(const char *);
-static int led_write(const char *);
+static int led_write(unsigned short int);
 static int lcd_write(const char *);
 static int device_write();
 static void handle_timer(unsigned long);
@@ -101,6 +101,8 @@ static int device_write(const int sig) {
 		led_write((unsigned short int)0);
 		lcd_write(blank_text);
 	}
+
+	return SUCCESS;
 }
 
 static void handle_timer(unsigned long timeout) {
@@ -124,7 +126,7 @@ static void handle_timer(unsigned long timeout) {
 	device_write(PRINT_STATE);
 
 	// set next timer
-	my_timer.timer.expires = get_jiffies_64() + (data.interval * HZ / 10);
+	my_timer.timer.expires = get_jiffies_64() + (my_data.interval * HZ / 10);
 	my_timer.timer.data = (unsigned long)&my_timer;
 	my_timer.timer.function = handle_timer;
 	
@@ -159,7 +161,7 @@ static void handle_device() {
 			text[i] = text[i + 1];
 		// chage direction
 		if(text[0] == '2') id_dir = MOVE_RIGHT;
-		brea;
+		break;
 	}
 	
 	// move name
@@ -251,6 +253,8 @@ static long dev_driver_ioctl(struct file *mfile,
 			printk("Invalid ioctl option\n");
 			return -EFAULT;
 	}
+	
+	return SUCCESS;
 }
 
 int __init dev_driver_init(void)
@@ -269,7 +273,7 @@ int __init dev_driver_init(void)
 	}
 
 	// print informations of driver
-	printk("********************************************\n")
+	printk("********************************************\n");
     printk("* dev_file: /dev/%s, major: %d    *\n", DEV_DRIVER_NAME, DEV_DRIVER_MAJOR);
 	printk("* mknod /dev/dev_driver c 242 0            *\n");
 	printk("********************************************\n")
