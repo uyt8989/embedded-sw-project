@@ -108,8 +108,10 @@ static int device_write(const int sig) {
 static void handle_timer(unsigned long timeout) {
 	struct struct_my_timer *p_data = (struct struct_my_timer *)timeout;
 
+	printk("check\n");
+
 	// print remain iterations
-	if(p_data->cnt % 5 == 0 || p_data->cnt < 10){
+	if((p_data->cnt) % 5 == 0 || (p_data->cnt) < 10){
 		printk("Remain iterations : %d\n", p_data->cnt);
 	}
 
