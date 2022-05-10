@@ -221,7 +221,7 @@ static long dev_driver_ioctl(struct file *mfile,
 
 			// set first timer
 			del_timer_sync(&my_timer.timer);
-			my_timer.timer.expires = get_jiffies_64() + (my_data.interval * HZ / 10);
+			my_timer.timer.expires = jiffies + (my_data.interval * HZ / 10);
 			my_timer.timer.data = (unsigned long)&my_timer;
 			my_timer.timer.function = handle_timer;
 			my_timer.cnt = my_data.cnt - 1;
@@ -244,7 +244,9 @@ static long dev_driver_ioctl(struct file *mfile,
 			printk("Execute device\n");
 			
 			// start first timer
-			add_timer(&my_timer.timer);
+			add_timer(&(my_timer.timer));
+
+			printk("add timer done\n");
 
 			break;
 
@@ -308,7 +310,6 @@ void __exit dev_driver_exit(void)
 	printk("********************************************\n");
 	printk("* dev_driver exit\n");
 	printk("* rm /dev/dev_driver\n");
-	printk("* rmmod /dev_driver.ko\n");
 	printk("********************************************\n");
 }
 
