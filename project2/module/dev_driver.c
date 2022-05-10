@@ -2,11 +2,13 @@
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/uaccess.h>
+#include <linux/fs.h>
 #include <linux/cdev.h>
 #include <linux/delay.h>
+#include <linux/timer.h>
 #include <asm/io.h>
 #include <asm/uaccess.h>
-#include <linux/fs.h>
+#include <asm/param.h>
 #include "dot_font.h"
 #include "mydev.h"
 
@@ -146,29 +148,33 @@ static void handle_device() {
 
 	// move id
 	switch(id_dir) {
-	case 1: // move id right
+	case MOVE_RIGHT: // move id right
 		for(i = 15; i > 0; i--)
 			text[i] = text[i - 1];
-		if(text[15] == '9') id_dir = 2;
+		// chage direction
+		if(text[15] == '9') id_dir = MOVE_LEFT;
 		break;
-	case 2: // move id left
+	case MOVE_LEFT: // move id left
 		for(i = 0; i < 15; i++) 
 			text[i] = text[i + 1];
-		if(text[0] == '2') id_dir = 1;
+		// chage direction
+		if(text[0] == '2') id_dir = MOVE_RIGHT;
 		brea;
 	}
 	
 	// move name
 	switch (name_dir) {
-	case 1: // move name right
+	case MOVE_RIGHT: // move name right
 		for(i = 31; i > 16; i--)
 			text[i] = text[i - 1];
-		if(text[31] == 'n') name_dir = 2;
+		// chage direction
+		if(text[31] == 'n') name_dir = MOVE_LEFT;
 		break;
-	case 2:  // move name left 
+	case MOVE_LEFT:  // move name left 
 		for(i = 16; i < 31; i++) 
 			text[i] = text[i + 1];
-		if(text[16] == 'Y') name_dir = 1;
+		// chage direction
+		if(text[16] == 'Y') name_dir = MOVE_RIGHT;
 	}
 }
 
@@ -213,7 +219,7 @@ static long dev_driver_ioctl(struct file *mfile,
 
 			// set first timer
 			del_timer_sync(&my_timer.timer);
-			my_timer.timer.expires = jiffies + (my_data.interval * HZ / 10);
+			my_timer.timer.expires = get_jiffies_64() + (my_data.interval * HZ / 10);
 			my_timer.timer.data = (unsigned long)&my_timer;
 			my_timer.timer.function = handle_timer;
 			my_timer.cnt = my_data.cnt;
@@ -224,7 +230,7 @@ static long dev_driver_ioctl(struct file *mfile,
 			flag = 1 << num;
 			sprintf(text, my_id);
 			sprintf(text + 16, my_name);
-			id_dir = 1; name_dir = 1;
+			id_dir = MOVE_RIGHT; name_dir = MOVE_RIGHT;
 
 			// set initial state of device
 			device_write(PRINT_STATE);

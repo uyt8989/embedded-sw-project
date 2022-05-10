@@ -27,6 +27,10 @@ enum {
 	PRINT_STATE, TURN_OFF
 };
 
+enum {
+	MOVE_LEFT, MOVE_RIGHT
+}
+
 const char my_id[] =   "20171659        ";
 const char my_name[] = "Yoo Kyungyun    ";
 const char blank_text[32] = {' ', };
