@@ -219,13 +219,6 @@ static long dev_driver_ioctl(struct file *mfile,
 			// print options
 			printk("%d %d %d %d\n", my_data.interval, my_data.cnt, my_data.num, my_data.pos);
 
-			// set first timer
-			del_timer_sync(&my_timer.timer);
-			my_timer.timer.expires = jiffies + (my_data.interval * HZ / 10);
-			my_timer.timer.data = (unsigned long)&my_timer;
-			my_timer.timer.function = handle_timer;
-			my_timer.cnt = my_data.cnt - 1;
-
 			// initialize options
 			num = my_data.num;
 			pos = my_data.pos;
@@ -243,6 +236,13 @@ static long dev_driver_ioctl(struct file *mfile,
 		case IOCTL_COMMAND:
 			printk("Execute device\n");
 			
+			// set first timer
+			del_timer_sync(&my_timer.timer);
+			my_timer.timer.expires = jiffies + (my_data.interval * HZ / 10);
+			my_timer.timer.data = (unsigned long)&my_timer;
+			my_timer.timer.function = handle_timer;
+			my_timer.cnt = my_data.cnt - 1;
+
 			// start first timer
 			add_timer(&(my_timer.timer));
 
