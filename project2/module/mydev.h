@@ -29,7 +29,7 @@ enum {
 
 enum {
 	MOVE_LEFT, MOVE_RIGHT
-}
+};
 
 const char my_id[16] =   "20171659        ";
 const char my_name[16] = "Yoo Kyungyun    ";
