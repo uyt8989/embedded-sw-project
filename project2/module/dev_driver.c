@@ -5,10 +5,8 @@
 #include <linux/fs.h>
 #include <linux/cdev.h>
 #include <linux/delay.h>
-#include <linux/timer.h>
 #include <asm/io.h>
 #include <asm/uaccess.h>
-#include <asm/param.h>
 #include "dot_font.h"
 #include "mydev.h"
 
