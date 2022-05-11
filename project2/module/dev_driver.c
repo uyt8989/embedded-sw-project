@@ -5,6 +5,7 @@
 #include <linux/fs.h>
 #include <linux/cdev.h>
 #include <linux/delay.h>
+#include <linux/platform_device.h>
 #include <asm/io.h>
 #include <asm/uaccess.h>
 #include "dot_font.h"
@@ -17,8 +18,7 @@ static int dot_write(const char *);
 static int led_write(unsigned short int);
 static int lcd_write(const char *);
 static int device_write(const int);
-static void add_my_timer(struct timer_list *);
-static void handle_timer(unsigned long);
+static void kernel_timer_blink(unsigned long);
 static void handle_status();
 static int dev_driver_open(struct inode *, struct file *);
 static int dev_driver_release(struct inode *, struct file *);
@@ -33,12 +33,13 @@ static struct file_operations dev_driver_fops =
 	.unlocked_ioctl = dev_driver_ioctl
 };
 
-static struct struct_my_timer {
+static struct struct_mydata {
 	struct timer_list timer;
-	int cnt;
+	int count;
 };
 
 /* Global variables */
+struct struct_mydata mydata;
 
 // usage counter for driver
 //static char dev_driver_usage = ATOMIC_INIT(DRIVER_NOT_USED);
@@ -51,7 +52,6 @@ static unsigned char *led_addr;
 static unsigned char *lcd_addr;
 
 static struct my_struct my_data;
-struct struct_my_timer my_timer;
 static char text[32];
 static char num, pos, flag, id_dir, name_dir;
 
@@ -104,46 +104,23 @@ static int device_write(const int sig) {
 	return SUCCESS;
 }
 
-static void add_my_timer(struct timer_list *timer) {
-	// set timer
-	timer->expires = get_jiffies_64() + (my_data.interval * HZ / 10);
-	printk("expire\n");
-	timer->data = (unsigned long)&my_timer;
-	printk("data\n");
-	timer->function = handle_timer;
-	printk("function\n");
-	
-	printk("set done\n");
+static void kernel_timer_blink(unsigned long timeout) {
+	struct struct_mydata *p_data = (struct struct_mydata*)timeout;
 
-	// add timer
-	add_timer(timer);
-	printk("add timer\n");
-}
+	if(p_data->count % 5 == 0 || p_data->count < 10)
+		printk("Remain iterations %d\n", p_data->count);
 
-static void handle_timer(unsigned long timeout) {
-	struct struct_my_timer *p_data = (struct struct_my_timer *)timeout;
-
-	printk("check\n");
-
-	// print remain iterations
-	if((p_data->cnt) % 5 == 0 || (p_data->cnt) < 10){
-		printk("Remain iterations : %d\n", p_data->cnt);
-	}
-
-	// stop iteration
-	if(--(p_data->cnt) < 0) {
-		printk("Excution is finished.\n");
-		// turn off the device
-		device_write(TURN_OFF);
+	p_data->count--;
+	if( p_data->count < 0 ) {
+		printk("Execution is ended\n");
 		return;
 	}
 
-	// reflect data to device
-	handle_status();
-	device_write(PRINT_STATE);
+	mydata.timer.expires = get_jiffies_64() + (1 * HZ);
+	mydata.timer.data = (unsigned long)&mydata;
+	mydata.timer.function = kernel_timer_blink;
 
-	// add next timer
-	add_my_timer(&my_timer.timer);
+	add_timer(&mydata.timer);
 }
 
 static void handle_status() {
@@ -250,21 +227,22 @@ static long dev_driver_ioctl(struct file *mfile,
 		case IOCTL_COMMAND:
 			printk("Execute device\n");
 			
-			/*
 			// set first timer
-			del_timer_sync(&my_timer.timer);
+			del_timer_sync(&mydata.timer);
 			
 			printk("delete timer\n");
 
-			my_timer.cnt = my_data.cnt - 1;
+			mydata.count = my_data.cnt - 1;
 			
 			printk("set count done\n");
 
 			// start first timer
-			add_my_timer(&my_timer.timer);
+			mydata.timer.expires = jiffies + (1 * HZ);
+			mydata.timer.data = (unsigned long)&mydata;
+			mydata.timer.function	= kernel_timer_blink;
 
 			printk("add timer done\n");
-			*/
+			
 			break;
 
 		// invalid ioctl command
@@ -304,7 +282,7 @@ int __init dev_driver_init(void)
 	lcd_addr = ioremap(IOM_FPGA_TEXT_LCD_ADDRESS, 0x32);
 
 	// initialize timer
-	init_timer(&my_timer.timer);
+	init_timer(&(mydata.timer));
 
 	printk("init module\n");
 
@@ -317,7 +295,7 @@ void __exit dev_driver_exit(void)
 	//atomic_set(&dev_driver_usage, DRIVER_NOT_USED);
 	dev_driver_usage = DRIVER_NOT_USED;
 
-	del_timer_sync(&my_timer.timer);
+	del_timer_sync(&mydata.timer);
 
 	// unmap register's physical address
 	iounmap(fnd_addr);
