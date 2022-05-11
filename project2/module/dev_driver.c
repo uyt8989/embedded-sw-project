@@ -15,7 +15,7 @@
 
 static int fnd_write(const char, const char);
 static int dot_write(const char *);
-static int led_write(unsigned short int);
+static int led_write(const char);
 static int lcd_write(const char *);
 static int device_write(const int);
 static void kernel_timer_blink(unsigned long);
@@ -75,7 +75,8 @@ static int dot_write(const char *data) {
 
 static int led_write(const char number) {
 	unsigned short int value = 0;
-	value = value | ( 1 << (8 - number));
+	if(number != 0)
+		value = value | ( 1 << (8 - number));
 	outw(value, (unsigned int)led_addr);
 	return SUCCESS;
 }
@@ -94,13 +95,13 @@ static int device_write(const int sig) {
 	if(sig == PRINT_STATE) {
 		fnd_write(num, pos);
 		dot_write(&fpga_number[num][0]);
-		led_write((unsigned short int)1 << num);
+		led_write(num);
 		lcd_write(text);
 	}
 	else if (sig == TURN_OFF){
 		fnd_write(0, 0);
 		dot_write(fpga_set_blank);
-		led_write((unsigned short int)0);
+		led_write(0);
 		lcd_write(text);
 	}
 
