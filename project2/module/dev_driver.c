@@ -218,8 +218,8 @@ static long dev_driver_ioctl(struct file *mfile,
 			pos = my_data.pos;
 			user_HZ = my_data.interval * HZ / 10;
 			flag = 1 << num;
-			sprintf(text, my_id);
-			sprintf(text + 16, my_name);
+			//sprintf(text, my_id);
+			//sprintf(text + 16, my_name);
 			id_dir = MOVE_RIGHT; name_dir = MOVE_RIGHT;
 
 			// set initial state of device
