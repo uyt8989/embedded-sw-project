@@ -128,7 +128,7 @@ static void kernel_timer_blink(unsigned long timeout) {
 	}
 
 	handle_status();
-	printk("num : %d pos : %d\n", num, pos);
+	printk("num : %d pos : %d flag : %d\n", num, pos, flag);
 	device_write(PRINT_STATE);
 
 	mydata.timer.expires = get_jiffies_64() + user_HZ;
@@ -143,7 +143,7 @@ static void handle_status() {
 
 	if(++num == 9) num = 1;
 	// change number and position
-	if(flag & (1 << (num - 1)) != 0) {
+	if(flag & (1 << (num - 1)) == 0) {
 		flag = flag | (1 << (num - 1));
 	}
 	else {
