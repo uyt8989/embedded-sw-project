@@ -17,8 +17,9 @@ static int dot_write(const char *);
 static int led_write(unsigned short int);
 static int lcd_write(const char *);
 static int device_write(const int);
+static void add_my_timer(const int);
 static void handle_timer(unsigned long);
-static void handle_device();
+static void handle_status();
 static int dev_driver_open(struct inode *, struct file *);
 static int dev_driver_release(struct inode *, struct file *);
 static long dev_driver_ioctl(struct file *, unsigned int, unsigned long);
@@ -50,7 +51,7 @@ static unsigned char *led_addr;
 static unsigned char *lcd_addr;
 
 static struct my_struct my_data;
-static struct struct_my_timer my_timer;
+struct struct_my_timer my_timer;
 static char text[32];
 static char num, pos, flag, id_dir, name_dir;
 
@@ -103,6 +104,18 @@ static int device_write(const int sig) {
 	return SUCCESS;
 }
 
+static void add_my_timer(struct timer_list *timer) {
+	// set timer
+	timer->expires = get_jiffies_64() + (my_data.interval * HZ / 10);
+	timer->data = (unsigned long)&my_timer;
+	timer->function = handle_timer;
+	
+	printk("set done\n");
+
+	// add timer
+	add_timer(timer);
+}
+
 static void handle_timer(unsigned long timeout) {
 	struct struct_my_timer *p_data = (struct struct_my_timer *)timeout;
 
@@ -122,19 +135,16 @@ static void handle_timer(unsigned long timeout) {
 	}
 
 	// reflect data to device
-	handle_device();
+	handle_status();
 	device_write(PRINT_STATE);
 
-	// set next timer
-	my_timer.timer.expires = get_jiffies_64() + (my_data.interval * HZ / 10);
-	my_timer.timer.data = (unsigned long)&my_timer;
-	my_timer.timer.function = handle_timer;
-	
 	// add next timer
-	add_timer(&my_timer.timer);
+	add_my_timer(&my_timer.timer);
 }
 
-static void handle_device() {
+static void handle_status() {
+	int i;
+
 	// change number and position
 	if(flag != 0xFF) {
 		if(++num == 9) num = 1;
@@ -145,8 +155,6 @@ static void handle_device() {
 		if(--pos < 0) pos = 3;
 		flag = 0;
 	}
-	
-	int i;
 
 	// move id
 	switch(id_dir) {
@@ -191,7 +199,7 @@ static int dev_driver_open(struct inode *minode, struct file *mfile) {
 	
 	printk("dev_driver is successfully opened\n");
 
-	return SUCCESS;
+	return 0;
 }
 
 static int dev_driver_release(struct inode *minode, struct file *mfile) {
@@ -200,7 +208,7 @@ static int dev_driver_release(struct inode *minode, struct file *mfile) {
 
 	printk("dev_driver is released");
 
-	return SUCCESS;
+	return 0;
 }
 
 static long dev_driver_ioctl(struct file *mfile, 
@@ -216,7 +224,7 @@ static long dev_driver_ioctl(struct file *mfile,
 				return -EFAULT;
 			}
 
-			// print options
+			// print the options
 			printk("%d %d %d %d\n", my_data.interval, my_data.cnt, my_data.num, my_data.pos);
 
 			// initialize options
@@ -230,6 +238,8 @@ static long dev_driver_ioctl(struct file *mfile,
 			// set initial state of device
 			device_write(PRINT_STATE);
 
+			printk("set optins done\n");
+
 			break;
 
 		// execute device
@@ -238,13 +248,15 @@ static long dev_driver_ioctl(struct file *mfile,
 			
 			// set first timer
 			del_timer_sync(&my_timer.timer);
-			my_timer.timer.expires = jiffies + (my_data.interval * HZ / 10);
-			my_timer.timer.data = (unsigned long)&my_timer;
-			my_timer.timer.function = handle_timer;
+			
+			printk("delete timer\n");
+
 			my_timer.cnt = my_data.cnt - 1;
+			
+			printk("set count done\n");
 
 			// start first timer
-			add_timer(&(my_timer.timer));
+			add_my_timer(&my_timer.timer);
 
 			printk("add timer done\n");
 
@@ -279,13 +291,15 @@ int __init dev_driver_init(void)
     printk("* dev_file: /dev/%s, major: %d    *\n", DEV_DRIVER_NAME, DEV_DRIVER_MAJOR);
 	printk("* mknod /dev/dev_driver c 242 0            *\n");
 	printk("********************************************\n");
+	
 	// map register's physical address
 	fnd_addr = ioremap(IOM_FND_ADDRESS, 0x4);
 	dot_addr = ioremap(IOM_FPGA_DOT_ADDRESS, 0x10);
 	led_addr = ioremap(IOM_LED_ADDRESS, 0x1);
 	lcd_addr = ioremap(IOM_FPGA_TEXT_LCD_ADDRESS, 0x32);
 
-	init_timer(&(my_timer.timer));
+	// initialize timer
+	init_timer(&my_timer.timer);
 
 	printk("init module\n");
 
