@@ -128,6 +128,7 @@ static void kernel_timer_blink(unsigned long timeout) {
 	}
 
 	handle_status();
+	printk("num : %d pos : %d\n", num, pos);
 	device_write(PRINT_STATE);
 
 	mydata.timer.expires = get_jiffies_64() + user_HZ;
@@ -144,7 +145,6 @@ static void handle_status() {
 	if(flag != 0xFF) {
 		if(++num == 9) num = 1;
 		flag = flag | (1 << (num - 1));
-		
 	}
 	else {
 		if(--pos < 0) pos = 3;
@@ -156,12 +156,14 @@ static void handle_status() {
 	case MOVE_RIGHT: // move id right
 		for(i = 15; i > 0; i--)
 			text[i] = text[i - 1];
+		text[0] = ' ';
 		// chage direction
 		if(text[15] == '9') id_dir = MOVE_LEFT;
 		break;
 	case MOVE_LEFT: // move id left
 		for(i = 0; i < 15; i++) 
 			text[i] = text[i + 1];
+		text[15] = ' ';
 		// chage direction
 		if(text[0] == '2') id_dir = MOVE_RIGHT;
 		break;
@@ -172,12 +174,14 @@ static void handle_status() {
 	case MOVE_RIGHT: // move name right
 		for(i = 31; i > 16; i--)
 			text[i] = text[i - 1];
+		text[16] = ' ';
 		// chage direction
 		if(text[31] == 'n') name_dir = MOVE_LEFT;
 		break;
 	case MOVE_LEFT:  // move name left 
 		for(i = 16; i < 31; i++) 
 			text[i] = text[i + 1];
+		text[31] = ' ';
 		// chage direction
 		if(text[16] == 'Y') name_dir = MOVE_RIGHT;
 	}
@@ -236,7 +240,7 @@ static long dev_driver_ioctl(struct file *mfile,
 				text[i] = my_id[i];
 			}
 			
-			for(i = 16; i < strlen(my_name); i++) {
+			for(i = 16; i < strlen(my_name) + 16; i++) {
 				text[i] = my_name[i - 16];
 			}
 			
