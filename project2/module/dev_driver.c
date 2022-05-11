@@ -141,13 +141,13 @@ static void kernel_timer_blink(unsigned long timeout) {
 static void handle_status() {
 	int i;
 
+	if(++num == 9) num = 1;
 	// change number and position
 	if(flag != 0xFF) {
-		if(++num == 9) num = 1;
 		flag = flag | (1 << (num - 1));
 	}
 	else {
-		if(--pos > 4) pos = 3;
+		if(--pos == 255) pos = 3;
 		flag = 0;
 	}
 
