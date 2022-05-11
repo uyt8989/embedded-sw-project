@@ -147,7 +147,7 @@ static void handle_status() {
 		flag = flag | (1 << (num - 1));
 	}
 	else {
-		if(--pos < 0) pos = 3;
+		if(--pos > 4) pos = 3;
 		flag = 0;
 	}
 
@@ -230,7 +230,7 @@ static long dev_driver_ioctl(struct file *mfile,
 			num = my_data.num;
 			pos = my_data.pos;
 			user_HZ = my_data.interval * HZ / 10;
-			flag = 1 << num;
+			flag = 1 << (num - 1);
 
 			for(i = 0; i < 32; i++) {
 				text[i] = ' ';
