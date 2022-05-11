@@ -143,12 +143,18 @@ static void handle_status() {
 
 	if(++num == 9) num = 1;
 	// change number and position
-	if(flag != 0xFF) {
+	if(flag & (1 << (num - 1) != 0)) {
 		flag = flag | (1 << (num - 1));
 	}
 	else {
-		if(--pos == 255) pos = 3;
+		if(pos == 0) {
+			pos = 3;
+		}
+		else {
+			pos--;
+		}
 		flag = 0;
+		flag = flag | (1 << (num - 1));
 	}
 
 	// move id
@@ -230,7 +236,8 @@ static long dev_driver_ioctl(struct file *mfile,
 			num = my_data.num;
 			pos = my_data.pos;
 			user_HZ = my_data.interval * HZ / 10;
-			flag = 1 << (num - 1);
+			flag = 0;
+			flag = flag | 1 << (num - 1);
 
 			for(i = 0; i < 32; i++) {
 				text[i] = ' ';
