@@ -90,7 +90,7 @@ static int lcd_write(const char *data) {
 static int device_write(const int sig) {
 	if(sig == PRINT_STATE) {
 		fnd_write(num, pos);
-		dot_write(fpga_number[num]);
+		dot_write(&fpga_number[num][0]);
 		led_write((unsigned short int)1 << num);
 		lcd_write(text);
 	}
@@ -107,13 +107,17 @@ static int device_write(const int sig) {
 static void add_my_timer(struct timer_list *timer) {
 	// set timer
 	timer->expires = get_jiffies_64() + (my_data.interval * HZ / 10);
+	printk("expire\n");
 	timer->data = (unsigned long)&my_timer;
+	printk("data\n");
 	timer->function = handle_timer;
+	printk("function\n");
 	
 	printk("set done\n");
 
 	// add timer
 	add_timer(timer);
+	printk("add timer\n");
 }
 
 static void handle_timer(unsigned long timeout) {
