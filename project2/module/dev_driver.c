@@ -12,7 +12,6 @@
 #include "mydev.h"
 
 /* functions */
-
 static int fnd_write(const char, const char);
 static int dot_write(const char *);
 static int led_write(const char);
@@ -25,7 +24,6 @@ static int dev_driver_release(struct inode *, struct file *);
 static long dev_driver_ioctl(struct file *, unsigned int, unsigned long);
 
 /* structs */
-
 static struct file_operations dev_driver_fops =
 {   
     .open = dev_driver_open,
@@ -33,6 +31,7 @@ static struct file_operations dev_driver_fops =
 	.unlocked_ioctl = dev_driver_ioctl
 };
 
+// timer struct
 static struct struct_mydata {
 	struct timer_list timer;
 	int count;
@@ -42,7 +41,6 @@ static struct struct_mydata {
 struct struct_mydata mydata;
 
 // usage counter for driver
-//static char dev_driver_usage = ATOMIC_INIT(DRIVER_NOT_USED);
 static char dev_driver_usage = DRIVER_NOT_USED;
 
 // register address
@@ -51,12 +49,18 @@ static unsigned char *dot_addr;
 static unsigned char *led_addr;
 static unsigned char *lcd_addr;
 
+// data from 
 static struct my_struct my_data;
+// LCD text
 static char text[33];
+// current status
 static int num, pos, id_dir, name_dir;
+// HZ value
 static unsigned long user_HZ;
+// flags
 static char flag[8];
 
+// write to FND device
 static int fnd_write(const char number, const char position) {
 	unsigned short int value = 0;
 	value = value | number << (position * 4);
@@ -64,6 +68,7 @@ static int fnd_write(const char number, const char position) {
 	return SUCCESS;
 }
 
+// write to DOT device
 static int dot_write(const char *data) {
 	int i;
 	unsigned short int value = 0;
@@ -74,6 +79,7 @@ static int dot_write(const char *data) {
 	return SUCCESS;
 }
 
+// write to LED device
 static int led_write(const char number) {
 	unsigned short int value = 0;
 	if(number != 0)
@@ -82,6 +88,7 @@ static int led_write(const char number) {
 	return SUCCESS;
 }
 
+// write to LCD device
 static int lcd_write(const char *data) {
 	int i;
 	unsigned short int value = 0;
@@ -92,13 +99,16 @@ static int lcd_write(const char *data) {
 	return SUCCESS;
 }
 
+// write to device according to signal argument
 static int device_write(const int sig) {
+	// print current status
 	if(sig == PRINT_STATE) {
 		fnd_write(num, pos);
 		dot_write(&fpga_number[num][0]);
 		led_write(num);
 		lcd_write(text);
 	}
+	// clear device
 	else if (sig == TURN_OFF){
 		fnd_write(0, 0);
 		dot_write(fpga_set_blank);
@@ -109,42 +119,53 @@ static int device_write(const int sig) {
 	return SUCCESS;
 }
 
+// timer function
 static void kernel_timer_blink(unsigned long timeout) {
 	struct struct_mydata *p_data = (struct struct_mydata*)timeout;
 	int i;
 
-	if(p_data->count % 5 == 0 || p_data->count < 10)
+	// print remain iterations
+	if(p_data->count % 5 == 0 || p_data->count <= 10)
 		printk("Remain iterations %d\n", p_data->count);
 
+	// decrease current counter
 	p_data->count--;
+
+	// end excution
 	if( p_data->count < 0 ) {
 		printk("Execution is ended\n");
 
+		// clear lcd text
 		for(i = 0; i < 32; i++) {
 			text[i] = ' ';
 		}
 
+		// clear device
 		device_write(TURN_OFF);
 		return;
 	}
 
+	// change current status to next status
 	handle_status();
-	printk("num : %d pos : %d\n", num, pos);
+	// write to device
 	device_write(PRINT_STATE);
 
+	// set next timer
 	mydata.timer.expires = get_jiffies_64() + user_HZ;
 	mydata.timer.data = (unsigned long)&mydata;
 	mydata.timer.function = kernel_timer_blink;
 	
+	// add next timer
 	add_timer(&mydata.timer);
 }
 
 static void handle_status() {
 	int i;
 
+	// increase number
 	if(++num == 9) num = 1;
 
-	// change number and position
+	// change position
 	if(flag[num - 1] == 0) {
 		flag[num - 1] = 1;
 	}
@@ -156,6 +177,7 @@ static void handle_status() {
 			pos--;
 		}
 		
+		// reset flags
 		for(i = 0; i < 8; i++) {
 			flag[i] = 0;
 		}
@@ -199,12 +221,11 @@ static void handle_status() {
 }
 
 static int dev_driver_open(struct inode *minode, struct file *mfile) {
-	//if(atomic_cmpxchg(&dev_driver_usage, DRIVER_NOT_USED, DRIVER_OPENED)) {
 	if(dev_driver_usage != DRIVER_NOT_USED) {
 		printk("dev_driver is already used\n");
 		return -EBUSY;
 	}
-
+	
 	dev_driver_usage = DRIVER_OPENED;
 	
 	printk("dev_driver is successfully opened\n");
@@ -213,7 +234,6 @@ static int dev_driver_open(struct inode *minode, struct file *mfile) {
 }
 
 static int dev_driver_release(struct inode *minode, struct file *mfile) {
-	//atomic_set(&dev_driver_usage, DRIVER_NOT_USED);
 	dev_driver_usage = DRIVER_NOT_USED;
 
 	printk("dev_driver is released");
@@ -242,56 +262,46 @@ static long dev_driver_ioctl(struct file *mfile,
 			pos = my_data.pos;
 			user_HZ = my_data.interval * HZ / 10;
 			
+			// initialize flags
 			for(i = 0; i < 8; i++) {
 				flag[i] = 0;
 			}
-
 			flag[num - 1] = 1;
 
-			printk("num : %d pos : %d flag : %d\n", num, pos, flag);
-
+			// initialize text lcd
 			for(i = 0; i < 32; i++) {
 				text[i] = ' ';
 			}
-			
 			for(i = 0; i < strlen(my_id); i++) {
 				text[i] = my_id[i];
 			}
-			
 			for(i = 16; i < strlen(my_name) + 16; i++) {
 				text[i] = my_name[i - 16];
 			}
-			
+			// initialize text direction
 			id_dir = MOVE_RIGHT; name_dir = MOVE_RIGHT;
 
 			// set initial state of device
 			device_write(PRINT_STATE);
 
-			printk("set options done\n");
-
 			break;
 
 		// execute device
 		case IOCTL_COMMAND:
-			printk("Execute device\n");
+			printk("Start iterations\n");
 			
 			// set first timer
 			del_timer_sync(&mydata.timer);
-			
-			printk("delete timer\n");
 
 			mydata.count = my_data.cnt - 1;
-			
-			printk("set count done\n");
 
-			// start first timer
+			// set first timer
 			mydata.timer.expires = get_jiffies_64() + user_HZ;
 			mydata.timer.data = (unsigned long)&mydata;
 			mydata.timer.function	= kernel_timer_blink;
 
+			// add first timer
 			add_timer(&mydata.timer);
-
-			printk("add timer done\n");
 			
 			break;
 
@@ -321,8 +331,8 @@ int __init dev_driver_init(void)
 
 	// print informations of driver
 	printk("********************************************\n");
-    printk("* dev_file: /dev/%s, major: %d    *\n", DEV_DRIVER_NAME, DEV_DRIVER_MAJOR);
-	printk("* mknod /dev/dev_driver c 242 0            *\n");
+    printk("* dev_file: /dev/%s, major: %d\n", DEV_DRIVER_NAME, DEV_DRIVER_MAJOR);
+	printk("* you need to do mknod /dev/dev_driver c 242 0\n");
 	printk("********************************************\n");
 	
 	// map register's physical address
@@ -342,7 +352,6 @@ int __init dev_driver_init(void)
 void __exit dev_driver_exit(void)
 {
 	// release usage counter
-	//atomic_set(&dev_driver_usage, DRIVER_NOT_USED);
 	dev_driver_usage = DRIVER_NOT_USED;
 
 	del_timer_sync(&mydata.timer);
@@ -356,7 +365,7 @@ void __exit dev_driver_exit(void)
 	unregister_chrdev(DEV_DRIVER_MAJOR, DEV_DRIVER_NAME);
 	printk("********************************************\n");
 	printk("* dev_driver exit\n");
-	printk("* rm /dev/dev_driver\n");
+	printk("* don't forget rm /dev/dev_driver\n");
 	printk("********************************************\n");
 }
 
