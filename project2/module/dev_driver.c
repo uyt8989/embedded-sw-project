@@ -53,8 +53,9 @@ static unsigned char *lcd_addr;
 
 static struct my_struct my_data;
 static char text[33];
-static char num, pos, flag, id_dir, name_dir;
+static int num, pos, id_dir, name_dir;
 static unsigned long user_HZ;
+static char flag[8];
 
 static int fnd_write(const char number, const char position) {
 	unsigned short int value = 0;
@@ -128,7 +129,7 @@ static void kernel_timer_blink(unsigned long timeout) {
 	}
 
 	handle_status();
-	printk("num : %d pos : %d flag : %d\n", num, pos, flag);
+	printk("num : %d pos : %d\n", num, pos);
 	device_write(PRINT_STATE);
 
 	mydata.timer.expires = get_jiffies_64() + user_HZ;
@@ -144,8 +145,8 @@ static void handle_status() {
 	if(++num == 9) num = 1;
 
 	// change number and position
-	if((flag & (1 << (num - 1))) == 0) {
-		flag = flag | (1 << (num - 1));
+	if(flag[num - 1] == 0) {
+		flag[num - 1] = 1;
 	}
 	else {
 		if(pos == 0) {
@@ -154,8 +155,11 @@ static void handle_status() {
 		else {
 			pos--;
 		}
-		flag = 0;
-		flag = flag | (1 << (num - 1));
+		
+		for(i = 0; i < 8; i++) {
+			flag[i] = 0;
+		}
+		flag[num - 1] = 1;
 	}
 
 	// move id
@@ -237,8 +241,14 @@ static long dev_driver_ioctl(struct file *mfile,
 			num = my_data.num;
 			pos = my_data.pos;
 			user_HZ = my_data.interval * HZ / 10;
-			flag = 0;
-			flag = flag | 1 << (num - 1);
+			
+			for(i = 0; i < 8; i++) {
+				flag[i] = 0;
+			}
+
+			flag[num - 1] = 1;
+
+			printk("num : %d pos : %d flag : %d\n", num, pos, flag);
 
 			for(i = 0; i < 32; i++) {
 				text[i] = ' ';
