@@ -54,6 +54,7 @@ static unsigned char *lcd_addr;
 static struct my_struct my_data;
 static char text[32];
 static char num, pos, flag, id_dir, name_dir;
+static unsigned long user_HZ;
 
 static int fnd_write(const char number, const char position) {
 	unsigned short int value = 0;
@@ -113,13 +114,17 @@ static void kernel_timer_blink(unsigned long timeout) {
 	p_data->count--;
 	if( p_data->count < 0 ) {
 		printk("Execution is ended\n");
+		device_write(TURN_OFF);
 		return;
 	}
 
-	mydata.timer.expires = get_jiffies_64() + (1 * HZ);
+	handle_status();
+	device_write(PRINT_STATE);
+
+	mydata.timer.expires = get_jiffies_64() + user_HZ;
 	mydata.timer.data = (unsigned long)&mydata;
 	mydata.timer.function = kernel_timer_blink;
-
+	
 	add_timer(&mydata.timer);
 }
 
@@ -211,6 +216,7 @@ static long dev_driver_ioctl(struct file *mfile,
 			// initialize options
 			num = my_data.num;
 			pos = my_data.pos;
+			user_HZ = my_data.interval * HZ / 10;
 			flag = 1 << num;
 			sprintf(text, my_id);
 			sprintf(text + 16, my_name);
@@ -237,7 +243,7 @@ static long dev_driver_ioctl(struct file *mfile,
 			printk("set count done\n");
 
 			// start first timer
-			mydata.timer.expires = jiffies + (1 * HZ);
+			mydata.timer.expires = get_jiffies_64() + user_HZ;
 			mydata.timer.data = (unsigned long)&mydata;
 			mydata.timer.function	= kernel_timer_blink;
 
