@@ -242,7 +242,7 @@ static long dev_driver_ioctl(struct file *mfile,
 			// set initial state of device
 			device_write(PRINT_STATE);
 
-			printk("set optins done\n");
+			printk("set options done\n");
 
 			break;
 
@@ -250,6 +250,7 @@ static long dev_driver_ioctl(struct file *mfile,
 		case IOCTL_COMMAND:
 			printk("Execute device\n");
 			
+			/*
 			// set first timer
 			del_timer_sync(&my_timer.timer);
 			
@@ -263,7 +264,7 @@ static long dev_driver_ioctl(struct file *mfile,
 			add_my_timer(&my_timer.timer);
 
 			printk("add timer done\n");
-
+			*/
 			break;
 
 		// invalid ioctl command
