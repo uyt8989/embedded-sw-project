@@ -52,7 +52,7 @@ static unsigned char *led_addr;
 static unsigned char *lcd_addr;
 
 static struct my_struct my_data;
-static char text[32];
+static char text[33];
 static char num, pos, flag, id_dir, name_dir;
 static unsigned long user_HZ;
 
@@ -73,8 +73,10 @@ static int dot_write(const char *data) {
 	return SUCCESS;
 }
 
-static int led_write(unsigned short int data) {
-	outw(data, (unsigned int)led_addr);
+static int led_write(const char number) {
+	unsigned short int value = 0;
+	value = value | ( 1 << (8 - number));
+	outw(value, (unsigned int)led_addr);
 	return SUCCESS;
 }
 
@@ -99,7 +101,7 @@ static int device_write(const int sig) {
 		fnd_write(0, 0);
 		dot_write(fpga_set_blank);
 		led_write((unsigned short int)0);
-		lcd_write(blank_text);
+		lcd_write(text);
 	}
 
 	return SUCCESS;
@@ -107,6 +109,7 @@ static int device_write(const int sig) {
 
 static void kernel_timer_blink(unsigned long timeout) {
 	struct struct_mydata *p_data = (struct struct_mydata*)timeout;
+	int i;
 
 	if(p_data->count % 5 == 0 || p_data->count < 10)
 		printk("Remain iterations %d\n", p_data->count);
@@ -114,6 +117,11 @@ static void kernel_timer_blink(unsigned long timeout) {
 	p_data->count--;
 	if( p_data->count < 0 ) {
 		printk("Execution is ended\n");
+
+		for(i = 0; i < 32; i++) {
+			text[i] = ' ';
+		}
+
 		device_write(TURN_OFF);
 		return;
 	}
@@ -134,7 +142,7 @@ static void handle_status() {
 	// change number and position
 	if(flag != 0xFF) {
 		if(++num == 9) num = 1;
-		flag = flag | (1 << num);
+		flag = flag | (1 << (num - 1));
 		
 	}
 	else {
@@ -199,7 +207,7 @@ static int dev_driver_release(struct inode *minode, struct file *mfile) {
 
 static long dev_driver_ioctl(struct file *mfile, 
 			unsigned int ioctl_num, unsigned long ioctl_param) {
-	int result;
+	int result, i;
 
 	switch(ioctl_num) {
 		// set options
@@ -218,8 +226,19 @@ static long dev_driver_ioctl(struct file *mfile,
 			pos = my_data.pos;
 			user_HZ = my_data.interval * HZ / 10;
 			flag = 1 << num;
-			//sprintf(text, my_id);
-			//sprintf(text + 16, my_name);
+
+			for(i = 0; i < 32; i++) {
+				text[i] = ' ';
+			}
+			
+			for(i = 0; i < strlen(my_id); i++) {
+				text[i] = my_id[i];
+			}
+			
+			for(i = 16; i < strlen(my_name); i++) {
+				text[i] = my_name[i - 16];
+			}
+			
 			id_dir = MOVE_RIGHT; name_dir = MOVE_RIGHT;
 
 			// set initial state of device

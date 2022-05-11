@@ -31,9 +31,9 @@ enum {
 	MOVE_LEFT, MOVE_RIGHT
 };
 
-const char my_id[16] =   "20171659        ";
-const char my_name[16] = "Yoo Kyungyun    ";
-const char blank_text[32] = {' ', };
+const char my_id[16] =   "20171659";
+const char my_name[16] = "Yoo Kyungyun";
+const char blank_text[33] = " ";
 
 // ioctl command
 #define IOCTL_SET_OPTION _IOW(DEV_DRIVER_MAJOR, 0, struct my_struct)
