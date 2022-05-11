@@ -241,6 +241,8 @@ static long dev_driver_ioctl(struct file *mfile,
 			mydata.timer.data = (unsigned long)&mydata;
 			mydata.timer.function	= kernel_timer_blink;
 
+			add_timer(&mydata.timer);
+
 			printk("add timer done\n");
 			
 			break;
