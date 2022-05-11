@@ -143,7 +143,7 @@ static void handle_status() {
 
 	if(++num == 9) num = 1;
 	// change number and position
-	if(flag & (1 << (num - 1) != 0)) {
+	if(flag & (1 << (num - 1)) != 0) {
 		flag = flag | (1 << (num - 1));
 	}
 	else {
