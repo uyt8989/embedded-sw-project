@@ -24,8 +24,6 @@ int main(int argc, char **argv)
     input.cnt = atoi(argv[2]);
     int temp = atoi(argv[3]);
 
-    printf("temp : %d\n", temp);
-
     // invalid interval
     if(1 > input.interval || input.interval > 100) {
         printf("Invalid TIMER_INTERVAL. Check the value of TIMER_INTERVAL\n");
