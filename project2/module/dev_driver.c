@@ -32,13 +32,13 @@ static struct file_operations dev_driver_fops =
 };
 
 // timer struct
-static struct struct_mydata {
+static struct struct_my_timer {
 	struct timer_list timer;
 	int count;
 };
 
 /* Global variables */
-struct struct_mydata mydata;
+struct struct_my_timer my_timer;
 
 // usage counter for driver
 static char dev_driver_usage = DRIVER_NOT_USED;
@@ -121,7 +121,7 @@ static int device_write(const int sig) {
 
 // timer function
 static void kernel_timer_blink(unsigned long timeout) {
-	struct struct_mydata *p_data = (struct struct_mydata*)timeout;
+	struct struct_my_timer *p_data = (struct struct_my_timer*)timeout;
 	int i;
 
 	// print remain iterations
@@ -151,12 +151,12 @@ static void kernel_timer_blink(unsigned long timeout) {
 	device_write(PRINT_STATE);
 
 	// set next timer
-	mydata.timer.expires = get_jiffies_64() + user_HZ;
-	mydata.timer.data = (unsigned long)&mydata;
-	mydata.timer.function = kernel_timer_blink;
+	my_timer.timer.expires = get_jiffies_64() + user_HZ;
+	my_timer.timer.data = (unsigned long)&my_timer;
+	my_timer.timer.function = kernel_timer_blink;
 	
 	// add next timer
-	add_timer(&mydata.timer);
+	add_timer(&my_timer.timer);
 }
 
 static void handle_status() {
@@ -254,9 +254,6 @@ static long dev_driver_ioctl(struct file *mfile,
 				return -EFAULT;
 			}
 
-			// print the options
-			printk("%d %d %d %d\n", my_data.interval, my_data.cnt, my_data.num, my_data.pos);
-
 			// initialize options
 			num = my_data.num;
 			pos = my_data.pos;
@@ -291,17 +288,17 @@ static long dev_driver_ioctl(struct file *mfile,
 			printk("Start iterations\n");
 			
 			// set first timer
-			del_timer_sync(&mydata.timer);
+			del_timer_sync(&my_timer.timer);
 
-			mydata.count = my_data.cnt - 1;
+			my_timer.count = my_data.cnt - 1;
 
 			// set first timer
-			mydata.timer.expires = get_jiffies_64() + user_HZ;
-			mydata.timer.data = (unsigned long)&mydata;
-			mydata.timer.function	= kernel_timer_blink;
+			my_timer.timer.expires = get_jiffies_64() + user_HZ;
+			my_timer.timer.data = (unsigned long)&my_timer;
+			my_timer.timer.function	= kernel_timer_blink;
 
 			// add first timer
-			add_timer(&mydata.timer);
+			add_timer(&my_timer.timer);
 			
 			break;
 
@@ -342,7 +339,7 @@ int __init dev_driver_init(void)
 	lcd_addr = ioremap(IOM_FPGA_TEXT_LCD_ADDRESS, 0x32);
 
 	// initialize timer
-	init_timer(&(mydata.timer));
+	init_timer(&(my_timer.timer));
 
 	printk("init module\n");
 
@@ -354,7 +351,7 @@ void __exit dev_driver_exit(void)
 	// release usage counter
 	dev_driver_usage = DRIVER_NOT_USED;
 
-	del_timer_sync(&mydata.timer);
+	del_timer_sync(&my_timer.timer);
 
 	// unmap register's physical address
 	iounmap(fnd_addr);

@@ -72,9 +72,6 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    // print user's inputs
-	printf("input: %d %d %d %d\n", input.interval, input.cnt, input.num, input.pos);
-
 	dev_fd = open("/dev/dev_driver", O_WRONLY);
 	if (dev_fd < 0){
 		printf("Open Failed!\n");
