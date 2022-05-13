@@ -1,0 +1,155 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BOARD_KEY_BACK	mylib.h	45;"	d
+BOARD_KEY_DEFAULT	mylib.h	44;"	d
+BOARD_KEY_PROG	mylib.h	46;"	d
+BOARD_KEY_VOL_DOWN	mylib.h	48;"	d
+BOARD_KEY_VOL_UP	mylib.h	47;"	d
+CC	Makefile	/^CC=arm-none-linux-gnueabi-gcc$/;"	m
+CFLAGS	Makefile	/^CFLAGS= -W$/;"	m
+CHANGE_DOWN	mylib.h	51;"	d
+CHANGE_UP	mylib.h	50;"	d
+FALSE	mylib.h	27;"	d
+FPGA_BASE_ADDRESS	mylib.h	59;"	d
+INPUT_SEMA	mylib.h	34;"	d
+KEY_BUFF_SIZE	mylib.h	37;"	d
+KEY_PRESS	input_process.c	14;"	d	file:
+KEY_RELEASE	input_process.c	13;"	d	file:
+LED_ADDR	mylib.h	60;"	d
+M1_BLINK	mylib.h	71;"	d
+M1_CHANGE_MODE	mylib.h	70;"	d
+M1_DEFAULT_MODE	mylib.h	69;"	d
+M1_UNBLINK	mylib.h	72;"	d
+M2_BIN_MODE	mylib.h	79;"	d
+M2_DEC_MODE	mylib.h	76;"	d
+M2_MODES	mylib.h	75;"	d
+M2_OCT_MODE	mylib.h	77;"	d
+M2_QUA_MODE	mylib.h	78;"	d
+M3_ALPHA_MODE	mylib.h	82;"	d
+M3_DOT_FONT_1	mylib.h	85;"	d
+M3_DOT_FONT_A	mylib.h	86;"	d
+M3_KEYPAD	mylib.h	84;"	d
+M3_NUM_MODE	mylib.h	83;"	d
+M4_OFF_CURSOR_MODE	mylib.h	90;"	d
+M4_ON_CURSOR_MODE	mylib.h	89;"	d
+MAX_BUTTON	mylib.h	39;"	d
+MAX_DIGIT	mylib.h	40;"	d
+MAX_DOT_BUFF	mylib.h	41;"	d
+MAX_DOT_Y	mylib.h	42;"	d
+MAX_LCD_BUFF	mylib.h	38;"	d
+MODE_1	mylib.h	54;"	d
+MODE_2	mylib.h	55;"	d
+MODE_3	mylib.h	56;"	d
+MODE_4	mylib.h	57;"	d
+MODS	mylib.h	53;"	d
+OBJDIR	Makefile	/^OBJDIR = build\/$/;"	m
+OBJS	Makefile	/^OBJS = $(addprefix $(OBJDIR),$(_OBJS))$/;"	m
+OUTPUT_SEMA	mylib.h	35;"	d
+SEMA_KEY	mylib.h	32;"	d
+SEMA_NUM	mylib.h	33;"	d
+SHARED_MEM_KEY_IN	mylib.h	29;"	d
+SHARED_MEM_KEY_OUT	mylib.h	30;"	d
+SW1	mylib.h	/^    SW1, SW2, SW3, SW4, SW5,$/;"	e	enum:__anon1
+SW2	mylib.h	/^    SW1, SW2, SW3, SW4, SW5,$/;"	e	enum:__anon1
+SW3	mylib.h	/^    SW1, SW2, SW3, SW4, SW5,$/;"	e	enum:__anon1
+SW4	mylib.h	/^    SW1, SW2, SW3, SW4, SW5,$/;"	e	enum:__anon1
+SW5	mylib.h	/^    SW1, SW2, SW3, SW4, SW5,$/;"	e	enum:__anon1
+SW6	mylib.h	/^    SW6, SW7, SW8, SW9, SW_NULL$/;"	e	enum:__anon1
+SW7	mylib.h	/^    SW6, SW7, SW8, SW9, SW_NULL$/;"	e	enum:__anon1
+SW8	mylib.h	/^    SW6, SW7, SW8, SW9, SW_NULL$/;"	e	enum:__anon1
+SW9	mylib.h	/^    SW6, SW7, SW8, SW9, SW_NULL$/;"	e	enum:__anon1
+SW_NULL	mylib.h	/^    SW6, SW7, SW8, SW9, SW_NULL$/;"	e	enum:__anon1
+TARGET	Makefile	/^TARGET = app$/;"	m
+TRUE	mylib.h	26;"	d
+_CLOCK_STAT	mylib.h	/^typedef struct _CLOCK_STAT$/;"	s
+_COUNTER_STAT	mylib.h	/^typedef struct _COUNTER_STAT$/;"	s
+_DRAW_BOARD_STAT	mylib.h	/^typedef struct _DRAW_BOARD_STAT$/;"	s
+_OBJS	Makefile	/^_OBJS =  main.o input_process.o main_process.o output_process.o sema.o utils.o mode.o $/;"	m
+_SHARED_MEM_IN	mylib.h	/^typedef struct _SHARED_MEM_IN$/;"	s
+_SHARED_MEM_OUT	mylib.h	/^typedef struct _SHARED_MEM_OUT$/;"	s
+_TEXT_EDITOR_STAT	mylib.h	/^typedef struct _TEXT_EDITOR_STAT$/;"	s
+__FPGA_NUMBER__	fpga_dot_font.h	7;"	d
+__MY_LIB__	mylib.h	2;"	d
+array	sema.c	/^    unsigned short *array;$/;"	m	union:semun	file:
+blink	mylib.h	/^    int blink;$/;"	m	struct:_CLOCK_STAT
+buf	sema.c	/^    struct semid_ds *buf;$/;"	m	union:semun	typeref:struct:semun::semid_ds	file:
+buff	mylib.h	/^    char buff[MAX_LCD_BUFF];$/;"	m	struct:_TEXT_EDITOR_STAT
+checkExit	utils.c	/^int checkExit(shm_in *addr, int sem_id)$/;"	f
+clear_out_shm	mode.c	/^void clear_out_shm(shm_out *shm_addr)$/;"	f
+clock_mode	mode.c	/^void clock_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])$/;"	f
+clock_s	mylib.h	/^} clock_s;$/;"	t	typeref:struct:_CLOCK_STAT
+clock_stat	main_process.c	/^clock_s clock_stat;$/;"	v
+count	mylib.h	/^    int count;$/;"	m	struct:_COUNTER_STAT
+count	mylib.h	/^    int count;$/;"	m	struct:_DRAW_BOARD_STAT
+count	mylib.h	/^    int count;$/;"	m	struct:_TEXT_EDITOR_STAT
+counter_mode	mode.c	/^void counter_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])$/;"	f
+counter_s	mylib.h	/^} counter_s;$/;"	t	typeref:struct:_COUNTER_STAT
+counter_stat	main_process.c	/^counter_s counter_stat;$/;"	v
+cur_mode	mylib.h	/^    int cur_mode;$/;"	m	struct:_CLOCK_STAT
+cur_mode	mylib.h	/^    int cur_mode;$/;"	m	struct:_COUNTER_STAT
+cur_mode	mylib.h	/^    int cur_mode;$/;"	m	struct:_DRAW_BOARD_STAT
+cur_mode	mylib.h	/^    int cur_mode;$/;"	m	struct:_TEXT_EDITOR_STAT
+current_mode	main.c	/^int current_mode = MODE_1;$/;"	v
+cursor	mylib.h	/^    int cursor;$/;"	m	struct:_TEXT_EDITOR_STAT
+cursor	mylib.h	/^    int cursor[2];$/;"	m	struct:_DRAW_BOARD_STAT
+digit	mylib.h	/^    unsigned char digit[MAX_DIGIT];$/;"	m	struct:_SHARED_MEM_OUT
+dot	mylib.h	/^    unsigned char dot[MAX_DOT_BUFF];$/;"	m	struct:_DRAW_BOARD_STAT
+dot	mylib.h	/^    unsigned char dot[MAX_DOT_BUFF];$/;"	m	struct:_SHARED_MEM_OUT
+dot	mylib.h	/^    unsigned char dot[MAX_DOT_BUFF];$/;"	m	struct:_TEXT_EDITOR_STAT
+dot_font	fpga_dot_font.h	/^const unsigned char dot_font[11][10] = {$/;"	v
+dot_set_blank	fpga_dot_font.h	/^const unsigned char dot_set_blank[10] = {$/;"	v
+dot_set_full	fpga_dot_font.h	/^const unsigned char dot_set_full[10] = {$/;"	v
+draw_board_mode	mode.c	/^void draw_board_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])$/;"	f
+draw_s	mylib.h	/^} draw_s;$/;"	t	typeref:struct:_DRAW_BOARD_STAT
+draw_stat	main_process.c	/^draw_s draw_stat;$/;"	v
+exit	mylib.h	/^    int exit;$/;"	m	struct:_SHARED_MEM_IN
+fnd	mylib.h	/^    int fnd;$/;"	m	struct:_SHARED_MEM_OUT
+getKeycode	main_process.c	/^int getKeycode(shm_in *shm_addr, int sem_id)$/;"	f
+getSwitch	main_process.c	/^int getSwitch(shm_in *shm_addr, int sem_id, unsigned char sw_buff[])$/;"	f
+get_cur_time	utils.c	/^int get_cur_time()$/;"	f
+hour	mylib.h	/^    int hour;$/;"	m	struct:_CLOCK_STAT
+init_clock_mode	mode.c	/^void init_clock_mode(shm_out *shm_addr)$/;"	f
+init_counter_mode	mode.c	/^void init_counter_mode(shm_out *shm_addr)$/;"	f
+init_draw_board_mode	mode.c	/^void init_draw_board_mode(shm_out *shm_addr)$/;"	f
+init_text_editor_mode	mode.c	/^void init_text_editor_mode(shm_out *shm_addr)$/;"	f
+input_process	input_process.c	/^int input_process(int shm_id)$/;"	f
+key_action	input_process.c	/^void key_action(int dev_key, shm_in *shm_addr, int sem_id)$/;"	f
+key_code	mylib.h	/^    int key_code;$/;"	m	struct:_SHARED_MEM_IN
+keypad	mode.c	/^const static char keypad[MAX_BUTTON][M3_KEYPAD] = {$/;"	v	file:
+keypad_idx	mylib.h	/^    int keypad_idx;$/;"	m	struct:_TEXT_EDITOR_STAT
+last_sw	mylib.h	/^    int last_sw;$/;"	m	struct:_TEXT_EDITOR_STAT
+lcd	mylib.h	/^    char lcd[MAX_LCD_BUFF];$/;"	m	struct:_SHARED_MEM_OUT
+led	mylib.h	/^    unsigned char led;$/;"	m	struct:_SHARED_MEM_OUT
+main	main.c	/^int main(int argc, char **argv)$/;"	f
+main_process	main_process.c	/^int main_process(int shm_input_id, int shm_output_id)$/;"	f
+min	mylib.h	/^    int min;$/;"	m	struct:_CLOCK_STAT
+mode_handler	mode.c	/^int mode_handler(shm_out *shm_addr, int sem_id, int d)$/;"	f
+output_process	output_process.c	/^int output_process(int shm_input_id, int shm_output_id)$/;"	f
+real_dot	mylib.h	/^    unsigned char real_dot[MAX_DOT_BUFF];$/;"	m	struct:_DRAW_BOARD_STAT
+seminit	sema.c	/^int seminit()$/;"	f
+semlock	sema.c	/^int semlock(int semid, int sem_num)$/;"	f
+semun	sema.c	/^union semun$/;"	u	file:
+semunlock	sema.c	/^int semunlock(int semid, int sem_num)$/;"	f
+setDot	main_process.c	/^void setDot(shm_out *shm_addr, unsigned char *value)$/;"	f
+setExit	utils.c	/^int setExit(shm_in *addr, int sem_id)$/;"	f
+setFnd	main_process.c	/^void setFnd(shm_out *shm_addr, int value, int digit)$/;"	f
+setLcd	main_process.c	/^void setLcd(shm_out *shm_addr, char *value)$/;"	f
+setLed	main_process.c	/^void setLed(shm_out *shm_addr, unsigned char value)$/;"	f
+shm_in	mylib.h	/^} shm_in;$/;"	t	typeref:struct:_SHARED_MEM_IN
+shm_out	mylib.h	/^} shm_out;$/;"	t	typeref:struct:_SHARED_MEM_OUT
+sw	mylib.h	/^    unsigned char sw[MAX_BUTTON];$/;"	m	struct:_SHARED_MEM_IN
+switch_action	input_process.c	/^void switch_action(int dev_sw, shm_in *shm_addr, int sem_id)$/;"	f
+text_editor_mode	mode.c	/^void text_editor_mode(shm_out *shm_addr, int sem_id, unsigned char sw_buff[])$/;"	f
+text_s	mylib.h	/^} text_s;$/;"	t	typeref:struct:_TEXT_EDITOR_STAT
+text_stat	main_process.c	/^text_s text_stat;$/;"	v
+time	mylib.h	/^    int time;$/;"	m	struct:_CLOCK_STAT
+time	mylib.h	/^    int time;$/;"	m	struct:_DRAW_BOARD_STAT
+val	sema.c	/^    int val;$/;"	m	union:semun	file:
+writeToDot	output_process.c	/^int writeToDot(shm_out *shm_addr, int fd)$/;"	f
+writeToFnd	output_process.c	/^int writeToFnd(shm_out *shm_addr, int fd)$/;"	f
+writeToLcd	output_process.c	/^int writeToLcd(shm_out *shm_addr, int fd)$/;"	f
+writeToLed	output_process.c	/^void writeToLed(shm_out *shm_addr, unsigned char *led_addr)$/;"	f
