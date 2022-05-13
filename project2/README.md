@@ -8,7 +8,7 @@ Device driver major number : 242
 
 ### Environment
 - Host PC : Linux (Ubuntu 16.04) System on x64 architecture
-- Target Board : Embeded Linux System on ARM architecture
+- Target Board : Embeded Linux System on ARM architecture (Linux 3.0.35)
 - Compiler : arm-none-linux-gnueabi-gcc
 
 ### Usage
