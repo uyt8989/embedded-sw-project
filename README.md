@@ -2,10 +2,10 @@
 
 
 ## Project1
-1. Various device control
+Various device control
 
 ## Project2
-2. Make device driver
+Make device driver
 
 ## Project3
-3. Stopwatch
+Stopwatch
