@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
-#include "../stopwatch.h"
+#include "../module/stopwatch.h"
 
 int main(int argc, char **argv)
 {

@@ -15,7 +15,7 @@
 #define VOLUP_KEY IMX_GPIO_NR(2,15)
 #define VOLDOWN_KEY IMX_GPIO_NR(5,14)
 
-#define SUCCES 0
+#define SUCCESS 0
 
 /* enums */
 enum {

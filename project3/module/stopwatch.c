@@ -20,7 +20,7 @@
 #include "stopwatch.h"
 
 /* functions */
-static int fnd_write(const char, const char);
+static int fnd_write(const unsigned short int value);
 static void update_device(struct work_struct *work);
 static void kernel_timer_blink(unsigned long timeout);
 irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg);
@@ -52,7 +52,7 @@ DECLARE_WAIT_QUEUE_HEAD(my_waitq);
 // work queue
 static struct workqueue_struct *my_workq;
 // timer
-struct timer_list my_timer;
+static struct timer_list my_timer;
 
 // write to FND device
 static int fnd_write(const unsigned short int value) {
@@ -63,6 +63,7 @@ static int fnd_write(const unsigned short int value) {
 // update device (bottom half)
 static void update_device(struct work_struct* work) {
     unsigned short int calculated_time;
+    unsigned int min, sec;
     min = (current_time / 10) / 60; sec = (current_time / 10) % 60;
     calculated_time = (min / 10) << 12 | (min % 10) << 8 | (sec / 10) << 4 | (sec % 10);
     fnd_write(calculated_time);
@@ -72,9 +73,9 @@ static void update_device(struct work_struct* work) {
 // set next timer (bottom half)
 static void set_my_timer(struct work_struct* work) {
     // set next timer
-    my_timer.timer.expires = get_jiffies_64() + HZ / 10;
-	my_timer.timer.data = NULL;
-    my_timer.timer.function	= kernel_timer_blink;
+    my_timer.expires = get_jiffies_64() + HZ / 10;
+	my_timer.data = NULL;
+    my_timer.function	= kernel_timer_blink;
 
     // add first timer
 	add_timer(&my_timer);
@@ -97,7 +98,7 @@ irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg) {
 	// top half
     printk("home key\n");
     if(stopwatch_on == INTERRUPT_ON) {
-        printk("Stopwatch is already excuted\n")
+        printk("Stopwatch is already excuted\n");
         return IRQ_HANDLED;
     }
     printk("Start stopwatch\n");
@@ -150,7 +151,7 @@ irqreturn_t inter_handler_volup(int irq, void* dev_id,struct pt_regs* reg) {
 irqreturn_t inter_handler_voldown(int irq, void* dev_id, struct pt_regs* reg) {
     // top half
     printk("voldown key\n");
-    __wake_up(&wq_write, 1, 1, NULL);
+    __wake_up(&my_waitq, 1, 1, NULL);
     stopwatch_on = INTERRUPT_OFF;
     return IRQ_HANDLED;
 }
@@ -270,7 +271,7 @@ void __exit dev_driver_exit(void)
     // unregister device
 	unregister_chrdev(DEV_DRIVER_MAJOR, DEV_DRIVER_NAME);
     // destroy work queue
-    destory_workqueue(my_workq);
+    destroy_workqueue(my_workq);
 
 	printk("********************************************\n");
 	printk("* dev_driver exit\n");
