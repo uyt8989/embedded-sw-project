@@ -304,7 +304,7 @@ static long dev_driver_ioctl(struct file *mfile,
             update_device();
             
             // initialize stopwatch's status
-            topwatch_on = STOPWATCH_OFF;
+            stopwatch_on = STOPWATCH_OFF;
             stopwatch_play = STOPWATCH_PAUSED;
             terminate_key = KEY_INIT;
 
