@@ -74,7 +74,7 @@ static void update_device(struct work_struct* work) {
 static void set_my_timer(struct work_struct* work) {
     // set next timer
     my_timer.expires = get_jiffies_64() + HZ / 10;
-	my_timer.data = NULL;
+	my_timer.data = 0;
     my_timer.function	= kernel_timer_blink;
 
     // add first timer
@@ -85,12 +85,16 @@ static void kernel_timer_blink(unsigned long timeout) {
     // top half
     current_time++;
 
+    fnd_write(current_time);
+
     my_timer.expires = get_jiffies_64() + HZ / 10;
-	my_timer.data = NULL;
+	my_timer.data = 0;
     my_timer.function	= kernel_timer_blink;
 
     // add first timer
 	add_timer(&my_timer);
+
+
     /*
     // bottom half
     struct work_struct work;
