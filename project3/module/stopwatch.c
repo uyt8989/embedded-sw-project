@@ -82,7 +82,7 @@ static void set_my_timer(struct work_struct* work) {
 }
 
 static void kernel_timer_blink(unsigned long timeout) {
-    printf("blink\n");
+    printk("blink\n");
     // top half
     current_time++;
 
