@@ -23,7 +23,7 @@ enum {
 };
 enum {
 	STOPWATCH_OFF, STOPWATCH_ON, STOPWATCH_PLAY, STOPWATCH_PAUSED
-}
+};
 /* ioctl commands */
 #define IOCTL_COMMAND _IO(DEV_DRIVER_MAJOR, 0)
 
