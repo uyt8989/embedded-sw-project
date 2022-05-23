@@ -91,6 +91,7 @@ static void kernel_timer_blink(unsigned long timeout) {
     // top half
     current_time++;
 
+/*
     fnd_write(current_time);
 
     my_timer.timer.expires = get_jiffies_64() + HZ / 10;
@@ -99,15 +100,15 @@ static void kernel_timer_blink(unsigned long timeout) {
 
     // add first timer
 	add_timer(&my_timer.timer);
+*/
 
-    /*
     // bottom half
     struct work_struct work;
     INIT_WORK(&work, update_device);
     queue_work(my_workq, &work);
     INIT_WORK(&work, set_my_timer);
     queue_work(my_workq, &work);
-    */
+
     return ;
 }
 
@@ -121,21 +122,21 @@ irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg) {
     }
     stopwatch_on = STOPWATCH_ON;
     stopwatch_play = STOPWATCH_PLAY;
-
+/*
     my_timer.timer.expires = get_jiffies_64() + HZ / 10;
 	my_timer.timer.data = (unsigned long)&my_timer;;
     my_timer.timer.function	= kernel_timer_blink;
 
     // add first timer
 	add_timer(&my_timer.timer);
-
+*/
     printk("Start stopwatch\n");
-/*
+
     // bottom half
     struct work_struct work;
     INIT_WORK(&work, set_my_timer);
     queue_work(my_workq, &work);
-*/
+
 	return IRQ_HANDLED;
 }
 
@@ -148,7 +149,7 @@ irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
         return IRQ_HANDLED;
     }
 
-/*
+
     if(stopwatch_play == STOPWATHC_PLAY) {
         // top half
         stopwatch_play = STOPWATCH_PAUSED;
@@ -164,7 +165,7 @@ irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
         INIT_WORK(&work, set_my_timer);
         queue_work(my_workq, &work);
     }
-*/
+
     return IRQ_HANDLED;
 }
 
@@ -178,20 +179,21 @@ irqreturn_t inter_handler_volup(int irq, void* dev_id,struct pt_regs* reg) {
     
     printk("reset stopwatch\n");
     current_time = 0;
-   /* 
+   
     // bottom half
     struct work_struct work;
     INIT_WORK(&work, update_device);
     queue_work(my_workq, &work);
-*/
+
     return IRQ_HANDLED;
 }
 
 irqreturn_t inter_handler_voldown(int irq, void* dev_id, struct pt_regs* reg) {
     // top half
     printk("voldown key\n");
-    __wake_up(&my_waitq, 1, 1, NULL);
+    del_timer_sync(&my_timer);
     stopwatch_on = STOPWATCH_OFF;
+    __wake_up(&my_waitq, 1, 1, NULL);
     return IRQ_HANDLED;
 }
 
