@@ -229,7 +229,8 @@ irqreturn_t inter_handler_voldown(int irq, void* dev_id, struct pt_regs* reg) {
         pressed_time = get_jiffies_64();
     }
     else if(terminate_key == KEY_PRESSED) {
-        if((get_jiffies_64() - pressed_time >= 3 * HZ) && pressed_time != 0) {
+        unsigned int temp_time = get_jiffies_64();
+        if((temp_time - pressed_time >= 3 * HZ)) {
              del_timer_sync(&my_timer);
             stopwatch_on = STOPWATCH_OFF;
             __wake_up(&my_waitq, 1, 1, NULL);
