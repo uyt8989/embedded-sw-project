@@ -97,6 +97,7 @@ static void kernel_timer_blink(unsigned long timeout) {
 irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg) {
 	// top half
     printk("home key\n");
+    /*
     if(stopwatch_on == INTERRUPT_ON) {
         printk("Stopwatch is already excuted\n");
         return IRQ_HANDLED;
@@ -107,14 +108,14 @@ irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg) {
     struct work_struct work;
     INIT_WORK(&work, set_my_timer);
     queue_work(my_workq, &work);
-
+*/
 	return IRQ_HANDLED;
 }
 
 irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
     printk("back key\n");
     printk("pause stopwatch\n");
-
+/*
     if(current_stat == PLAY) {
         // top half
         current_stat = PAUSED;
@@ -130,7 +131,7 @@ irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
         INIT_WORK(&work, set_my_timer);
         queue_work(my_workq, &work);
     }
-
+*/
     return IRQ_HANDLED;
 }
 
@@ -139,12 +140,12 @@ irqreturn_t inter_handler_volup(int irq, void* dev_id,struct pt_regs* reg) {
     printk("volup key\n");
     printk("reset stopwatch\n");
     current_time = 0;
-    
+   /* 
     // bottom half
     struct work_struct work;
     INIT_WORK(&work, update_device);
     queue_work(my_workq, &work);
-
+*/
     return IRQ_HANDLED;
 }
 
@@ -270,6 +271,8 @@ void __exit dev_driver_exit(void)
 	iounmap(fnd_addr);
     // unregister device
 	unregister_chrdev(DEV_DRIVER_MAJOR, DEV_DRIVER_NAME);
+    // flush
+    flush_workqueue(my_workq);
     // destroy work queue
     destroy_workqueue(my_workq);
 
