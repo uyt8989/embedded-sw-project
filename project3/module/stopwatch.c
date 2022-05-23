@@ -21,7 +21,8 @@
 
 /* functions */
 static int fnd_write(const unsigned short int value);
-static void update_device(struct work_struct *work);
+//static void update_device(struct work_struct *work);
+//static void set_my_timer(struct work_struct* work)
 static void kernel_timer_blink(unsigned long timeout);
 irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg);
 irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg);
@@ -65,6 +66,7 @@ static int fnd_write(const unsigned short int value) {
 	return SUCCESS;
 }
 
+/*
 // update device (bottom half)
 static void update_device(struct work_struct* work) {
     unsigned short int calculated_time;
@@ -85,30 +87,45 @@ static void set_my_timer(struct work_struct* work) {
     // add first timer
 	add_timer(&my_timer.timer);
 }
+*/
 
-static void kernel_timer_blink(unsigned long timeout) {
-    printk("blink\n");
-    // top half
-    current_time++;
+// update device (bottom half)
+static void update_device() {
+    unsigned short int calculated_time;
+    unsigned int min, sec;
+    min = (current_time / 10) / 60; sec = (current_time / 10) % 60;
+    calculated_time = (min / 10) << 12 | (min % 10) << 8 | (sec / 10) << 4 | (sec % 10);
+    fnd_write(calculated_time);
+    return ;
+}
 
-/*
-    fnd_write(current_time);
-
+// set next timer (bottom half)
+static void set_my_timer() {
+    // set next timer
     my_timer.timer.expires = get_jiffies_64() + HZ / 10;
 	my_timer.timer.data = (unsigned long)&my_timer;;
     my_timer.timer.function	= kernel_timer_blink;
 
     // add first timer
 	add_timer(&my_timer.timer);
-*/
+}
 
+static void kernel_timer_blink(unsigned long timeout) {
+    printk("blink\n");
+    // top half
+    current_time++;
+
+    update_device();
+    set_my_timer();
+
+/*
     // bottom half
     struct work_struct work;
     INIT_WORK(&work, update_device);
     queue_work(my_workq, &work);
     INIT_WORK(&work, set_my_timer);
     queue_work(my_workq, &work);
-
+*/
     return ;
 }
 
@@ -122,6 +139,8 @@ irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg) {
     }
     stopwatch_on = STOPWATCH_ON;
     stopwatch_play = STOPWATCH_PLAY;
+
+    set_my_timer();
 /*
     my_timer.timer.expires = get_jiffies_64() + HZ / 10;
 	my_timer.timer.data = (unsigned long)&my_timer;;
@@ -132,11 +151,12 @@ irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg) {
 */
     printk("Start stopwatch\n");
 
+/*
     // bottom half
     struct work_struct work;
     INIT_WORK(&work, set_my_timer);
     queue_work(my_workq, &work);
-
+*/
 	return IRQ_HANDLED;
 }
 
@@ -149,7 +169,26 @@ irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
         return IRQ_HANDLED;
     }
 
+    if(stopwatch_play == STOPWATCH_PLAY) {
+        // top half
+        stopwatch_play = STOPWATCH_PAUSED;
+        // erase next timer
+        del_timer_sync(&my_timer);
+    }
 
+    else if(stopwatch_play == STOPWATCH_PAUSED) {
+        // top half
+        stopwatch_play = STOPWATCH_PLAY;
+        set_my_timer();
+        /*
+        // bottom half
+        struct work_struct work;
+        INIT_WORK(&work, set_my_timer);
+        queue_work(my_workq, &work);
+        */
+    }
+
+/*
     if(stopwatch_play == STOPWATCH_PLAY) {
         // top half
         stopwatch_play = STOPWATCH_PAUSED;
@@ -165,7 +204,7 @@ irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
         INIT_WORK(&work, set_my_timer);
         queue_work(my_workq, &work);
     }
-
+*/
     return IRQ_HANDLED;
 }
 
@@ -179,12 +218,15 @@ irqreturn_t inter_handler_volup(int irq, void* dev_id,struct pt_regs* reg) {
     
     printk("reset stopwatch\n");
     current_time = 0;
+    del_timer_sync(&my_timer);
+    set_my_timer();
    
+   /*
     // bottom half
     struct work_struct work;
     INIT_WORK(&work, update_device);
     queue_work(my_workq, &work);
-
+*/
     return IRQ_HANDLED;
 }
 
@@ -297,6 +339,7 @@ int __init dev_driver_init(void)
 
     // initialize time
     current_time = 0;
+    update_device();
 
     // create work queue
     my_workq = create_workqueue("my workqueue");
