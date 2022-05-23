@@ -39,6 +39,11 @@ static struct file_operations dev_driver_fops =
 	.unlocked_ioctl = dev_driver_ioctl
 };
 
+// timer struct
+static struct struct_my_timer {
+	struct timer_list timer;
+};
+
 // usage counter for driver
 static char stopwatch_usage = DRIVER_NOT_USED;
 static char stopwatch_on = STOPWATCH_OFF;
@@ -52,7 +57,7 @@ DECLARE_WAIT_QUEUE_HEAD(my_waitq);
 // work queue
 static struct workqueue_struct *my_workq;
 // timer
-static struct timer_list my_timer;
+struct struct_my_timer my_timer;
 
 // write to FND device
 static int fnd_write(const unsigned short int value) {
@@ -73,12 +78,12 @@ static void update_device(struct work_struct* work) {
 // set next timer (bottom half)
 static void set_my_timer(struct work_struct* work) {
     // set next timer
-    my_timer.expires = get_jiffies_64() + HZ / 10;
-	my_timer.data = (unsigned long)&my_timer;
-    my_timer.function = kernel_timer_blink;
+    my_timer.timer.expires = get_jiffies_64() + HZ / 10;
+	my_timer.time.data = (unsigned long)&my_timer;;
+    my_timer.timer.function	= kernel_timer_blink;
 
     // add first timer
-	add_timer(&my_timer);
+	add_timer(&my_timer.timer);
 }
 
 static void kernel_timer_blink(unsigned long timeout) {
@@ -88,12 +93,12 @@ static void kernel_timer_blink(unsigned long timeout) {
 
     fnd_write(current_time);
 
-    my_timer.expires = get_jiffies_64() + HZ / 10;
-	my_timer.data = (unsigned long)&my_timer;
-    my_timer.function = kernel_timer_blink;
+    my_timer.timer.expires = get_jiffies_64() + HZ / 10;
+	my_timer.time.data = (unsigned long)&my_timer;;
+    my_timer.timer.function	= kernel_timer_blink;
 
     // add first timer
-	add_timer(&my_timer);
+	add_timer(&my_timer.timer);
 
     /*
     // bottom half
@@ -117,14 +122,14 @@ irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg) {
     stopwatch_on = STOPWATCH_ON;
     stopwatch_play = STOPWATCH_PLAY;
 
-    my_timer.expires = get_jiffies_64() + HZ / 10;
-	my_timer.data = (unsigned long)&my_timer;;
-    my_timer.function	= kernel_timer_blink;
+    my_timer.timer.expires = get_jiffies_64() + HZ / 10;
+	my_timer.time.data = (unsigned long)&my_timer;;
+    my_timer.timer.function	= kernel_timer_blink;
 
     // add first timer
-	add_timer(&my_timer);
+	add_timer(&my_timer.timer);
 
-     printk("Start stopwatch\n");
+    printk("Start stopwatch\n");
 /*
     // bottom half
     struct work_struct work;
@@ -284,6 +289,9 @@ int __init dev_driver_init(void)
 	
 	// map register's physical address
 	fnd_addr = ioremap(IOM_FND_ADDRESS, 0x4);
+
+    // initialize timer
+	init_timer(&(my_timer.timer));
 
     // initialize time
     current_time = 0;
