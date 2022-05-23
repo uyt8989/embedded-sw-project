@@ -74,26 +74,26 @@ static void update_device(struct work_struct* work) {
 static void set_my_timer(struct work_struct* work) {
     // set next timer
     my_timer.expires = get_jiffies_64() + HZ / 10;
-	my_timer.data = 0;
-    my_timer.function	= kernel_timer_blink;
+	my_timer.data = (unsigned long)&my_timer;
+    my_timer.function = kernel_timer_blink;
 
     // add first timer
 	add_timer(&my_timer);
 }
 
 static void kernel_timer_blink(unsigned long timeout) {
+    printf("blink\n");
     // top half
     current_time++;
 
     fnd_write(current_time);
 
     my_timer.expires = get_jiffies_64() + HZ / 10;
-	my_timer.data = 0;
-    my_timer.function	= kernel_timer_blink;
+	my_timer.data = (unsigned long)&my_timer;
+    my_timer.function = kernel_timer_blink;
 
     // add first timer
 	add_timer(&my_timer);
-
 
     /*
     // bottom half
@@ -114,16 +114,17 @@ irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg) {
         printk("Stopwatch is already excuted\n");
         return IRQ_HANDLED;
     }
-    printk("Start stopwatch\n");
     stopwatch_on = STOPWATCH_ON;
     stopwatch_play = STOPWATCH_PLAY;
 
     my_timer.expires = get_jiffies_64() + HZ / 10;
-	my_timer.data = NULL;
+	my_timer.data = (unsigned long)&my_timer;;
     my_timer.function	= kernel_timer_blink;
 
     // add first timer
 	add_timer(&my_timer);
+
+     printk("Start stopwatch\n");
 /*
     // bottom half
     struct work_struct work;
