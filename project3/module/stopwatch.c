@@ -302,6 +302,12 @@ static long dev_driver_ioctl(struct file *mfile,
             current_time = 0;
             // initialize fnd
             update_device();
+            
+            // initialize stopwatch's status
+            topwatch_on = STOPWATCH_OFF;
+            stopwatch_play = STOPWATCH_PAUSED;
+            terminate_key = KEY_INIT;
+
             // Sleep until home button is pressed
             printk("Press Home button to start stopwatch...\n");
             if(stopwatch_on == STOPWATCH_OFF) {
