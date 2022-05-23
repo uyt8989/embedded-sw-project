@@ -218,9 +218,12 @@ irqreturn_t inter_handler_volup(int irq, void* dev_id,struct pt_regs* reg) {
     
     printk("reset stopwatch\n");
     current_time = 0;
-    del_timer_sync(&my_timer);
-    set_my_timer();
-   
+    // play 였다면 타이머 다시 설정하고 add
+    if(stopwatch_play == stopwatch_play) {
+        del_timer_sync(&my_timer);
+        set_my_timer();
+    }
+
    /*
     // bottom half
     struct work_struct work;
