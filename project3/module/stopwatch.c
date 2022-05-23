@@ -150,7 +150,7 @@ irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
     }
 
 
-    if(stopwatch_play == STOPWATHC_PLAY) {
+    if(stopwatch_play == STOPWATCH_PLAY) {
         // top half
         stopwatch_play = STOPWATCH_PAUSED;
         // erase next timer
