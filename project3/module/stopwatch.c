@@ -49,6 +49,8 @@ static struct struct_my_timer {
 static char stopwatch_usage = DRIVER_NOT_USED;
 static char stopwatch_on = STOPWATCH_OFF;
 static char stopwatch_play = STOPWATCH_PAUSED;
+static char terminate_key = KEY_INIT;
+static unsigned int pressed_time = 0;
 // register address
 static unsigned char *fnd_addr;
 static unsigned int current_time;
@@ -131,8 +133,7 @@ static void kernel_timer_blink(unsigned long timeout) {
 
 irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg) {
 	// top half
-    printk("home key\n");
-    
+    printk("Start stopwatch\n");
     if(stopwatch_on == STOPWATCH_ON) {
         printk("Stopwatch is already excuted\n");
         return IRQ_HANDLED;
@@ -140,16 +141,8 @@ irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg) {
     stopwatch_on = STOPWATCH_ON;
     stopwatch_play = STOPWATCH_PLAY;
 
+    // bottom half
     set_my_timer();
-/*
-    my_timer.timer.expires = get_jiffies_64() + HZ / 10;
-	my_timer.timer.data = (unsigned long)&my_timer;;
-    my_timer.timer.function	= kernel_timer_blink;
-
-    // add first timer
-	add_timer(&my_timer.timer);
-*/
-    printk("Start stopwatch\n");
 
 /*
     // bottom half
@@ -161,15 +154,13 @@ irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg) {
 }
 
 irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
-    printk("back key\n");
-    printk("pause stopwatch\n");
-
     if(stopwatch_on == STOPWATCH_OFF) {
         printk("You should press Home button first\n");
         return IRQ_HANDLED;
     }
 
     if(stopwatch_play == STOPWATCH_PLAY) {
+        printk("pause stopwatch\n");
         // top half
         stopwatch_play = STOPWATCH_PAUSED;
         // erase next timer
@@ -177,15 +168,11 @@ irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
     }
 
     else if(stopwatch_play == STOPWATCH_PAUSED) {
+        printk("play stopwatch\n");
         // top half
         stopwatch_play = STOPWATCH_PLAY;
-        set_my_timer();
-        /*
         // bottom half
-        struct work_struct work;
-        INIT_WORK(&work, set_my_timer);
-        queue_work(my_workq, &work);
-        */
+        set_my_timer();
     }
 
 /*
@@ -210,7 +197,6 @@ irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
 
 irqreturn_t inter_handler_volup(int irq, void* dev_id,struct pt_regs* reg) {
     // top half
-    printk("volup key\n");
     if(stopwatch_on == STOPWATCH_OFF) {
         printk("You should press Home button first\n");
         return IRQ_HANDLED;
@@ -225,21 +211,35 @@ irqreturn_t inter_handler_volup(int irq, void* dev_id,struct pt_regs* reg) {
         set_my_timer();
     }
 
-   /*
+    /*
     // bottom half
     struct work_struct work;
     INIT_WORK(&work, update_device);
     queue_work(my_workq, &work);
-*/
+    */
+
     return IRQ_HANDLED;
 }
 
 irqreturn_t inter_handler_voldown(int irq, void* dev_id, struct pt_regs* reg) {
     // top half
     printk("voldown key\n");
-    del_timer_sync(&my_timer);
-    stopwatch_on = STOPWATCH_OFF;
-    __wake_up(&my_waitq, 1, 1, NULL);
+    if(terminate_key == KEY_INIT) {
+        terminate_key = KEY_PRESSED;
+        pressed_time = get_jiffies_64();
+    }
+    else if(terminate_key == KEY_PRESSED) {
+        if(get_jiffies_64() - pressed_time >= 3 * HZ) {
+             del_timer_sync(&my_timer);
+            stopwatch_on = STOPWATCH_OFF;
+            __wake_up(&my_waitq, 1, 1, NULL);
+        }
+        else {
+            terminate_key = KEY_INIT;
+            pressed_time = 0;
+        }
+    }
+
     return IRQ_HANDLED;
 }
 
@@ -298,10 +298,13 @@ static long dev_driver_ioctl(struct file *mfile,
 
 	switch(ioctl_num) {
 		case IOCTL_COMMAND:
+            // initialize time
+            current_time = 0;
+            // initialize fnd
+            update_device();
+            // Sleep until home button is pressed
             printk("Press Home button to start stopwatch...\n");
             if(stopwatch_on == STOPWATCH_OFF) {
-                //stopwatch_on = INTERRUPT_ON;
-                //current_stat = PLAY;
 			    interruptible_sleep_on(&my_waitq);
             }
 			break;
@@ -340,10 +343,6 @@ int __init dev_driver_init(void)
 
     // initialize timer
 	init_timer(&(my_timer.timer));
-
-    // initialize time
-    current_time = 0;
-    update_device();
 
     // create work queue
     my_workq = create_workqueue("my workqueue");
