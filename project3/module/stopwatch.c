@@ -96,7 +96,6 @@ static void set_my_timer(void) {
     my_timer.timer.expires = get_jiffies_64() + HZ / 10;
 	my_timer.timer.data = (unsigned long)&my_timer;;
     my_timer.timer.function	= kernel_timer_blink;
-
     // add first timer
 	add_timer(&my_timer.timer);
 }
@@ -141,7 +140,6 @@ irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
         // change status variables
         stopwatch_play = STOPWATCH_PAUSED;
         // erase next timer
-        //del_timer_sync(&my_timer.timer);
         del_timer(&my_timer.timer);
     }
 
@@ -170,7 +168,6 @@ irqreturn_t inter_handler_volup(int irq, void* dev_id,struct pt_regs* reg) {
 
     // if stopwatch is playing, set timer again
     if(stopwatch_play == STOPWATCH_PLAY) {
-        //del_timer_sync(&my_timer.timer);
         del_timer(&my_timer.timer);
         set_my_timer();
     }
@@ -196,7 +193,6 @@ irqreturn_t inter_handler_voldown(int irq, void* dev_id, struct pt_regs* reg) {
         if((temp_time - pressed_time >= 3 * HZ)) {
             printk("Stopwatch is terminated\n");
             // delete current timer
-            //del_timer_sync(&my_timer.timer);
             del_timer(&my_timer.timer);
             // clear status variables
             stopwatch_on = STOPWATCH_OFF;
