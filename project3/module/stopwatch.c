@@ -141,7 +141,8 @@ irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
         // change status variables
         stopwatch_play = STOPWATCH_PAUSED;
         // erase next timer
-        del_timer_sync(&my_timer.timer);
+        //del_timer_sync(&my_timer.timer);
+        del_timer(&my_timer.timer);
     }
 
     else if(stopwatch_play == STOPWATCH_PAUSED) {
@@ -169,7 +170,8 @@ irqreturn_t inter_handler_volup(int irq, void* dev_id,struct pt_regs* reg) {
 
     // if stopwatch is playing, set timer again
     if(stopwatch_play == STOPWATCH_PLAY) {
-        del_timer_sync(&my_timer.timer);
+        //del_timer_sync(&my_timer.timer);
+        del_timer(&my_timer.timer);
         set_my_timer();
     }
 
@@ -194,7 +196,8 @@ irqreturn_t inter_handler_voldown(int irq, void* dev_id, struct pt_regs* reg) {
         if((temp_time - pressed_time >= 3 * HZ)) {
             printk("Stopwatch is terminated\n");
             // delete current timer
-            del_timer_sync(&my_timer.timer);
+            //del_timer_sync(&my_timer.timer);
+            del_timer(&my_timer.timer);
             // clear status variables
             stopwatch_on = STOPWATCH_OFF;
             current_time = 0;
