@@ -21,7 +21,7 @@
 
 /* functions */
 static int fnd_write(const unsigned short int value);
-//static void update_device(struct work_struct *work);
+static void update_device(struct work_struct *work);
 //static void set_my_timer(struct work_struct* work);
 static void set_my_timer(void);
 static void kernel_timer_blink(unsigned long timeout);
