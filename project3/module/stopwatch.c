@@ -20,15 +20,20 @@
 #include "stopwatch.h"
 
 /* functions */
+// write value to fnd regiser
 static int fnd_write(const unsigned short int value);
+// calculate time and call write function
 static void update_device(struct work_struct *work);
-//static void set_my_timer(struct work_struct* work);
+// add new timer
 static void set_my_timer(void);
+// increase time and set new timer
 static void kernel_timer_blink(unsigned long timeout);
+// interrupt handler functions
 irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg);
 irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg);
 irqreturn_t inter_handler_volup(int irq, void* dev_id, struct pt_regs* reg);
 irqreturn_t inter_handler_voldown(int irq, void* dev_id, struct pt_regs* reg);
+// module functions
 static int dev_driver_open(struct inode *, struct file *);
 static int dev_driver_release(struct inode *, struct file *);
 static long dev_driver_ioctl(struct file *, unsigned int, unsigned long);
@@ -46,29 +51,46 @@ static struct struct_my_timer {
 	struct timer_list timer;
 };
 
+// wait queue
+wait_queue_head_t my_waitq;
+DECLARE_WAIT_QUEUE_HEAD(my_waitq);
+// work queue
+static DECLARE_WORK(work, update_device);
+
+/* global variables */
 // usage counter for driver
 static char stopwatch_usage = DRIVER_NOT_USED;
+// stopwatch status variables
 static char stopwatch_on = STOPWATCH_OFF;
 static char stopwatch_play = STOPWATCH_PAUSED;
 static char terminate_key = KEY_INIT;
 static unsigned int pressed_time = 0;
 // register address
 static unsigned char *fnd_addr;
+// stopwatch's time
 static unsigned int current_time;
-// wait queue
-wait_queue_head_t my_waitq;
-DECLARE_WAIT_QUEUE_HEAD(my_waitq);
-static DECLARE_WORK(work, update_device);
-// timer
+// my timer
 struct struct_my_timer my_timer;
 
-// write to FND device
 static int fnd_write(const unsigned short int value) {
 	outw(value, (unsigned int)fnd_addr);
 	return SUCCESS;
 }
 
-// set next timer (top half)
+static void update_device(struct work_struct* work) {
+    unsigned short int calculated_time;
+    unsigned int min, sec;
+    if(current_time % 10 == 0) {
+        printk("Tiktok\n");
+    }
+    // calculate time to print
+    min = (current_time / 10) / 60; sec = (current_time / 10) % 60;
+    calculated_time = (min / 10) << 12 | (min % 10) << 8 | (sec / 10) << 4 | (sec % 10);
+    // write to fnd
+    fnd_write(calculated_time);
+    return ;
+}
+
 static void set_my_timer(void) {
     // set next timer
     my_timer.timer.expires = get_jiffies_64() + HZ / 10;
@@ -79,62 +101,44 @@ static void set_my_timer(void) {
 	add_timer(&my_timer.timer);
 }
 
-// update device (bottom half)
-static void update_device(struct work_struct* work) {
-    unsigned short int calculated_time;
-    unsigned int min, sec;
-    if(current_time % 10 == 0) {
-        printk("Tiktok\n");
-    }
-    min = (current_time / 10) / 60; sec = (current_time / 10) % 60;
-    calculated_time = (min / 10) << 12 | (min % 10) << 8 | (sec / 10) << 4 | (sec % 10);
-    fnd_write(calculated_time);
-    return ;
-}
-
 static void kernel_timer_blink(unsigned long timeout) {
-    //struct work_struct work;
     /* top half */
     current_time++;
     set_my_timer();
-
     /* bottom half */
-    //INIT_WORK(&work, update_device);
     schedule_work(&work);
-    
     return ;
 }
 
 irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg) {
-	//struct work_struct work;
     /* top half */
     if(stopwatch_on == STOPWATCH_ON) {
         printk("Stopwatch is already on\n");
         return IRQ_HANDLED;
     }
     printk("Start stopwatch\n");
+    // change status variables
     stopwatch_on = STOPWATCH_ON;
     stopwatch_play = STOPWATCH_PLAY;
+    // add first timer
     set_my_timer();
 
     /* bottom half */
-    //INIT_WORK(&work, update_device);
     schedule_work(&work);
 
 	return IRQ_HANDLED;
 }
 
 irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
-    //struct work_struct work;
-
     if(stopwatch_on == STOPWATCH_OFF) {
         printk("You should press Home button first\n");
         return IRQ_HANDLED;
     }
 
     if(stopwatch_play == STOPWATCH_PLAY) {
-        printk("Pause stopwatch\n");
         /* top half */
+        printk("Pause stopwatch\n");
+        // change status variables
         stopwatch_play = STOPWATCH_PAUSED;
         // erase next timer
         del_timer_sync(&my_timer.timer);
@@ -143,11 +147,11 @@ irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
     else if(stopwatch_play == STOPWATCH_PAUSED) {
         /* top half */
         printk("Replay stopwatch\n");
+        // change status variables
         stopwatch_play = STOPWATCH_PLAY;
+        // set new timer 
         set_my_timer();
-
         /* bottom half */
-        //INIT_WORK(&work, update_device);
         schedule_work(&work);
     }
 
@@ -155,7 +159,6 @@ irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
 }
 
 irqreturn_t inter_handler_volup(int irq, void* dev_id,struct pt_regs* reg) {
-    //struct work_struct work;
     /* top half */
     if(stopwatch_on == STOPWATCH_OFF) {
         printk("You should press Home button first\n");
@@ -171,17 +174,16 @@ irqreturn_t inter_handler_volup(int irq, void* dev_id,struct pt_regs* reg) {
     }
 
     /* bottom half */
-    //INIT_WORK(&work, update_device);
     schedule_work(&work);
 
     return IRQ_HANDLED;
 }
 
 irqreturn_t inter_handler_voldown(int irq, void* dev_id, struct pt_regs* reg) {
-    //struct work_struct work;
     /* top half */
     // save the time when button is pressed
     if(terminate_key == KEY_INIT) {
+        printk("You need to press for 3 seconds\n");
         terminate_key = KEY_PRESSED;
         pressed_time = get_jiffies_64();
     }
@@ -191,16 +193,19 @@ irqreturn_t inter_handler_voldown(int irq, void* dev_id, struct pt_regs* reg) {
         // if user pressed button while more than 3 seconds, terminate program
         if((temp_time - pressed_time >= 3 * HZ)) {
             printk("Stopwatch is terminated\n");
+            // delete current timer
             del_timer_sync(&my_timer.timer);
+            // clear status variables
             stopwatch_on = STOPWATCH_OFF;
             current_time = 0;
+            // terminate program
             __wake_up(&my_waitq, 1, 1, NULL);
             /* bottom half */
-            //INIT_WORK(&work, update_device);
             schedule_work(&work);
         }
         // if user pressed button while less than 3 seconds, continue program
         else {
+            printk("You need to press button longer to terminate\n");
             terminate_key = KEY_INIT;
             pressed_time = 0;
         }
@@ -246,8 +251,10 @@ static int dev_driver_open(struct inode *minode, struct file *mfile) {
 }
 
 static int dev_driver_release(struct inode *minode, struct file *mfile) {
-	stopwatch_usage = DRIVER_NOT_USED;
+	// clear variables
+    stopwatch_usage = DRIVER_NOT_USED;
 
+    // free irqs
     free_irq(gpio_to_irq(HOME_KEY), NULL);
 	free_irq(gpio_to_irq(BACK_KEY), NULL);
 	free_irq(gpio_to_irq(VOLUP_KEY), NULL);
@@ -264,17 +271,15 @@ static long dev_driver_ioctl(struct file *mfile,
 		case IOCTL_COMMAND:
             // initialize time
             current_time = 0;
-            
             // initialize stopwatch's status
             stopwatch_on = STOPWATCH_OFF;
             stopwatch_play = STOPWATCH_PAUSED;
             terminate_key = KEY_INIT;
-
-            // Sleep until home button is pressed
             printk("********************************************\n");
             printk("* Press Home button to start stopwatch...\n");
             printk("********************************************\n");
             if(stopwatch_on == STOPWATCH_OFF) {
+                // Sleep until home button is pressed
 			    interruptible_sleep_on(&my_waitq);
             }
 			break;
@@ -290,29 +295,23 @@ static long dev_driver_ioctl(struct file *mfile,
 int __init dev_driver_init(void)
 {
 	int result;
-
 	// reigster device
 	result = register_chrdev(DEV_DRIVER_MAJOR, DEV_DRIVER_NAME, &dev_driver_fops);
-
 	// register error
 	if(result < 0) {
 		printk("register error %d\n", result);
 		return result;
 	}
-
 	// print informations of driver
 	printk("********************************************\n");
     printk("* %s module init\n", DEV_DRIVER_NAME);
     printk("* dev_file: /dev/%s, major: %d\n", DEV_DRIVER_NAME, DEV_DRIVER_MAJOR);
 	printk("* you need to do mknod /dev/%s c %d 0\n", DEV_DRIVER_NAME, DEV_DRIVER_MAJOR);
 	printk("********************************************\n");
-	
 	// map register's physical address
 	fnd_addr = ioremap(IOM_FND_ADDRESS, 0x4);
-
     // initialize timer
 	init_timer(&(my_timer.timer));
-
 	return 0;
 }
 
