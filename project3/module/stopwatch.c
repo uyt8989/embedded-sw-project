@@ -134,7 +134,7 @@ irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
         /* top half */
         stopwatch_play = STOPWATCH_PAUSED;
         // erase next timer
-        del_timer_sync(&my_timer);
+        del_timer_sync(&my_timer.timer);
     }
 
     else if(stopwatch_play == STOPWATCH_PAUSED) {
@@ -163,7 +163,7 @@ irqreturn_t inter_handler_volup(int irq, void* dev_id,struct pt_regs* reg) {
 
     // if stopwatch is playing, set timer again
     if(stopwatch_play == STOPWATCH_PLAY) {
-        del_timer_sync(&my_timer);
+        del_timer_sync(&my_timer.timer);
         set_my_timer();
     }
 
@@ -188,7 +188,7 @@ irqreturn_t inter_handler_voldown(int irq, void* dev_id, struct pt_regs* reg) {
         // if user pressed button while more than 3 seconds, terminate program
         if((temp_time - pressed_time >= 3 * HZ)) {
             printk("Stopwatch is terminated\n");
-            del_timer_sync(&my_timer);
+            del_timer_sync(&my_timer.timer);
             stopwatch_on = STOPWATCH_OFF;
             current_time = 0;
             __wake_up(&my_waitq, 1, 1, NULL);
