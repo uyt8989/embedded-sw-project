@@ -259,8 +259,6 @@ static int dev_driver_release(struct inode *minode, struct file *mfile) {
 
 static long dev_driver_ioctl(struct file *mfile, 
 			unsigned int ioctl_num, unsigned long ioctl_param) {
-	int result;
-
 	switch(ioctl_num) {
 		case IOCTL_COMMAND:
             // initialize time
