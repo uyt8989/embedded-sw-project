@@ -80,7 +80,7 @@ static int fnd_write(const unsigned short int value) {
 static void update_device(struct work_struct* work) {
     unsigned short int calculated_time;
     unsigned int min, sec;
-    if(current_time % 10 == 0) {
+    if(current_time % 10 == 0 && current_time != 0) {
         printk("Tiktok\n");
     }
     // calculate time to print
