@@ -58,6 +58,7 @@ static unsigned int current_time;
 // wait queue
 wait_queue_head_t my_waitq;
 DECLARE_WAIT_QUEUE_HEAD(my_waitq);
+static DECLARE_WORK(work, update_device);
 // timer
 struct struct_my_timer my_timer;
 
@@ -92,20 +93,20 @@ static void update_device(struct work_struct* work) {
 }
 
 static void kernel_timer_blink(unsigned long timeout) {
-    struct work_struct work;
+    //struct work_struct work;
     /* top half */
     current_time++;
     set_my_timer();
 
     /* bottom half */
-    INIT_WORK(&work, update_device);
+    //INIT_WORK(&work, update_device);
     schedule_work(&work);
     
     return ;
 }
 
 irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg) {
-	struct work_struct work;
+	//struct work_struct work;
     /* top half */
     if(stopwatch_on == STOPWATCH_ON) {
         printk("Stopwatch is already on\n");
@@ -117,14 +118,14 @@ irqreturn_t inter_handler_home(int irq, void* dev_id, struct pt_regs* reg) {
     set_my_timer();
 
     /* bottom half */
-    INIT_WORK(&work, update_device);
+    //INIT_WORK(&work, update_device);
     schedule_work(&work);
 
 	return IRQ_HANDLED;
 }
 
 irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
-    struct work_struct work;
+    //struct work_struct work;
 
     if(stopwatch_on == STOPWATCH_OFF) {
         printk("You should press Home button first\n");
@@ -146,7 +147,7 @@ irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
         set_my_timer();
 
         /* bottom half */
-        INIT_WORK(&work, update_device);
+        //INIT_WORK(&work, update_device);
         schedule_work(&work);
     }
 
@@ -154,7 +155,7 @@ irqreturn_t inter_handler_back(int irq, void* dev_id, struct pt_regs* reg) {
 }
 
 irqreturn_t inter_handler_volup(int irq, void* dev_id,struct pt_regs* reg) {
-    struct work_struct work;
+    //struct work_struct work;
     /* top half */
     if(stopwatch_on == STOPWATCH_OFF) {
         printk("You should press Home button first\n");
@@ -170,14 +171,14 @@ irqreturn_t inter_handler_volup(int irq, void* dev_id,struct pt_regs* reg) {
     }
 
     /* bottom half */
-    INIT_WORK(&work, update_device);
+    //INIT_WORK(&work, update_device);
     schedule_work(&work);
 
     return IRQ_HANDLED;
 }
 
 irqreturn_t inter_handler_voldown(int irq, void* dev_id, struct pt_regs* reg) {
-    struct work_struct work;
+    //struct work_struct work;
     /* top half */
     // save the time when button is pressed
     if(terminate_key == KEY_INIT) {
@@ -195,7 +196,7 @@ irqreturn_t inter_handler_voldown(int irq, void* dev_id, struct pt_regs* reg) {
             current_time = 0;
             __wake_up(&my_waitq, 1, 1, NULL);
             /* bottom half */
-            INIT_WORK(&work, update_device);
+            //INIT_WORK(&work, update_device);
             schedule_work(&work);
         }
         // if user pressed button while less than 3 seconds, continue program
