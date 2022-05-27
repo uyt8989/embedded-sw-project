@@ -96,7 +96,7 @@ static void set_my_timer(void) {
     my_timer.timer.expires = get_jiffies_64() + HZ / 10;
 	my_timer.timer.data = (unsigned long)&my_timer;;
     my_timer.timer.function	= kernel_timer_blink;
-    // add first timer
+    // add next timer
 	add_timer(&my_timer.timer);
 }
 
