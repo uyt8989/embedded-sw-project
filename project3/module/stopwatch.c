@@ -17,7 +17,6 @@
 #include <asm/irq.h>
 #include <mach/gpio.h>
 #include "stopwatch.h"
-#include "dot_font.h"
 
 /* functions */
 // write value to fnd regiser
