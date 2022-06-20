@@ -275,7 +275,7 @@ static long dev_driver_ioctl(struct file *mfile,
 
 			ret = move_maze(dir);
 
-			msleep(50);
+			//msleep(50);
 
 			break;
 		default:
