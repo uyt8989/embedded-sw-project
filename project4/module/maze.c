@@ -101,13 +101,14 @@ static void kernel_timer_blink(unsigned long timeout) {
 static int dev_driver_open(struct inode *minode, struct file *mfile) {
 	int ret, irq;
     
+	/*
     if(stopwatch_usage != DRIVER_NOT_USED) {
 		printk("dev_driver is already used\n");
 		return -EBUSY;
 	}
 	
 	stopwatch_usage = DRIVER_OPENED;
-	
+	*/
 	printk("%s is successfully opened\n", DEV_DRIVER_NAME);
 
 	return 0;
@@ -115,7 +116,7 @@ static int dev_driver_open(struct inode *minode, struct file *mfile) {
 
 static int dev_driver_release(struct inode *minode, struct file *mfile) {
 	// clear variables
-    stopwatch_usage = DRIVER_NOT_USED;
+	//stopwatch_usage = DRIVER_NOT_USED;
 
 	printk("%s is released\n", DEV_DRIVER_NAME);
 
@@ -179,9 +180,9 @@ int __init dev_driver_init(void)
 	printk("* you need to do mknod /dev/%s c %d 0\n", DEV_DRIVER_NAME, DEV_DRIVER_MAJOR);
 	printk("********************************************\n");
 	// map register's physical address
-	fnd_addr = ioremap(IOM_FND_ADDRESS, 0x4);
+	//fnd_addr = ioremap(IOM_FND_ADDRESS, 0x4);
     // initialize timer
-	init_timer(&(my_timer.timer));
+	//init_timer(&(my_timer.timer));
 	
     return 0;
 }
@@ -189,9 +190,9 @@ int __init dev_driver_init(void)
 void __exit dev_driver_exit(void)
 {
 	// release usage counter
-	stopwatch_usage = DRIVER_NOT_USED;
+	//topwatch_usage = DRIVER_NOT_USED;
 	// unmap register's physical address
-	iounmap(fnd_addr);
+	//iounmap(fnd_addr);
 
     // unregister device
 	unregister_chrdev(DEV_DRIVER_MAJOR, DEV_DRIVER_NAME);
