@@ -227,7 +227,7 @@ static long dev_driver_ioctl(struct file *mfile,
 
 			// initialize status variables
 			cur_time = 0;
-			cur_x = 0; cur_y = COL - 1;
+			cur_x = 0; cur_y = 0;
 			
 			// make footprint
 			board[cur_x] = board[cur_x] | (1 << cur_y);
