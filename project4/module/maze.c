@@ -8,6 +8,7 @@
 #include <linux/platform_device.h>
 #include <linux/interrupt.h>
 #include <linux/wait.h>
+#include <linux/timber.h>
 #include <linux/ioport.h>
 #include <linux/version.h>
 #include <linux/random.h>
@@ -34,7 +35,7 @@ static unsigned char *fnd_addr;
 static unsigned char *dot_addr;
 
 // usage counter for driver
-static char dev_driver_usage = DRIVER_NOT_USED;
+static char driver_usage = DRIVER_NOT_USED;
 
 /* functions */
 // initialize maze and make new random maze

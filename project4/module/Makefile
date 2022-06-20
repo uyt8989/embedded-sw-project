@@ -4,7 +4,7 @@ KDIR := /work/achroimx_kernel
 PWD := $(shell pwd)
 
 driver : 
-	$(MAKE) -C $(KDIR) SUBDIRS=$(PWD) modules
+	$(MAKE) -C $(KDIR) SUBDIRS=$(PWD)
 
 .PHONY: clean
 clean : 
