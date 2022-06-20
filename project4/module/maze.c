@@ -222,7 +222,7 @@ static long dev_driver_ioctl(struct file *mfile,
 			
 			// make footprint
 			board[cur_x] = board[cur_x] | (1 << cur_y);
-/*
+
 			for (j = 0; j < COL; j++) printk(" -");
 			printk("\n");
 
@@ -247,7 +247,7 @@ static long dev_driver_ioctl(struct file *mfile,
 
 			for (j = 0; j < COL; j++) printk(" -");
 			printk("\n");
-*/
+
 			set_my_timer();
 
 			break;

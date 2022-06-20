@@ -38,6 +38,8 @@ int main(int argc, char **argv)
     // execute device
     ioctl(dev_fd, IOCTL_START);
 
+	dfs(dev_fd, 0, 0);
+
 	// close the device file
     close(dev_fd);
 
