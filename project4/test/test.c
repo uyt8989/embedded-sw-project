@@ -23,6 +23,7 @@ void dfs(int fd, int x, int y) {
 			dfs(fd, x + dx[i], y + dy[i]);
 		}
 	}
+	visit[x][y] = 0;
 }
 
 int main(int argc, char **argv)
