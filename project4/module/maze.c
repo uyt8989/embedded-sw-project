@@ -139,8 +139,10 @@ int move_maze(int dir) {
 		// change current location
 		cur_x = nx; cur_y = ny;
 		// make footprint
-		board[cur_x] = board[cur_x] | (1 << (COL - cur_y));
-		
+		//board[cur_x] = board[cur_x] | (1 << (COL - cur_y));
+		board[cur_x] = board[cur_x] | (1 << cur_y);
+
+
 		printk("%d %d\n", cur_x, cur_y);
 
 		dot_write();
