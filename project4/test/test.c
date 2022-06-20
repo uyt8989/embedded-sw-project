@@ -13,6 +13,8 @@ int visit[10][7];
 
 void dfs(int fd, int x, int y) {
 	int i, result;
+	if(visit[x][y] == 1) return ;
+
 	for(i = 0; i < 4; i++) {
 		if(visit[x+dx[i]][y+dy[i]] == 1) continue; 
 		result = ioctl(fd, IOCTL_MOVE, &i);
