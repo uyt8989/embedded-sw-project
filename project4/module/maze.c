@@ -99,7 +99,7 @@ static void kernel_timer_blink(unsigned long timeout) {
 */
 
 static int dev_driver_open(struct inode *minode, struct file *mfile) {
-	int ret, irq;
+	int ret;
     
 	/*
     if(stopwatch_usage != DRIVER_NOT_USED) {
@@ -125,33 +125,35 @@ static int dev_driver_release(struct inode *minode, struct file *mfile) {
 
 static long dev_driver_ioctl(struct file *mfile, 
 			unsigned int ioctl_num, unsigned long ioctl_param) {
+	int i, j, w;
 	switch(ioctl_num) {
 		case IOCTL_COMMAND:
-            int i, j, w;
-			for (j = 0; j < COL; j++) printf(" -");
-			printf("\n");
+			init_maze();
+
+			for (j = 0; j < COL; j++) printk(" -");
+			printk("\n");
 
 			for (i = 0; i < ROW; i++) {
 				if (i != 0) {
 					for (j = 0; j < COL; j++) {
-						printf(" ");
-						if (maze[i - 1][j].wall[DOWN] == 1) printf("-");
-						else printf(" ");
+						printk(" ");
+						if (maze[i - 1][j].wall[DOWN] == 1) printk("-");
+						else printk(" ");
 					}
-				printf("\n");
+				printk("\n");
 			}
 
-			printf("|");
+			printk("|");
 			for (j = 0; j < COL; j++) {
 				printf(" ");
-				if (maze[i][j].wall[RIGHT] == 1) printf("|");
-				else printf(" ");
+				if (maze[i][j].wall[RIGHT] == 1) printk("|");
+				else printk(" ");
 			}
-			printf("\n");
+			printk("\n");
 		}
 
-		for (j = 0; j < COL; j++) printf(" -");
-		printf("\n");
+		for (j = 0; j < COL; j++) printk(" -");
+		printk("\n");
 		
 		break;
 		// invalid ioctl command
