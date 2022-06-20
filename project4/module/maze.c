@@ -106,7 +106,7 @@ static void init_maze(void) {
 
 int move_maze(int dir) {
 	bool flag = false;
-	int dx[] = {-1, 0, 1, 0}; int dy[] = {0, -1, 0, 1};
+	int dx[] = {-1, 0, 1, 0}; int dy[] = {0, 1, 0, -1};
 	int nx = cur_x + dx[dir]; int ny = cur_y + dy[dir];
 
 	// invalid
@@ -139,7 +139,7 @@ int move_maze(int dir) {
 		// change current location
 		cur_x = nx; cur_y = ny;
 		// make footprint
-		board[cur_x] = board[cur_x] | (1 << cur_y);
+		board[cur_x] = board[cur_x] | (1 << (COL - 1 - cur_y);
 		
 		printk("%d %d\n", cur_x, cur_y);
 
