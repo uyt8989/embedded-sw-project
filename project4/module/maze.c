@@ -45,7 +45,7 @@ static int move_maze(int);
 
 // write value to fnd regiser
 static int fnd_write(const unsigned short int value);
-static int dot_write(const char *);
+static int dot_write();
 // add new timer
 static void set_my_timer(void);
 // increase time and set new timer
