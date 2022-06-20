@@ -110,6 +110,7 @@ int move_maze(int dir) {
 
 	// invalid
 	if(nx < 0 || nx >= ROW || ny < 0 || ny >= COL) {
+		printk("Invalid move\n");
 		return -1;
 	}
 
@@ -138,9 +139,16 @@ int move_maze(int dir) {
 		cur_x = nx; cur_y = ny;
 		// make footprint
 		board[cur_x] = board[cur_x] | (1 << cur_y);
+		
+		printk("%d %d\n", cur_x, cur_y);
+
+		dot_write();
+		
 		return 1;
 	}
 	
+	printk("Blocked\n");
+
 	// blocked
 	return 0;
 }
@@ -258,6 +266,8 @@ static long dev_driver_ioctl(struct file *mfile,
 				printk("Set option error\n");
 				return -EFAULT;
 			}
+
+			printf("dir : %d\n", dir);
 
 			move_maze(dir);
 
