@@ -112,15 +112,15 @@ static void set_my_timer(void) {
 
 static void kernel_timer_blink(unsigned long timeout) {
     cur_time++;
-    set_my_timer();
+	printk("%d\n", cur_time);
 	fnd_write((unsigned short int)cur_time);
+    set_my_timer();
 
     return ;
 }
 
 
 static int dev_driver_open(struct inode *minode, struct file *mfile) {    
-	
     if(driver_usage != DRIVER_NOT_USED) {
 		printk("dev_driver is already used\n");
 		return -EBUSY;
