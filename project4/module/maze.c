@@ -102,7 +102,6 @@ static int fnd_write(const unsigned short int value) {
 }
 
 static void set_my_timer(void) {
-	printk("%d\n", cur_time);
     // set next timer
     my_timer.timer.expires = get_jiffies_64() + HZ;
 	my_timer.timer.data = (unsigned long)&my_timer;;
@@ -113,7 +112,7 @@ static void set_my_timer(void) {
 
 static void kernel_timer_blink(unsigned long timeout) {
     cur_time++;
-	printk("%d\n", cur_time);
+	printk("current time : %d\n", cur_time);
 	fnd_write((unsigned short int)cur_time);
     set_my_timer();
 
