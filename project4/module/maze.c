@@ -105,7 +105,7 @@ static void init_maze(void) {
 
 int move_maze(int dir) {
 	bool flag = false;
-	int dx[] = {-1, 0, 1, 0}; int dy[] = {0, 1, 0, -1};
+	int dx[] = {-1, 0, 1, 0}; int dy[] = {0, -1, 0, 1};
 	int nx = cur_x + dx[dir]; int ny = cur_y + dy[dir];
 
 	// invalid
@@ -216,7 +216,7 @@ static int dev_driver_release(struct inode *minode, struct file *mfile) {
 
 static long dev_driver_ioctl(struct file *mfile, 
 			unsigned int ioctl_num, unsigned long ioctl_param) {
-	int i, j, dir, result;
+	int i, j, dir, result, ret = SUCCESS;
 
 	switch(ioctl_num) {
 		//start 
@@ -269,7 +269,9 @@ static long dev_driver_ioctl(struct file *mfile,
 
 			printk("dir : %d\n", dir);
 
-			move_maze(dir);
+			ret = move_maze(dir);
+
+			usleep(100);
 
 			break;
 		default:
@@ -277,7 +279,7 @@ static long dev_driver_ioctl(struct file *mfile,
 			return -EFAULT;
 	}
 
-	return SUCCESS;
+	return ret;
 }
 
 int __init dev_driver_init(void)
