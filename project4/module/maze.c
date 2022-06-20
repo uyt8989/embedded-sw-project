@@ -45,7 +45,7 @@ static struct file_operations dev_driver_fops =
 
 static void init_maze(void) {
 	int i, j;
-	unsigned int random;
+	unsigned int random, temp;
 
 	for(i = 0; i < ROW; i++) for(j = 0; j < COL; j++) {
 		maze[i][j].wall[0] = 1; maze[i][j].wall[1] = 1;
@@ -59,8 +59,11 @@ static void init_maze(void) {
 			maze[i][j].wall[DOWN] = 0;
 			continue;
 		}
+		
+		get_random_bytes(&temp, sizeof(temp));
+		temp = temp % 100;
 
-		random = (random + 10) >> 1;
+		random = ((random + 10) * temp)>> 1;
 		if ((random & 1) == 0) {
 			maze[i][j].wall[RIGHT] = 0;
 		}
