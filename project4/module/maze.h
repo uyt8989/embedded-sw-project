@@ -31,4 +31,11 @@ typedef struct _MAZE {
 	int wall[2];
 } maze_t;
 
+// timer struct
+static struct struct_my_timer {
+	struct timer_list timer;
+	int count;
+};
+
+
 #endif

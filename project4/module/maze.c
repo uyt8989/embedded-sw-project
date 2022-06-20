@@ -15,10 +15,26 @@
 #include <asm/uaccess.h>
 #include "maze.h"
 
+// timer struct
+static struct struct_my_timer {
+	struct timer_list timer;
+	int count;
+};
+
+/* Global variables */
+struct struct_my_timer my_timer;
+
 // maze board
 maze_t maze[10][7];
 unsigned char board[10];
-int cur_x, cur_y;
+int cur_x, cur_y, cur_time;
+
+// register address
+static unsigned char *fnd_addr;
+static unsigned char *dot_addr;
+
+// usage counter for driver
+static char dev_driver_usage = DRIVER_NOT_USED;
 
 /* functions */
 // initialize maze and make new random maze
@@ -63,8 +79,8 @@ static void init_maze(void) {
 		get_random_bytes(&temp, sizeof(temp));
 		temp = temp % 100;
 
-		random = ((random + 10) * temp)>> 1;
-		if ((random & 1) == 0) {
+		random = ((random + 13) * temp) >> 1;
+		if ((random & 1) == 1) {
 			maze[i][j].wall[RIGHT] = 0;
 		}
 		else {
@@ -78,7 +94,7 @@ static void init_maze(void) {
 	}
 }
 
-/*
+
 static int fnd_write(const unsigned short int value) {
 	outw(value, (unsigned int)fnd_addr);
 	return SUCCESS;
@@ -86,7 +102,7 @@ static int fnd_write(const unsigned short int value) {
 
 static void set_my_timer(void) {
     // set next timer
-    my_timer.timer.expires = get_jiffies_64() + HZ / 10;
+    my_timer.timer.expires = get_jiffies_64() + HZ;
 	my_timer.timer.data = (unsigned long)&my_timer;;
     my_timer.timer.function	= kernel_timer_blink;
     // add next timer
@@ -94,22 +110,23 @@ static void set_my_timer(void) {
 }
 
 static void kernel_timer_blink(unsigned long timeout) {
-    current_time++;
+    cur_time++;
     set_my_timer();
-    
+	fnd_write((unsigned short int)cur_time);
+
     return ;
 }
-*/
+
 
 static int dev_driver_open(struct inode *minode, struct file *mfile) {    
-	/*
-    if(stopwatch_usage != DRIVER_NOT_USED) {
+	
+    if(driver_usage != DRIVER_NOT_USED) {
 		printk("dev_driver is already used\n");
 		return -EBUSY;
 	}
 	
-	stopwatch_usage = DRIVER_OPENED;
-	*/
+	driver_usage = DRIVER_OPENED;
+	
 	printk("%s is successfully opened\n", DEV_DRIVER_NAME);
 
 	return 0;
@@ -117,7 +134,7 @@ static int dev_driver_open(struct inode *minode, struct file *mfile) {
 
 static int dev_driver_release(struct inode *minode, struct file *mfile) {
 	// clear variables
-	//stopwatch_usage = DRIVER_NOT_USED;
+	driver_usage = DRIVER_NOT_USED;
 
 	printk("%s is released\n", DEV_DRIVER_NAME);
 
@@ -128,8 +145,11 @@ static long dev_driver_ioctl(struct file *mfile,
 			unsigned int ioctl_num, unsigned long ioctl_param) {
 	int i, j;
 	switch(ioctl_num) {
+		//start 
 		case IOCTL_COMMAND:
 			init_maze();
+			cur_time = 0;
+			cur_x = 0; cur_y = COL - 1;
 
 			for (j = 0; j < COL; j++) printk(" -");
 			printk("\n");
@@ -182,10 +202,13 @@ int __init dev_driver_init(void)
     printk("* dev_file: /dev/%s, major: %d\n", DEV_DRIVER_NAME, DEV_DRIVER_MAJOR);
 	printk("* you need to do mknod /dev/%s c %d 0\n", DEV_DRIVER_NAME, DEV_DRIVER_MAJOR);
 	printk("********************************************\n");
+	
 	// map register's physical address
-	//fnd_addr = ioremap(IOM_FND_ADDRESS, 0x4);
-    // initialize timer
-	//init_timer(&(my_timer.timer));
+	fnd_addr = ioremap(IOM_FND_ADDRESS, 0x4);
+	dot_addr = ioremap(IOM_FPGA_DOT_ADDRESS, 0x10);
+    
+	// initialize timer
+	init_timer(&(my_timer.timer));
 	
     return 0;
 }
@@ -193,9 +216,14 @@ int __init dev_driver_init(void)
 void __exit dev_driver_exit(void)
 {
 	// release usage counter
-	//topwatch_usage = DRIVER_NOT_USED;
+	driver_usage = DRIVER_NOT_USED;
+
+	// delete timer
+	del_timer_sync(&my_timer.timer);
+
 	// unmap register's physical address
-	//iounmap(fnd_addr);
+	iounmap(fnd_addr);
+	iounmap(dot_addr);
 
     // unregister device
 	unregister_chrdev(DEV_DRIVER_MAJOR, DEV_DRIVER_NAME);
