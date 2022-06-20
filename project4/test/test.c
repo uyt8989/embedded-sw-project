@@ -21,10 +21,10 @@ int main(int argc, char **argv)
     // execute device
     ioctl(dev_fd, IOCTL_COMMAND);
 
+	sleep(10);
+
 	// close the device file
     close(dev_fd);
-
-	sleep(10);
 
 	return 0;
 }
