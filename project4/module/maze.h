@@ -11,6 +11,7 @@
 #define DEV_DRIVER_MAJOR 242
 // register physical address
 #define IOM_FND_ADDRESS 0x08000004
+#define IOM_FPGA_DOT_ADDRESS 0x08000210
 // maze size
 #define ROW 10
 #define COL 7
