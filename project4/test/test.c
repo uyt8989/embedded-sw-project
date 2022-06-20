@@ -19,7 +19,6 @@ void dfs(int fd, int x, int y) {
 		if(result == 1) {
 			visit[x+dx[i]][y+dy[i]] = 1;
 			dfs(fd, x + dx[i], y + dy[i]);
-			visit[x+dx[i]][y+dy[i]] = 0;
 		}
 	}
 }
