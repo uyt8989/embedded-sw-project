@@ -98,9 +98,7 @@ static void kernel_timer_blink(unsigned long timeout) {
 }
 */
 
-static int dev_driver_open(struct inode *minode, struct file *mfile) {
-	int ret;
-    
+static int dev_driver_open(struct inode *minode, struct file *mfile) {    
 	/*
     if(stopwatch_usage != DRIVER_NOT_USED) {
 		printk("dev_driver is already used\n");
@@ -125,7 +123,7 @@ static int dev_driver_release(struct inode *minode, struct file *mfile) {
 
 static long dev_driver_ioctl(struct file *mfile, 
 			unsigned int ioctl_num, unsigned long ioctl_param) {
-	int i, j, w;
+	int i, j;
 	switch(ioctl_num) {
 		case IOCTL_COMMAND:
 			init_maze();
@@ -145,7 +143,7 @@ static long dev_driver_ioctl(struct file *mfile,
 
 			printk("|");
 			for (j = 0; j < COL; j++) {
-				printf(" ");
+				printk(" ");
 				if (maze[i][j].wall[RIGHT] == 1) printk("|");
 				else printk(" ");
 			}
