@@ -24,6 +24,8 @@ int main(int argc, char **argv)
 	// close the device file
     close(dev_fd);
 
+	sleep(10);
+
 	return 0;
 }
 
