@@ -41,6 +41,14 @@ int main(int argc, char **argv)
 	visit[0][0] = 1;
 	dfs(dev_fd, 0, 0);
 
+	int i, j;
+	for(i = 0; i < 10; i++) {
+		for(j = 0; j < 7; j++) {
+			printf("%d ", visit[i][j]);
+		}
+		printf("\n");
+	}
+
 	// close the device file
     close(dev_fd);
 
