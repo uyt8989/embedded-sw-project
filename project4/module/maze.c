@@ -268,7 +268,7 @@ static long dev_driver_ioctl(struct file *mfile,
 				return -EFAULT;
 			}
 
-			printk("dir : %d\n", dir);
+			printk("cur %d %d dir : %d\n", cur_x, cur_y, dir);
 
 			ret = move_maze(dir);
 
