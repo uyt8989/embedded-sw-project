@@ -45,7 +45,7 @@ static int move_maze(int);
 
 // write value to fnd regiser
 static int fnd_write(const unsigned short int value);
-static int dot_write();
+static int dot_write(void);
 // add new timer
 static void set_my_timer(void);
 // increase time and set new timer
@@ -160,7 +160,7 @@ static int fnd_write(const unsigned short int value) {
 }
 
 // write to DOT device
-static int dot_write() {
+static int dot_write(void) {
 	int i;
 	unsigned short int value = 0;
 	for(i = 0; i < 10; i++) {
@@ -267,7 +267,7 @@ static long dev_driver_ioctl(struct file *mfile,
 				return -EFAULT;
 			}
 
-			printf("dir : %d\n", dir);
+			printk("dir : %d\n", dir);
 
 			move_maze(dir);
 
