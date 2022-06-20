@@ -8,7 +8,7 @@
 #include <linux/platform_device.h>
 #include <linux/interrupt.h>
 #include <linux/wait.h>
-#include <linux/timber.h>
+#include <linux/timer.h>
 #include <linux/ioport.h>
 #include <linux/version.h>
 #include <linux/random.h>
