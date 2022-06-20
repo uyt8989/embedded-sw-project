@@ -14,6 +14,7 @@
 #include <linux/random.h>
 #include <asm/io.h>
 #include <asm/uaccess.h>
+#include <asm/delay.h>
 #include "maze.h"
 
 // timer struct
@@ -271,7 +272,7 @@ static long dev_driver_ioctl(struct file *mfile,
 
 			ret = move_maze(dir);
 
-			usleep(100);
+			msleep(10);
 
 			break;
 		default:
