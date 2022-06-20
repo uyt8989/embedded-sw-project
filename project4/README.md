@@ -2,7 +2,7 @@
 ## 20171659 유경연
 
 ### Description
-Make mini maze game
+Make mini maze escape game
 Device driver name : /dev/maze
 Device driver major number : 242
 
