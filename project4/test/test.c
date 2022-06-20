@@ -7,6 +7,23 @@
 #include <sys/ioctl.h>
 #include "../module/maze.h"
 
+int dx[] = {-1, 0, 1, 0}; 
+int dy[] = {0, 1, 0, -1};
+int visit[10][7];
+
+void dfs(int fd, int x, int y) {
+	int i, result;
+	for(i = 0; i < 4; i++) {
+		if(visit[x+dx[i]][y+dy[i]] == 1) continue; 
+		result = ioctl(fd, IOCTL_MOVE, &i);
+		if(result == 1) {
+			visit[x+dx[i]][y+dy[i]] = 1;
+			sleep(1);
+			dfs(fd, x + dx[i], y + dy[i]);
+		}
+	}
+}
+
 int main(int argc, char **argv)
 {
 	int dev_fd;
@@ -19,9 +36,7 @@ int main(int argc, char **argv)
 	}
 
     // execute device
-    ioctl(dev_fd, IOCTL_COMMAND);
-
-	sleep(10);
+    ioctl(dev_fd, IOCTL_START);
 
 	// close the device file
     close(dev_fd);

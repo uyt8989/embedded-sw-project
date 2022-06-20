@@ -40,6 +40,9 @@ static char driver_usage = DRIVER_NOT_USED;
 /* functions */
 // initialize maze and make new random maze
 static void init_maze(void);
+// move cursor on board
+static int move_maze(int);
+
 // write value to fnd regiser
 static int fnd_write(const unsigned short int value);
 static int dot_write(const char *);
@@ -93,11 +96,69 @@ static void init_maze(void) {
 	for (j = 0; j < COL - 1; j++) {
 		maze[ROW - 1][j].wall[RIGHT] = 0;
 	}
+
+	// clear board
+	for(i = 0; i < ROW; i++) {
+		board[i] = 0;
+	}
 }
 
+int move_maze(int dir) {
+	bool flag = false;
+	int dx[] = {-1, 0, 1, 0}; int dy[] = {0, 1, 0, -1};
+	int nx = cur_x + dx[dir]; int ny = cur_y + dy[dir];
 
+	// invalid
+	if(nx < 0 || nx >= ROW || ny < 0 || ny >= COL) {
+		return -1;
+	}
+
+	switch(dir) {
+		// check wall
+		case 0:	// up
+			if(maze[nx][ny].wall[DOWN] != 1) flag = true;
+			break;
+		case 1: // right
+			if(maze[cur_x][cur_y].wall[RIGHT] != 1) flag = true;
+			break;
+		case 2: // down
+			if(maze[cur_x][cur_y].wall[DOWN] != 1) flag = true;
+			break;
+		case 3: // left
+			if(maze[nx][ny].wall[RIGHT] != 1) flag = true;
+			break;
+		default:
+			printk("Invalid direction\n");
+			break;
+	}
+
+	// allowed
+	if(flag) {
+		// change current location
+		cur_x = nx; cur_y = ny;
+		// make footprint
+		board[cur_x] = board[cur_x] | (1 << cur_y);
+		return 1;
+	}
+	
+	// blocked
+	return 0;
+}
+
+// write to FND device
 static int fnd_write(const unsigned short int value) {
 	outw(value, (unsigned int)fnd_addr);
+	return SUCCESS;
+}
+
+// write to DOT device
+static int dot_write() {
+	int i;
+	unsigned short int value = 0;
+	for(i = 0; i < 10; i++) {
+		value = board[i] & 0x7F;
+		outw(value,(unsigned int)dot_addr + i * 2);
+	}
 	return SUCCESS;
 }
 
@@ -147,14 +208,21 @@ static int dev_driver_release(struct inode *minode, struct file *mfile) {
 
 static long dev_driver_ioctl(struct file *mfile, 
 			unsigned int ioctl_num, unsigned long ioctl_param) {
-	int i, j;
+	int i, j, dir, result;
+
 	switch(ioctl_num) {
 		//start 
-		case IOCTL_COMMAND:
+		case IOCTL_START:
+			// initialize board
 			init_maze();
+
+			// initialize status variables
 			cur_time = 0;
 			cur_x = 0; cur_y = COL - 1;
-
+			
+			// make footprint
+			board[cur_x] = board[cur_x] | (1 << cur_y);
+/*
 			for (j = 0; j < COL; j++) printk(" -");
 			printk("\n");
 
@@ -165,29 +233,35 @@ static long dev_driver_ioctl(struct file *mfile,
 						if (maze[i - 1][j].wall[DOWN] == 1) printk("-");
 						else printk(" ");
 					}
+					printk("\n");
+				}
+
+				printk("|");
+				for (j = 0; j < COL; j++) {
+					printk(" ");
+					if (maze[i][j].wall[RIGHT] == 1) printk("|");
+					else printk(" ");
+				}
 				printk("\n");
 			}
 
-			printk("|");
-			for (j = 0; j < COL; j++) {
-				printk(" ");
-				if (maze[i][j].wall[RIGHT] == 1) printk("|");
-				else printk(" ");
-			}
+			for (j = 0; j < COL; j++) printk(" -");
 			printk("\n");
-		}
+*/
+			set_my_timer();
 
-		for (j = 0; j < COL; j++) printk(" -");
-		printk("\n");
-		
-
-
-
-
-		set_my_timer();
-
-		break;
+			break;
 		// invalid ioctl command
+		case IOCTL_MOVE:
+			result = copy_from_user(&dir, (void __user *)ioctl_param, sizeof(int));
+			if(result) {
+				printk("Set option error\n");
+				return -EFAULT;
+			}
+
+			move_maze(dir);
+
+			break;
 		default:
 			printk("Invalid ioctl option\n");
 			return -EFAULT;

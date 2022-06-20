@@ -17,7 +17,8 @@
 #define COL 7
 
 /* ioctl commands */
-#define IOCTL_COMMAND _IO(DEV_DRIVER_MAJOR, 0)
+#define IOCTL_START _IO(DEV_DRIVER_MAJOR, 0)
+#define IOCTL_MOVE _IOW(DEV_DRIVER_MAJOR, 1, int)
 
 /* enums */
 enum { // device driver status
