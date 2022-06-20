@@ -106,7 +106,8 @@ static void init_maze(void) {
 
 int move_maze(int dir) {
 	bool flag = false;
-	int dx[] = {-1, 0, 1, 0}; int dy[] = {0, 1, 0, -1};
+	int dx[] = {-1, 0, 1, 0};
+	int dy[] = {0, 1, 0, -1};
 	int nx = cur_x + dx[dir]; int ny = cur_y + dy[dir];
 
 	// invalid
@@ -274,7 +275,7 @@ static long dev_driver_ioctl(struct file *mfile,
 
 			ret = move_maze(dir);
 
-			msleep(10);
+			msleep(50);
 
 			break;
 		default:
