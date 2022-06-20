@@ -1,13 +1,13 @@
 CC := arm-none-linux-gnueabi-gcc
 
 app:
-	arm-none-linux-gnueabi-gcc -static -o app app.c
+	arm-none-linux-gnueabi-gcc -static -o test test.c
 
 .PHONY: clean
 clean : 
-	rm -rf app
+	rm -rf test
 
 .PHONY: push
 push:
 	make
-	adb push app /data/local/tmp
+	adb push test /data/local/tmp

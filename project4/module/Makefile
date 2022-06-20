@@ -17,4 +17,4 @@ clean :
 .PHONY: push
 push:
 	make
-	adb push stopwatch.ko /data/local/tmp
+	adb push maze.ko /data/local/tmp
