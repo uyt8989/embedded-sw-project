@@ -102,6 +102,7 @@ static int fnd_write(const unsigned short int value) {
 }
 
 static void set_my_timer(void) {
+	printk("%d\n", cur_time);
     // set next timer
     my_timer.timer.expires = get_jiffies_64() + HZ;
 	my_timer.timer.data = (unsigned long)&my_timer;;
@@ -180,7 +181,7 @@ static long dev_driver_ioctl(struct file *mfile,
 
 
 
-		
+
 		set_my_timer();
 
 		break;
