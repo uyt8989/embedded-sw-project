@@ -177,6 +177,12 @@ static long dev_driver_ioctl(struct file *mfile,
 		for (j = 0; j < COL; j++) printk(" -");
 		printk("\n");
 		
+
+
+
+		
+		set_my_timer();
+
 		break;
 		// invalid ioctl command
 		default:
