@@ -148,7 +148,7 @@ int move_maze(int dir) {
 		board[cur_x] = board[cur_x] | (1 << (COL - 1 - cur_y));
 
 		if(cur_x == ROW - 1 && cur_y == COL - 1) {
-			printf("Escape!\n");
+			printk("Escape!\n");
 			__wake_up(&my_waitq, 1, 1, NULL);
 		}
 
@@ -192,7 +192,7 @@ static void set_fnd_timer(void) {
 
 static void set_dot_timer(void) {
     // set next timer
-    dot_timer.timer.expires = get_jiffies_64() + HZ/2;
+    dot_timer.timer.expires = get_jiffies_64() + HZ / 4;
 	dot_timer.timer.data = (unsigned long)&dot_timer;
     dot_timer.timer.function = dot_timer_blink;
     // add next timer
@@ -327,7 +327,7 @@ static long dev_driver_ioctl(struct file *mfile,
 
 			break;
 		case IOCTL_CHECK:
-			printf("Sleep!\n");
+			printk("Sleep!\n");
 			// Sleep until escape the maze
 			interruptible_sleep_on(&my_waitq);
 		default:
