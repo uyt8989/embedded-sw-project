@@ -214,12 +214,10 @@ static void dot_timer_blink(unsigned long timeout) {
 		blink[i] = 0b11111111;
 
 	if(sw) {
-		printk("sw on\n");
-		blink[cur_x] = ~(1 << (COL - 1 - cur_y));
+		blink[cur_x] =  ~(1 << (COL - 1 - cur_y));
 		sw = false;
 	}
 	else {
-		printk("sw off\n");
 		sw = true;
 	}
 
@@ -249,6 +247,8 @@ static int dev_driver_open(struct inode *minode, struct file *mfile) {
 	// initialize status variables
 	cur_time = 0;
 	cur_x = 0; cur_y = 0; sw = true;
+
+	board[cur_x] = board[cur_x] | (1 << (COL - 1 - cur_y));
 			
 	dot_write();
 
