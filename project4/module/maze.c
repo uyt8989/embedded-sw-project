@@ -27,6 +27,10 @@ static struct struct_my_timer {
 struct struct_my_timer fnd_timer;
 struct struct_my_timer dot_timer;
 
+// wait queue
+wait_queue_head_t my_waitq;
+DECLARE_WAIT_QUEUE_HEAD(my_waitq);
+
 // maze board
 maze_t maze[10][7];
 unsigned char board[10];
@@ -142,6 +146,10 @@ int move_maze(int dir) {
 		// make footprint
 		//board[cur_x] = board[cur_x] | (1 << (COL - cur_y));
 		board[cur_x] = board[cur_x] | (1 << (COL - 1 - cur_y));
+
+		if(cur_x == ROW - 1 && cur_y == COL - 1) {
+			__wake_up(&my_waitq, 1, 1, NULL);
+		}
 
 		dot_write();
 		
@@ -317,6 +325,9 @@ static long dev_driver_ioctl(struct file *mfile,
 			ret = move_maze(dir);
 
 			break;
+		case IOCTL_CHECK:
+			// Sleep until escape the maze
+			interruptible_sleep_on(&my_waitq);
 		default:
 			printk("Invalid ioctl option\n");
 			return -EFAULT;
