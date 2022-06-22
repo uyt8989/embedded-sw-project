@@ -138,7 +138,7 @@ int move_maze(int dir) {
 		//board[cur_x] = board[cur_x] | (1 << (COL - cur_y));
 		board[cur_x] = board[cur_x] | (1 << cur_y);
 
-		rintk("allowed current :  %d %d\n", cur_x, cur_y);
+		printk("allowed current :  %d %d\n", cur_x, cur_y);
 
 		dot_write();
 		
