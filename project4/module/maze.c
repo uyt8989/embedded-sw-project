@@ -49,9 +49,11 @@ static int move_maze(int);
 static int fnd_write(const unsigned short int value);
 static int dot_write(void);
 // add new timer
-static void set_my_timer(void);
+static void set_fnd_timer(void);
+static void set_dot_timer(void)
 // increase time and set new timer
-static void kernel_timer_blink(unsigned long timeout);
+static void fnd_timer_blink(unsigned long timeout);
+static void dot_timer_blink(unsigned long timeout);
 // module functions
 static int dev_driver_open(struct inode *, struct file *);
 static int dev_driver_release(struct inode *, struct file *);
@@ -202,7 +204,7 @@ static void dot_timer_blink(unsigned long timeout) {
 }
 
 static int dev_driver_open(struct inode *minode, struct file *mfile) {    
-    int i;
+    int i, j;
 
 	if(driver_usage != DRIVER_NOT_USED) {
 		printk("dev_driver is already used\n");
