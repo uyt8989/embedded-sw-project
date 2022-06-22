@@ -149,7 +149,7 @@ int move_maze(int dir) {
 
 		if(cur_x == ROW - 1 && cur_y == COL - 1) {
 			printk("Escape!\n");
-			__wake_up(&my_waitq, 1, 1, NULL);
+			//__wake_up(&my_waitq, 1, 1, NULL);
 		}
 
 		dot_write();
@@ -305,7 +305,7 @@ static int dev_driver_release(struct inode *minode, struct file *mfile) {
 	del_timer_sync(&fnd_timer.timer);
 	del_timer_sync(&dot_timer.timer);
 
-	__wake_up(&my_waitq, 1, 1, NULL);
+	//__wake_up(&my_waitq, 1, 1, NULL);
 
 	printk("%s is released\n", DEV_DRIVER_NAME);
 
@@ -333,7 +333,7 @@ static long dev_driver_ioctl(struct file *mfile,
 		case IOCTL_CHECK:
 			printk("Sleep!\n");
 			// Sleep until escape the maze
-			interruptible_sleep_on(&my_waitq);
+			//interruptible_sleep_on(&my_waitq);
 		default:
 			printk("Invalid ioctl option\n");
 			return -EFAULT;
