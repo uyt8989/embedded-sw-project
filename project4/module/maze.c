@@ -163,8 +163,10 @@ static int fnd_write(const unsigned short int value) {
 static int dot_write(void) {
 	int i;
 	unsigned short int value = 0;
+
+	blink[cur_x] = blink[cur_x] );
 	for(i = 0; i < 10; i++) {
-		value = board[i] & 0x7F;
+		value = (board[i] & blick[i]);
 		outw(value,(unsigned int)dot_addr + i * 2);
 	}
 	return SUCCESS;
@@ -197,8 +199,13 @@ static void fnd_timer_blink(unsigned long timeout) {
 }
 
 static void dot_timer_blink(unsigned long timeout) {
-	unsigned char temp = board[cur_x];
-	board[cur_x] = board[cur_x] ^ (1 << (COL - 1 - cur_y));
+	int i;
+	
+	for(i = 0; i < ROW; i++) 
+		blink[i] = 0b11111111;
+
+	blink[cur_x] = ~(1 << (COL - 1 - cur_y));
+
 	dot_write();
     set_dot_timer();
     return ;
