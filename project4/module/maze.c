@@ -188,7 +188,9 @@ static void kernel_timer_blink(unsigned long timeout) {
 
 
 static int dev_driver_open(struct inode *minode, struct file *mfile) {    
-    if(driver_usage != DRIVER_NOT_USED) {
+    int i;
+
+	if(driver_usage != DRIVER_NOT_USED) {
 		printk("dev_driver is already used\n");
 		return -EBUSY;
 	}
@@ -247,6 +249,8 @@ static int dev_driver_open(struct inode *minode, struct file *mfile) {
 }
 
 static int dev_driver_release(struct inode *minode, struct file *mfile) {
+	int i;
+
 	// clear variables
 	driver_usage = DRIVER_NOT_USED;
 
