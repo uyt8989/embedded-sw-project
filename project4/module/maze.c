@@ -24,7 +24,8 @@ static struct struct_my_timer {
 };
 
 /* Global variables */
-struct struct_my_timer my_timer;
+struct struct_my_timer fnd_timer;
+struct struct_my_timer dot_timer;
 
 // maze board
 maze_t maze[10][7];
@@ -136,9 +137,7 @@ int move_maze(int dir) {
 		cur_x = nx; cur_y = ny;
 		// make footprint
 		//board[cur_x] = board[cur_x] | (1 << (COL - cur_y));
-		board[cur_x] = board[cur_x] | (1 << cur_y);
-
-		printk("allowed current :  %d %d\n", cur_x, cur_y);
+		board[cur_x] = board[cur_x] | (1 << (COL - 1 - cur_y));
 
 		dot_write();
 		
@@ -168,24 +167,39 @@ static int dot_write(void) {
 	return SUCCESS;
 }
 
-static void set_my_timer(void) {
+static void set_fnd_timer(void) {
     // set next timer
-    my_timer.timer.expires = get_jiffies_64() + HZ;
-	my_timer.timer.data = (unsigned long)&my_timer;;
-    my_timer.timer.function	= kernel_timer_blink;
+    fnd_timer.timer.expires = get_jiffies_64() + HZ;
+	fnd_timer.timer.data = (unsigned long)&fnd_timer;
+    fnd_timer.timer.function = fnd_timer_blink;
     // add next timer
-	add_timer(&my_timer.timer);
+	add_timer(&fnd_timer.timer);
 }
 
-static void kernel_timer_blink(unsigned long timeout) {
-    cur_time++;
-	printk("current time : %d\n", cur_time);
-	fnd_write((unsigned short int)cur_time);
-    set_my_timer();
+static void set_dot_timer(void) {
+    // set next timer
+    dot_timer.timer.expires = get_jiffies_64() + HZ/2;
+	dot_timer.timer.data = (unsigned long)&dot_timer;
+    dot_timer.timer.function = dot_timer_blink;
+    // add next timer
+	add_timer(&dot_timer.timer);
+}
 
+static void fnd_timer_blink(unsigned long timeout) {
+    cur_time++;
+	//printk("current time : %d\n", cur_time);
+	fnd_write((unsigned short int)cur_time);
+    set_fnd_timer();
     return ;
 }
 
+static void dot_timer_blink(unsigned long timeout) {
+	unsigned char temp = board[cur_x];
+	board[cur_x] = board[cur_x] ^ (1 << (COL - 1 - cur_y));
+	dot_write();
+    set_dot_timer();
+    return ;
+}
 
 static int dev_driver_open(struct inode *minode, struct file *mfile) {    
     int i;
@@ -209,15 +223,14 @@ static int dev_driver_open(struct inode *minode, struct file *mfile) {
 	cur_time = 0;
 	cur_x = 0; cur_y = 0;
 			
-	// make footprint
-	board[cur_x] = board[cur_x] | (1 << cur_y);
-
 	dot_write();
 
 	// start timer
-	set_my_timer();
+	set_fnd_timer();
+	set_dot_timer();
 
-/*
+	printk("%s is successfully opened\n", DEV_DRIVER_NAME);
+
 	for (j = 0; j < COL; j++) printk(" -");
 	printk("\n");
 
@@ -242,8 +255,6 @@ static int dev_driver_open(struct inode *minode, struct file *mfile) {
 
 	for (j = 0; j < COL; j++) printk(" -");
 	printk("\n");
-*/
-	printk("%s is successfully opened\n", DEV_DRIVER_NAME);
 
 	return 0;
 }
@@ -264,7 +275,8 @@ static int dev_driver_release(struct inode *minode, struct file *mfile) {
 	fnd_write(0);
 
 	// delete timer
-	del_timer_sync(&my_timer.timer);
+	del_timer_sync(&fnd_timer.timer);
+	del_timer_sync(&dot_timer.timer);
 
 	printk("%s is released\n", DEV_DRIVER_NAME);
 
@@ -284,11 +296,9 @@ static long dev_driver_ioctl(struct file *mfile,
 				return -EFAULT;
 			}
 
-			//printk("cur %d %d dir : %d\n", cur_x, cur_y, dir);
+			printk("cur %d %d dir : %d\n", cur_x, cur_y, dir);
 
 			ret = move_maze(dir);
-
-			//msleep(50);
 
 			break;
 		default:
@@ -321,7 +331,8 @@ int __init dev_driver_init(void)
 	dot_addr = ioremap(IOM_FPGA_DOT_ADDRESS, 0x10);
     
 	// initialize timer
-	init_timer(&(my_timer.timer));
+	init_timer(&(fnd_timer.timer));
+	init_timer(&(dot_timer.timer));
 	
     return 0;
 }
@@ -332,7 +343,8 @@ void __exit dev_driver_exit(void)
 	driver_usage = DRIVER_NOT_USED;
 
 	// delete timer
-	del_timer_sync(&my_timer.timer);
+	del_timer_sync(&fnd_timer.timer);
+	del_timer_sync(&dot_timer.timer);
 
 	// unmap register's physical address
 	iounmap(fnd_addr);
