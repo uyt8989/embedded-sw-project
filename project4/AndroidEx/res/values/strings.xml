@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="app_name">Let</string>
+    <string name="off">You should start first!</string>
+    <string name="on">You already started!</string>
+    <string name="start">Start!</string>
+    <string name="end">End!</string>
+    <string name="reset">Reset!</string>
+
+</resources>
