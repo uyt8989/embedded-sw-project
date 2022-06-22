@@ -148,6 +148,7 @@ int move_maze(int dir) {
 		board[cur_x] = board[cur_x] | (1 << (COL - 1 - cur_y));
 
 		if(cur_x == ROW - 1 && cur_y == COL - 1) {
+			printf("Escape!\n");
 			__wake_up(&my_waitq, 1, 1, NULL);
 		}
 
@@ -326,6 +327,7 @@ static long dev_driver_ioctl(struct file *mfile,
 
 			break;
 		case IOCTL_CHECK:
+			printf("Sleep!\n");
 			// Sleep until escape the maze
 			interruptible_sleep_on(&my_waitq);
 		default:
