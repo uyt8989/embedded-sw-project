@@ -37,10 +37,9 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-    // execute device
-    ioctl(dev_fd, IOCTL_START);
+	//dfs(dev_fd, 0, 0);
 
-	dfs(dev_fd, 0, 0);
+	sleep(5);
 
 	int i, j;
 	for(i = 0; i < 10; i++) {
