@@ -214,10 +214,12 @@ static void dot_timer_blink(unsigned long timeout) {
 		blink[i] = 0b11111111;
 
 	if(sw) {
+		printk("sw on\n");
 		blink[cur_x] = ~(1 << (COL - 1 - cur_y));
 		sw = false;
 	}
 	else {
+		printk("sw off\n");
 		sw = true;
 	}
 
