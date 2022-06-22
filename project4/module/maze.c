@@ -35,6 +35,7 @@ DECLARE_WAIT_QUEUE_HEAD(my_waitq);
 maze_t maze[10][7];
 unsigned char board[10];
 unsigned char blink[10];
+// currente location and time
 int cur_x, cur_y, cur_time;
 bool sw;
 
@@ -73,6 +74,7 @@ static struct file_operations dev_driver_fops =
 	.unlocked_ioctl = dev_driver_ioctl
 };
 
+// gernerate random maze using binary tree algorthm
 static void init_maze(void) {
 	int i, j;
 	unsigned int random, temp;
@@ -108,6 +110,7 @@ static void init_maze(void) {
 	}
 }
 
+// move cursor
 int move_maze(int dir) {
 	bool flag = false;
 	int dx[] = {-1, 0, 1, 0};
