@@ -32,6 +32,7 @@ maze_t maze[10][7];
 unsigned char board[10];
 unsigned char blink[10];
 int cur_x, cur_y, cur_time;
+bool sw;
 
 // register address
 static unsigned char *fnd_addr;
@@ -163,7 +164,7 @@ static int fnd_write(const unsigned short int value) {
 static int dot_write(void) {
 	int i;
 	unsigned short int value = 0;
-	
+
 	for(i = 0; i < 10; i++) {
 		value = (board[i] & blink[i]);
 		outw(value,(unsigned int)dot_addr + i * 2);
@@ -203,7 +204,13 @@ static void dot_timer_blink(unsigned long timeout) {
 	for(i = 0; i < ROW; i++) 
 		blink[i] = 0b11111111;
 
-	blink[cur_x] = ~(1 << (COL - 1 - cur_y));
+	if(sw) {
+		blink[cur_x] = ~(1 << (COL - 1 - cur_y));
+		sw = false;
+	}
+	else {
+		sw = true;
+	}
 
 	dot_write();
     set_dot_timer();
@@ -230,7 +237,7 @@ static int dev_driver_open(struct inode *minode, struct file *mfile) {
 	
 	// initialize status variables
 	cur_time = 0;
-	cur_x = 0; cur_y = 0;
+	cur_x = 0; cur_y = 0; sw = true;
 			
 	dot_write();
 
