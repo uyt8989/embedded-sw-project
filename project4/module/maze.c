@@ -287,6 +287,8 @@ static int dev_driver_open(struct inode *minode, struct file *mfile) {
 static int dev_driver_release(struct inode *minode, struct file *mfile) {
 	int i;
 
+	if(driver_usage == DRIVER_NOT_USED)
+		return -1;
 	// clear variables
 	driver_usage = DRIVER_NOT_USED;
 
@@ -302,6 +304,8 @@ static int dev_driver_release(struct inode *minode, struct file *mfile) {
 	// delete timer
 	del_timer_sync(&fnd_timer.timer);
 	del_timer_sync(&dot_timer.timer);
+
+	__wake_up(&my_waitq, 1, 1, NULL);
 
 	printk("%s is released\n", DEV_DRIVER_NAME);
 
