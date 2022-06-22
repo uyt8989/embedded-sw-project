@@ -50,7 +50,7 @@ static int fnd_write(const unsigned short int value);
 static int dot_write(void);
 // add new timer
 static void set_fnd_timer(void);
-static void set_dot_timer(void)
+static void set_dot_timer(void);
 // increase time and set new timer
 static void fnd_timer_blink(unsigned long timeout);
 static void dot_timer_blink(unsigned long timeout);
