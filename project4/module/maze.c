@@ -30,6 +30,7 @@ struct struct_my_timer dot_timer;
 // maze board
 maze_t maze[10][7];
 unsigned char board[10];
+unsigned char blink[10];
 int cur_x, cur_y, cur_time;
 
 // register address
@@ -105,7 +106,7 @@ static void init_maze(void) {
 int move_maze(int dir) {
 	bool flag = false;
 	int dx[] = {-1, 0, 1, 0};
-	int dy[] = {0, -1, 0, 1};
+	int dy[] = {0, 1, 0, -1};
 	int nx = cur_x + dx[dir]; int ny = cur_y + dy[dir];
 
 	// invalid
