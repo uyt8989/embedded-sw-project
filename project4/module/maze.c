@@ -116,7 +116,7 @@ int move_maze(int dir) {
 
 	// invalid
 	if(nx < 0 || nx >= ROW || ny < 0 || ny >= COL) {
-		printk("Invalid move\n");
+		//printk("Invalid move\n");
 		return -1;
 	}
 
@@ -157,7 +157,7 @@ int move_maze(int dir) {
 		return 1;
 	}
 	
-	printk("Blocked\n");
+	//printk("Blocked\n");
 
 	// blocked
 	return 0;
@@ -327,7 +327,7 @@ static long dev_driver_ioctl(struct file *mfile,
 				return -EFAULT;
 			}
 
-			printk("cur %d %d dir : %d\n", cur_x, cur_y, dir);
+			//printk("cur %d %d dir : %d\n", cur_x, cur_y, dir);
 
 			ret = move_maze(dir);
 
