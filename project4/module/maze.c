@@ -163,10 +163,9 @@ static int fnd_write(const unsigned short int value) {
 static int dot_write(void) {
 	int i;
 	unsigned short int value = 0;
-
-	blink[cur_x] = blink[cur_x] );
+	
 	for(i = 0; i < 10; i++) {
-		value = (board[i] & blick[i]);
+		value = (board[i] & blink[i]);
 		outw(value,(unsigned int)dot_addr + i * 2);
 	}
 	return SUCCESS;
