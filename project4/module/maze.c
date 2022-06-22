@@ -97,17 +97,12 @@ static void init_maze(void) {
 	for (j = 0; j < COL - 1; j++) {
 		maze[ROW - 1][j].wall[RIGHT] = 0;
 	}
-
-	// clear board
-	for(i = 0; i < ROW; i++) {
-		board[i] = 0;
-	}
 }
 
 int move_maze(int dir) {
 	bool flag = false;
 	int dx[] = {-1, 0, 1, 0};
-	int dy[] = {0, 1, 0, -1};
+	int dy[] = {0, -1, 0, 1};
 	int nx = cur_x + dx[dir]; int ny = cur_y + dy[dir];
 
 	// invalid
@@ -143,8 +138,7 @@ int move_maze(int dir) {
 		//board[cur_x] = board[cur_x] | (1 << (COL - cur_y));
 		board[cur_x] = board[cur_x] | (1 << cur_y);
 
-
-		printk("%d %d\n", cur_x, cur_y);
+		rintk("allowed current :  %d %d\n", cur_x, cur_y);
 
 		dot_write();
 		
@@ -201,6 +195,52 @@ static int dev_driver_open(struct inode *minode, struct file *mfile) {
 	
 	driver_usage = DRIVER_OPENED;
 	
+	// clear board
+	for(i = 0; i < ROW; i++) {
+		board[i] = 0;
+	}
+	
+	// initialize board
+	init_maze();
+	
+	// initialize status variables
+	cur_time = 0;
+	cur_x = 0; cur_y = 0;
+			
+	// make footprint
+	board[cur_x] = board[cur_x] | (1 << cur_y);
+
+	dot_write();
+
+	// start timer
+	set_my_timer();
+
+/*
+	for (j = 0; j < COL; j++) printk(" -");
+	printk("\n");
+
+	for (i = 0; i < ROW; i++) {
+		if (i != 0) {
+			for (j = 0; j < COL; j++) {
+				printk(" ");
+				if (maze[i - 1][j].wall[DOWN] == 1) printk("-");
+				else printk(" ");
+			}
+			printk("\n");
+		}
+
+		printk("|");
+		for (j = 0; j < COL; j++) {
+			printk(" ");
+			if (maze[i][j].wall[RIGHT] == 1) printk("|");
+			else printk(" ");
+		}
+		printk("\n");
+	}
+
+	for (j = 0; j < COL; j++) printk(" -");
+	printk("\n");
+*/
 	printk("%s is successfully opened\n", DEV_DRIVER_NAME);
 
 	return 0;
@@ -209,6 +249,15 @@ static int dev_driver_open(struct inode *minode, struct file *mfile) {
 static int dev_driver_release(struct inode *minode, struct file *mfile) {
 	// clear variables
 	driver_usage = DRIVER_NOT_USED;
+
+	// clear board
+	for(i = 0; i < ROW; i++) {
+		board[i] = 0;
+	}
+
+	dot_write();
+
+	fnd_write(0);
 
 	// delete timer
 	del_timer_sync(&my_timer.timer);
@@ -223,46 +272,6 @@ static long dev_driver_ioctl(struct file *mfile,
 	int i, j, dir, result, ret = SUCCESS;
 
 	switch(ioctl_num) {
-		//start 
-		case IOCTL_START:
-			// initialize board
-			init_maze();
-
-			// initialize status variables
-			cur_time = 0;
-			cur_x = 0; cur_y = 0;
-			
-			// make footprint
-			board[cur_x] = board[cur_x] | (1 << cur_y);
-
-			for (j = 0; j < COL; j++) printk(" -");
-			printk("\n");
-
-			for (i = 0; i < ROW; i++) {
-				if (i != 0) {
-					for (j = 0; j < COL; j++) {
-						printk(" ");
-						if (maze[i - 1][j].wall[DOWN] == 1) printk("-");
-						else printk(" ");
-					}
-					printk("\n");
-				}
-
-				printk("|");
-				for (j = 0; j < COL; j++) {
-					printk(" ");
-					if (maze[i][j].wall[RIGHT] == 1) printk("|");
-					else printk(" ");
-				}
-				printk("\n");
-			}
-
-			for (j = 0; j < COL; j++) printk(" -");
-			printk("\n");
-
-			set_my_timer();
-
-			break;
 		// invalid ioctl command
 		case IOCTL_MOVE:
 			result = copy_from_user(&dir, (void __user *)ioctl_param, sizeof(int));
@@ -271,7 +280,7 @@ static long dev_driver_ioctl(struct file *mfile,
 				return -EFAULT;
 			}
 
-			printk("cur %d %d dir : %d\n", cur_x, cur_y, dir);
+			//printk("cur %d %d dir : %d\n", cur_x, cur_y, dir);
 
 			ret = move_maze(dir);
 
